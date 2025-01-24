@@ -91,19 +91,16 @@ public class Dusk {
             }
 
             Task task = tasks[idx];
+            printLine(writer);
             if (isDone) {
                 task.markDone();
-                printLine(writer);
                 writer.write("\t Nice! I've marked this task as done:\n");
-                writer.write("\t   " + task + "\n");
-                printLine(writer);
             } else {
                 task.markUndone();
-                printLine(writer);
                 writer.write("\t OK, I've marked this task as not done yet:\n");
-                writer.write("\t   " + task + "\n");
-                printLine(writer);
             }
+            writer.write("\t   " + task + "\n");
+            printLine(writer);
         } catch (NumberFormatException e) {
             printLine(writer);
             writer.write("\t Please provide a valid task number to mark/unmark.\n");
