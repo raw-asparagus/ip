@@ -8,6 +8,12 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
+        String by;
+        if (this.by.isEmpty()) {
+            by = "no idea :p";
+        } else {
+            by = this.by;
+        }
         return "[D]" + super.toString() + " (by: " + by + ")";
     }
 }

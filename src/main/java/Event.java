@@ -10,6 +10,16 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        String message;
+        if (from.isEmpty() && to.isEmpty()) {
+            message = "";
+        } else if (from.isEmpty()) {
+            message = " (to: " + to + ")";
+        } else if (to.isEmpty()) {
+            message = " (from: " + from + ")";
+        } else {
+            message = " (from: " + from + " to: " + to + ")";
+        }
+        return "[E]" + super.toString() + message;
     }
 }
