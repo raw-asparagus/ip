@@ -25,7 +25,6 @@ public class Dusk {
 
             String input;
             while ((input = reader.readLine()) != null && !"bye".equalsIgnoreCase(input.trim())) {
-                input = input.trim();
                 parseInput(input, writer);
                 writer.flush();
             }
@@ -76,64 +75,64 @@ public class Dusk {
         // add deadline
         else if (input.toLowerCase().startsWith("deadline ")) {
             String details = input.substring("deadline ".length());
-            int byIndex = details.toLowerCase().indexOf("/by ");
-            if (byIndex != -1) {
-                String desc = details.substring(0, byIndex).trim();
-                String by = details.substring(byIndex + 4).trim();
-                addDeadline(desc, by, writer);
-            } else {
-                addDeadline(details, "", writer);
+
+            String desc = details;
+            String by = "";
+            int byIdx = details.toLowerCase().indexOf("/by ");
+            if (byIdx != -1) {
+                desc = details.substring(0, byIdx).trim();
+                by = details.substring(byIdx + "/by ".length()).trim();
             }
+            addDeadline(desc, by, writer);
         }
         // add event
         else if (input.toLowerCase().startsWith("event ")) {
             String details = input.substring("event ".length());
-            int fromIndex = details.toLowerCase().indexOf("/from ");
-            int toIndex = details.toLowerCase().indexOf("/to ");
 
-            String description;
-            String fromPart = "";
-            String toPart = "";
+            String desc = details;
+            String from = "";
+            String to = "";
+            int fromIdx = details.toLowerCase().indexOf("/from ");
+            int toIdx = details.toLowerCase().indexOf("/to ");
 
             // Both /from and /to exist
-            if (fromIndex != -1 && toIndex != -1) {
-                if (fromIndex < toIndex) {
-                    description = details.substring(0, fromIndex).trim();
-                    fromPart = details.substring(fromIndex + 6, toIndex).trim();
-                    toPart = details.substring(toIndex + 4).trim();
+            if (fromIdx != -1 && toIdx != -1) {
+                if (fromIdx < toIdx) {
+                    desc = details.substring(0, fromIdx).trim();
+                    from = details.substring(fromIdx + "/from".length(), toIdx).trim();
+                    to = details.substring(toIdx + "/to ".length()).trim();
                 } else {
                     // /to is found before /from
-                    description = details.substring(0, toIndex).trim();
-                    toPart = details.substring(toIndex + 4, fromIndex).trim();
-                    fromPart = details.substring(fromIndex + 6).trim();
+                    desc = details.substring(0, toIdx).trim();
+                    to = details.substring(toIdx + "/to ".length(), fromIdx).trim();
+                    from = details.substring(fromIdx + "/from".length()).trim();
                 }
             }
             // Only /from is present
-            else if (fromIndex != -1) {
-                description = details.substring(0, fromIndex).trim();
-                fromPart = details.substring(fromIndex + 6).trim();
+            else if (fromIdx != -1) {
+                desc = details.substring(0, fromIdx).trim();
+                from = details.substring(fromIdx + "/from".length()).trim();
             }
             // Only /to is present
-            else if (toIndex != -1) {
-                description = details.substring(0, toIndex).trim();
-                toPart = details.substring(toIndex + 4).trim();
+            else if (toIdx != -1) {
+                desc = details.substring(0, toIdx).trim();
+                to = details.substring(toIdx + "/to".length()).trim();
             }
             // Neither /from nor /to
             else {
-                description = details;
+                desc = details;
             }
 
-            addEvent(description, fromPart, toPart, writer);
-        }
-        else {
+            addEvent(desc, from, to, writer);
+        } else {
             addTask(input, writer);
         }
     }
 
-    private static void addTodo(String description, BufferedWriter writer) throws IOException {
+    private static void addTodo(String desc, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            Todo newTask = new Todo(description);
+            Todo newTask = new Todo(desc);
             tasks[taskCount] = newTask;
             taskCount++;
             writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
@@ -143,10 +142,10 @@ public class Dusk {
         printLine(writer);
     }
 
-    private static void addDeadline(String description, String by, BufferedWriter writer) throws IOException {
+    private static void addDeadline(String desc, String by, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            Deadline newTask = new Deadline(description, by);
+            Deadline newTask = new Deadline(desc, by);
             tasks[taskCount] = newTask;
             taskCount++;
             writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
@@ -156,10 +155,10 @@ public class Dusk {
         printLine(writer);
     }
 
-    private static void addEvent(String description, String from, String to, BufferedWriter writer) throws IOException {
+    private static void addEvent(String desc, String from, String to, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            Event newTask = new Event(description, from, to);
+            Event newTask = new Event(desc, from, to);
             tasks[taskCount] = newTask;
             taskCount++;
             writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
@@ -169,10 +168,10 @@ public class Dusk {
         printLine(writer);
     }
 
-    private static void addTask(String taskDescription, BufferedWriter writer) throws IOException {
+    private static void addTask(String desc, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            Task newTask = new Task(taskDescription);
+            Task newTask = new Task(desc);
             tasks[taskCount] = newTask;
             taskCount++;
             writer.write("\t added: " + newTask.getName() + "\n");
