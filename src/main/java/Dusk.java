@@ -10,7 +10,6 @@ public class Dusk {
     // Commons
     private static final Logger logger = Logger.getLogger(Dusk.class.getName());
 
-
     // Commons to track tasks
     private static final int MAX_TASKS = 100;
     private static final Task[] tasks = new Task[MAX_TASKS];
@@ -54,24 +53,126 @@ public class Dusk {
         writer.write("\t____________________________________________________________\n");
     }
 
-    private static void parseInput(String input, BufferedWriter writer) throws java.io.IOException {
+    private static void parseInput(String input, BufferedWriter writer) throws IOException {
+        // list all tasks
         if (input.equalsIgnoreCase("list")) {
             listTasks(writer);
-        } else if (input.toLowerCase().startsWith("mark ")) {
+        }
+        // mark task as done
+        else if (input.toLowerCase().startsWith("mark ")) {
             String idx = input.substring("mark ".length());
             markTask(idx, writer, true);
-        } else if (input.toLowerCase().startsWith("unmark ")) {
+        }
+        // unmark task
+        else if (input.toLowerCase().startsWith("unmark ")) {
             String idx = input.substring("unmark ".length());
             markTask(idx, writer, false);
-        } else {
+        }
+        // add to-do
+        else if (input.toLowerCase().startsWith("todo ")) {
+            String desc = input.substring("todo ".length());
+            addTodo(desc, writer);
+        }
+        // add deadline
+        else if (input.toLowerCase().startsWith("deadline ")) {
+            String details = input.substring("deadline ".length());
+            int byIndex = details.toLowerCase().indexOf("/by ");
+            if (byIndex != -1) {
+                String desc = details.substring(0, byIndex).trim();
+                String by = details.substring(byIndex + 4).trim();
+                addDeadline(desc, by, writer);
+            } else {
+                addDeadline(details, "", writer);
+            }
+        }
+        // add event
+        else if (input.toLowerCase().startsWith("event ")) {
+            String details = input.substring("event ".length());
+            int fromIndex = details.toLowerCase().indexOf("/from ");
+            int toIndex = details.toLowerCase().indexOf("/to ");
+
+            String description;
+            String fromPart = "";
+            String toPart = "";
+
+            // Both /from and /to exist
+            if (fromIndex != -1 && toIndex != -1) {
+                if (fromIndex < toIndex) {
+                    description = details.substring(0, fromIndex).trim();
+                    fromPart = details.substring(fromIndex + 6, toIndex).trim();
+                    toPart = details.substring(toIndex + 4).trim();
+                } else {
+                    // /to is found before /from
+                    description = details.substring(0, toIndex).trim();
+                    toPart = details.substring(toIndex + 4, fromIndex).trim();
+                    fromPart = details.substring(fromIndex + 6).trim();
+                }
+            }
+            // Only /from is present
+            else if (fromIndex != -1) {
+                description = details.substring(0, fromIndex).trim();
+                fromPart = details.substring(fromIndex + 6).trim();
+            }
+            // Only /to is present
+            else if (toIndex != -1) {
+                description = details.substring(0, toIndex).trim();
+                toPart = details.substring(toIndex + 4).trim();
+            }
+            // Neither /from nor /to
+            else {
+                description = details;
+            }
+
+            addEvent(description, fromPart, toPart, writer);
+        }
+        else {
             addTask(input, writer);
         }
     }
 
-    private static void addTask(String task, BufferedWriter writer) throws IOException {
+    private static void addTodo(String description, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            Task newTask = new Task(task);
+            Todo newTask = new Todo(description);
+            tasks[taskCount] = newTask;
+            taskCount++;
+            writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
+        } else {
+            writer.write("\t Task list is full! Unable to add task!\n");
+        }
+        printLine(writer);
+    }
+
+    private static void addDeadline(String description, String by, BufferedWriter writer) throws IOException {
+        printLine(writer);
+        if (taskCount < MAX_TASKS) {
+            Deadline newTask = new Deadline(description, by);
+            tasks[taskCount] = newTask;
+            taskCount++;
+            writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
+        } else {
+            writer.write("\t Task list is full! Unable to add task!\n");
+        }
+        printLine(writer);
+    }
+
+    private static void addEvent(String description, String from, String to, BufferedWriter writer) throws IOException {
+        printLine(writer);
+        if (taskCount < MAX_TASKS) {
+            Event newTask = new Event(description, from, to);
+            tasks[taskCount] = newTask;
+            taskCount++;
+            writer.write("\t Got it. I've added this task:\n\t   " + newTask + "\n\t Now you have " + taskCount + " tasks in the list.\n");
+        } else {
+            writer.write("\t Task list is full! Unable to add task!\n");
+        }
+        printLine(writer);
+    }
+
+    private static void addTask(String taskDescription, BufferedWriter writer) throws IOException {
+        printLine(writer);
+        if (taskCount < MAX_TASKS) {
+            Task newTask = new Task(taskDescription);
             tasks[taskCount] = newTask;
             taskCount++;
             writer.write("\t added: " + newTask.getName() + "\n");
@@ -88,19 +189,21 @@ public class Dusk {
                 printLine(writer);
                 writer.write("\t Invalid task number!\n");
                 printLine(writer);
+                return;
             }
 
             Task task = tasks[idx];
-            printLine(writer);
             if (isDone) {
                 task.markDone();
-                writer.write("\t Nice! I've marked this task as done:\n");
+                printLine(writer);
+                writer.write("\t Nice! I've marked this task as done:\n\t   " + task + "\n");
+                printLine(writer);
             } else {
                 task.markUndone();
-                writer.write("\t OK, I've marked this task as not done yet:\n");
+                printLine(writer);
+                writer.write("\t OK, I've marked this task as not done yet:\n\t   " + task + "\n");
+                printLine(writer);
             }
-            writer.write("\t   " + task + "\n");
-            printLine(writer);
         } catch (NumberFormatException e) {
             printLine(writer);
             writer.write("\t Please provide a valid task number to mark/unmark.\n");
@@ -113,6 +216,7 @@ public class Dusk {
         if (taskCount == 0) {
             writer.write("\t Task list is empty! Would you like to add some tasks?\n");
         } else {
+            writer.write("\t Here are the tasks in your list:\n");
             for (int i = 0; i < taskCount; i++) {
                 writer.write("\t " + (i + 1) + "." + tasks[i] + "\n");
             }
