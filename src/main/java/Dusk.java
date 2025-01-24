@@ -26,6 +26,7 @@ public class Dusk {
 
             String input;
             while ((input = reader.readLine()) != null && !"bye".equalsIgnoreCase(input.trim())) {
+                input = input.trim();
                 parseInput(input, writer);
                 writer.flush();
             }
@@ -54,8 +55,14 @@ public class Dusk {
     }
 
     private static void parseInput(String input, BufferedWriter writer) throws java.io.IOException {
-        if ("list".equalsIgnoreCase(input.trim())) {
+        if (input.equalsIgnoreCase("list")) {
             listTasks(writer);
+        } else if (input.toLowerCase().startsWith("mark ")) {
+            String idx = input.substring("mark ".length());
+            markTask(idx, writer, true);
+        } else if (input.toLowerCase().startsWith("unmark ")) {
+            String idx = input.substring("unmark ".length());
+            markTask(idx, writer, false);
         } else {
             addTask(input, writer);
         }
@@ -64,13 +71,44 @@ public class Dusk {
     private static void addTask(String task, BufferedWriter writer) throws IOException {
         printLine(writer);
         if (taskCount < MAX_TASKS) {
-            tasks[taskCount] = new Task(task);
+            Task newTask = new Task(task);
+            tasks[taskCount] = newTask;
             taskCount++;
-            writer.write("\t added: " + task + "\n");
+            writer.write("\t added: " + newTask.getName() + "\n");
         } else {
             writer.write("\t Task list is full! Unable to add task!\n");
         }
         printLine(writer);
+    }
+
+    private static void markTask(String index, BufferedWriter writer, boolean isDone) throws IOException {
+        try {
+            int idx = Integer.parseInt(index) - 1;
+            if (idx < 0 || idx >= taskCount) {
+                printLine(writer);
+                writer.write("\t Invalid task number!\n");
+                printLine(writer);
+            }
+
+            Task task = tasks[idx];
+            if (isDone) {
+                task.markDone();
+                printLine(writer);
+                writer.write("\t Nice! I've marked this task as done:\n");
+                writer.write("\t   " + task + "\n");
+                printLine(writer);
+            } else {
+                task.markUndone();
+                printLine(writer);
+                writer.write("\t OK, I've marked this task as not done yet:\n");
+                writer.write("\t   " + task + "\n");
+                printLine(writer);
+            }
+        } catch (NumberFormatException e) {
+            printLine(writer);
+            writer.write("\t Please provide a valid task number to mark/unmark.\n");
+            printLine(writer);
+        }
     }
 
     private static void listTasks(BufferedWriter writer) throws IOException {
@@ -79,7 +117,7 @@ public class Dusk {
             writer.write("\t Task list is empty! Would you like to add some tasks?\n");
         } else {
             for (int i = 0; i < taskCount; i++) {
-                writer.write("\t " + (i + 1) + ". " + tasks[i] + "\n");
+                writer.write("\t " + (i + 1) + "." + tasks[i] + "\n");
             }
         }
         printLine(writer);
