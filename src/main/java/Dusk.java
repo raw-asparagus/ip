@@ -3,8 +3,14 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Dusk {
+    // Commons
+    private static final Logger logger = Logger.getLogger(Dusk.class.getName());
+
+
     // Commons to track tasks
     private static final int MAX_TASKS = 100;
     private static final Task[] tasks = new Task[MAX_TASKS];
@@ -27,7 +33,7 @@ public class Dusk {
             printFarewell(writer);
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "An error occurred while handling I/O operations using BufferedReader/BufferedWriter.", e);
         }
     }
 
