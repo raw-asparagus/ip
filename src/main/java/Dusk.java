@@ -20,6 +20,38 @@ public class Dusk {
             "Anything you want me to do for you? :D" };
     public static final String BYE = "See ya! Hope to see you again soon! :3";
 
+    public enum CommandType {
+        LIST,
+        MARK,
+        UNMARK,
+        DELETE,
+        TODO,
+        DEADLINE,
+        EVENT;
+
+        public static CommandType fromString(String command) {
+            try {
+                return CommandType.valueOf(command.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
+
+    public enum FlagType {
+        BY,
+        FROM,
+        TO;
+
+        public static FlagType fromString(String flag) {
+            try {
+                return FlagType.valueOf(flag.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         try (
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -64,13 +96,19 @@ public class Dusk {
 
     private static void parseInput(BufferedWriter writer, String input)
             throws IOException, DuskException, InputException {
+        /*
+        For testing
+         */
+        writer.write(input + "\n");
+        writer.flush();
+
         input = input.trim();
         if (input.isEmpty()) {
             throw new InputException("Input cannot be null or empty.");
         }
 
         Pattern inputPattern = Pattern.compile(
-                "^(?<command>list|mark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
+                "^(?<command>list|mark|unmark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher inputMatcher = inputPattern.matcher(input);
@@ -78,7 +116,7 @@ public class Dusk {
             throw new InputException("Invalid command: " + input);
         }
 
-        String command = inputMatcher.group("command").trim();
+        CommandType command = CommandType.fromString(inputMatcher.group("command").trim());
         String rawDescription = inputMatcher.group("description");
         String rawArguments = inputMatcher.group("arguments");
 
@@ -93,17 +131,17 @@ public class Dusk {
             Pattern flagsPattern = Pattern.compile("/(?<flag>by|from|to)\\s+(?<value>[^/]+)", Pattern.CASE_INSENSITIVE);
             Matcher flagsMatcher = flagsPattern.matcher(arguments);
             while (flagsMatcher.find()) {
-                String flag = flagsMatcher.group("flag").toLowerCase().trim();
+                FlagType flag = FlagType.fromString(flagsMatcher.group("flag").toLowerCase().trim());
                 String value = flagsMatcher.group("value").trim();
 
                 switch (flag) {
-                    case "by":
+                    case BY:
                         by = value;
                         break;
-                    case "from":
+                    case FROM:
                         from = value;
                         break;
-                    case "to":
+                    case TO:
                         to = value;
                         break;
                     default:
@@ -114,9 +152,9 @@ public class Dusk {
 
         int idx = -1;
         switch (command) {
-            case "mark":
-            case "unmark":
-            case "delete":
+            case MARK:
+            case UNMARK:
+            case DELETE:
                 try {
                     idx = Integer.parseInt(description) - 1;
                 } catch (NumberFormatException e) {
@@ -126,9 +164,9 @@ public class Dusk {
                     throw new DuskException("Invalid task number: " + description);
                 }
                 break;
-            case "todo":
-            case "deadline":
-            case "event":
+            case TODO:
+            case DEADLINE:
+            case EVENT:
                 if (description.isEmpty()) {
                     throw new InputException("A '" + command + "' command must include a description.");
                 }
@@ -138,22 +176,23 @@ public class Dusk {
         }
 
         switch (command) {
-            case "list":
+            case LIST:
                 listTasks(writer);
                 break;
-            case "mark":
-            case "unmark":
-                markTask(writer, idx, command.equalsIgnoreCase("mark"));
+            case MARK:
+            case UNMARK:
+                markTask(writer, idx, command == CommandType.MARK);
                 break;
-            case "delete":
+            case DELETE:
                 deleteTask(writer, idx);
-            case "todo":
+                break;
+            case TODO:
                 addTodo(writer, description);
                 break;
-            case "deadline":
+            case DEADLINE:
                 addDeadline(writer, description, by);
                 break;
-            case "event":
+            case EVENT:
                 addEvent(writer, description, from, to);
                 break;
             default:
@@ -199,7 +238,7 @@ public class Dusk {
                 printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
             } else {
                 task.markUndone();
-                printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
+                printMessage(writer, new String[]{"OK! I've updated this task as undone:", "  " + task});
             }
         } catch (IndexOutOfBoundsException e) {
             throw new DuskException("Invalid task number: " + idx);
