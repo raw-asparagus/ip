@@ -70,7 +70,7 @@ public class Dusk {
         }
 
         Pattern inputPattern = Pattern.compile(
-                "^(?<command>list|mark|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
+                "^(?<command>list|mark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
                 Pattern.CASE_INSENSITIVE);
 
         Matcher inputMatcher = inputPattern.matcher(input);
@@ -116,12 +116,13 @@ public class Dusk {
         switch (command) {
             case "mark":
             case "unmark":
+            case "delete":
                 try {
                     idx = Integer.parseInt(description) - 1;
                 } catch (NumberFormatException e) {
-                    throw new InputException("Task number cannot be empty for a mark/unmark command!");
+                    throw new InputException("Task number cannot be empty for a '" + command + "' command!");
                 }
-                if (idx < 0 || idx >= tasks.size()) {
+                if (idx <= 0 || idx > tasks.size()) {
                     throw new DuskException("Invalid task number: " + description);
                 }
                 break;
@@ -144,6 +145,8 @@ public class Dusk {
             case "unmark":
                 markTask(writer, idx, command.equalsIgnoreCase("mark"));
                 break;
+            case "delete":
+                deleteTask(writer, idx);
             case "todo":
                 addTodo(writer, description);
                 break;
@@ -188,14 +191,31 @@ public class Dusk {
         });
     }
 
-    private static void markTask(BufferedWriter writer, int idx, boolean isDone) throws IOException {
-        Task task = tasks.get(idx);
-        if (isDone) {
-            task.markDone();
-            printMessage(writer, new String[] { "Nice! I've marked this task as done:", "  " + task });
-        } else {
-            task.markUndone();
-            printMessage(writer, new String[] { "Nice! I've marked this task as done:", "  " + task });
+    private static void markTask(BufferedWriter writer, int idx, boolean isDone) throws IOException, DuskException {
+        try {
+            Task task = tasks.get(idx);
+            if (isDone) {
+                task.markDone();
+                printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
+            } else {
+                task.markUndone();
+                printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new DuskException("Invalid task number: " + idx);
+        }
+    }
+
+    private static void deleteTask(BufferedWriter writer, int idx) throws IOException, DuskException {
+        try {
+            Task removedTask = tasks.remove(idx);
+            printMessage(writer, new String[] {
+                    "Noted. I've removed this task:",
+                    "  " + removedTask,
+                    "Now you have " + tasks.size() + " tasks in the list."
+            });
+        } catch (IndexOutOfBoundsException e) {
+            throw new DuskException("Invalid task number: " + idx);
         }
     }
 
