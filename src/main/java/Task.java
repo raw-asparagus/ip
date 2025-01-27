@@ -1,9 +1,9 @@
 public class Task {
-    protected String description;
+    protected String desc;
     protected boolean isDone;
 
-    public Task(String description) {
-        this.description = description;
+    public Task(String desc) {
+        this.desc = desc;
         this.isDone = false;
     }
 
@@ -18,7 +18,7 @@ public class Task {
 
     // Accessors
     public String getName() {
-        return description;
+        return desc;
     }
 
     public boolean getDone() {
@@ -27,6 +27,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + (getDone() ? "X" : " ") + "] " + description;
+        return "[" + (getDone() ? "X" : " ") + "] " + desc;
     }
 }
