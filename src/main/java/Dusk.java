@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -13,11 +15,21 @@ public class Dusk {
             "Anything you want me to do for you? :D"
     };
     public static final String BYE = "See ya! Hope to see you again soon! :3";
+
     // Commons
     private static final Logger logger = Logger.getLogger(Dusk.class.getName());
+    private static final Storage storage = new Storage();
     private static final List<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
+        CompletableFuture<List<Task>> loadFuture = storage.loadTasksAsync();
+        try {
+            List<Task> loadedTasks = loadFuture.get();
+            tasks.addAll(loadedTasks);
+        } catch (InterruptedException | ExecutionException e) {
+            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+        }
+
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
             consoleIO.print(GREETING);
 
@@ -42,6 +54,9 @@ public class Dusk {
                     "An error occurred while handling I/O operations using ConsoleIO.",
                     e
             );
+        } finally {
+            // Cleanly shut down the executor to end the application
+            storage.shutdownExecutor();
         }
     }
 
@@ -104,24 +119,15 @@ public class Dusk {
                 }
             }
 
-            switch (commandType) {
-                case LIST:
-                    return new ListCommand(tasks, consoleIO);
-                case MARK:
-                    return new MarkCommand(tasks, consoleIO, description, true);
-                case UNMARK:
-                    return new MarkCommand(tasks, consoleIO, description, false);
-                case DELETE:
-                    return new DeleteCommand(tasks, consoleIO, description);
-                case TODO:
-                    return new CreateTodoCommand(tasks, consoleIO, description);
-                case DEADLINE:
-                    return new CreateDeadlineCommand(tasks, consoleIO, description, by);
-                case EVENT:
-                    return new CreateEventCommand(tasks, consoleIO, description, from, to);
-                default:
-                    throw new InputException("Unknown command: " + commandType);
-            }
+            return switch (commandType) {
+                case LIST -> new ListCommand(tasks, consoleIO);
+                case MARK -> new MarkCommand(tasks, consoleIO, description, true);
+                case UNMARK -> new MarkCommand(tasks, consoleIO, description, false);
+                case DELETE -> new DeleteCommand(tasks, consoleIO, description);
+                case TODO -> new CreateTodoCommand(tasks, consoleIO, description);
+                case DEADLINE -> new CreateDeadlineCommand(tasks, consoleIO, description, by);
+                case EVENT -> new CreateEventCommand(tasks, consoleIO, description, from, to);
+            };
         }
     }
 
@@ -182,6 +188,17 @@ public class Dusk {
                 } else {
                     task.markDone();
                     consoleIO.print("Nice! I've marked this task as done:", "  " + task);
+
+                    // Async save, then wait for completion
+                    CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                        try {
+                            consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " mark");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return null;
+                    });
+                    future.join();
                 }
             } else {
                 if (!task.getDone()) {
@@ -189,6 +206,17 @@ public class Dusk {
                 } else {
                     task.markUndone();
                     consoleIO.print("OK! I've updated this task as not done:", "  " + task);
+
+                    // Async save, then wait for completion
+                    CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                        try {
+                            consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " unmark");
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return null;
+                    });
+                    future.join();
                 }
             }
         }
@@ -213,6 +241,7 @@ public class Dusk {
             } catch (NumberFormatException e) {
                 throw new InputException("Task number cannot be empty or invalid for a 'DELETE' command!");
             }
+
             if (idx < 0 || idx >= tasks.size()) {
                 throw new DuskException("Invalid task number: " + description);
             }
@@ -223,6 +252,17 @@ public class Dusk {
                     "  " + removedTask,
                     "Now you have " + tasks.size() + " tasks in the list."
             );
+
+            // Async save, then wait for completion
+            CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                try {
+                    consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " deletion");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            future.join();
         }
     }
 
@@ -249,6 +289,17 @@ public class Dusk {
                     "  " + newTask,
                     "Now you have " + tasks.size() + " tasks in the list."
             );
+
+            // Async save, then wait for completion
+            CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                try {
+                    consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + newTask);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            future.join();
         }
     }
 
@@ -277,6 +328,17 @@ public class Dusk {
                     "  " + newTask,
                     "Now you have " + tasks.size() + " tasks in the list."
             );
+
+            // Async save, then wait for completion
+            CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                try {
+                    consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + newTask);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            future.join();
         }
     }
 
@@ -307,6 +369,17 @@ public class Dusk {
                     "  " + newTask,
                     "Now you have " + tasks.size() + " tasks in the list."
             );
+
+            // Async save, then wait for completion
+            CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                try {
+                    consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + newTask);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            });
+            future.join();
         }
     }
 }
