@@ -7,16 +7,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dusk {
-    // Commons
-    private static final Logger logger = Logger.getLogger(Dusk.class.getName());
-    private static final List<Task> tasks = new ArrayList<>();
-
     // Commons messages
     public static final String[] GREETING = {
             "Hello! I'm Dusk",
             "Anything you want me to do for you? :D"
     };
     public static final String BYE = "See ya! Hope to see you again soon! :3";
+    // Commons
+    private static final Logger logger = Logger.getLogger(Dusk.class.getName());
+    private static final List<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
