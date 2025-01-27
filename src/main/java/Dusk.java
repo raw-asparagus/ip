@@ -16,8 +16,10 @@ public class Dusk {
     private static final List<Task> tasks = new ArrayList<>();
 
     // Commons messages
-    public static final String[] GREETING = new String[] { "Hello! I'm Dusk",
-            "Anything you want me to do for you? :D" };
+    public static final String[] GREETING = new String[] {
+        "Hello! I'm Dusk",
+        "Anything you want me to do for you? :D"
+    };
     public static final String BYE = "See ya! Hope to see you again soon! :3";
 
     public enum CommandType {
@@ -54,16 +56,20 @@ public class Dusk {
 
     public static void main(String[] args) {
         try (
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))
+        ) {
             printMessage(writer, GREETING);
 
             String input;
             while ((input = reader.readLine()) != null && !"bye".equalsIgnoreCase(input.trim())) {
+                writer.write(input + "\n");
+                writer.flush();
                 try {
-                    parseInput(writer, input);
+                    Command command = CommandParser.parse(writer, input, tasks);
+                    command.execute();
                 } catch (DuskException | InputException e) {
-                    printMessage(writer, "!! " + e.getMessage());
+                    Dusk.printMessage(writer, "!! " + e.getMessage());
                 }
             }
 
@@ -94,180 +100,253 @@ public class Dusk {
         writer.write("\t" + "_".repeat(60) + "\n");
     }
 
-    private static void parseInput(BufferedWriter writer, String input)
-            throws IOException, DuskException, InputException {
-        /*
-        For testing
-         */
-        writer.write(input + "\n");
-        writer.flush();
+    public interface Command {
+        void execute() throws DuskException, InputException, IOException;
+    }
 
-        input = input.trim();
-        if (input.isEmpty()) {
-            throw new InputException("Input cannot be null or empty.");
-        }
+    public class CommandParser {
+        public static Command parse(BufferedWriter writer, String input, List<Task> tasks) throws InputException {
+            input = input.trim();
+            if (input.isEmpty()) {
+                throw new InputException("Input cannot be null or empty.");
+            }
 
-        Pattern inputPattern = Pattern.compile(
-                "^(?<command>list|mark|unmark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
-                Pattern.CASE_INSENSITIVE);
+            Pattern inputPattern = Pattern.compile(
+                    "^(?<command>list|mark|unmark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
+                    Pattern.CASE_INSENSITIVE);
 
-        Matcher inputMatcher = inputPattern.matcher(input);
-        if (!inputMatcher.matches()) {
-            throw new InputException("Invalid command: " + input);
-        }
+            Matcher inputMatcher = inputPattern.matcher(input);
+            if (!inputMatcher.matches()) {
+                throw new InputException("Invalid command: " + input);
+            }
 
-        CommandType command = CommandType.fromString(inputMatcher.group("command").trim());
-        String rawDescription = inputMatcher.group("description");
-        String rawArguments = inputMatcher.group("arguments");
+            Dusk.CommandType commandType = CommandType.fromString(inputMatcher.group("command").trim());
+            String rawDescription = inputMatcher.group("description");
+            String rawArguments = inputMatcher.group("arguments");
 
-        String description = (rawDescription == null) ? "" : rawDescription.trim();
-        String arguments = (rawArguments == null) ? "" : rawArguments.trim();
+            String description = (rawDescription == null) ? "" : rawDescription.trim();
+            String arguments = (rawArguments == null) ? "" : rawArguments.trim();
 
-        String by = "";
-        String from = "";
-        String to = "";
+            String by = "";
+            String from = "";
+            String to = "";
+            if (!arguments.isBlank()) {
+                Pattern flagsPattern = Pattern.compile("/(?<flag>by|from|to)\\s+(?<value>[^/]+)", Pattern.CASE_INSENSITIVE);
+                Matcher flagsMatcher = flagsPattern.matcher(arguments);
+                while (flagsMatcher.find()) {
+                    Dusk.FlagType flag = Dusk.FlagType.fromString(flagsMatcher.group("flag").trim());
+                    String value = flagsMatcher.group("value").trim();
 
-        if (!arguments.isBlank()) {
-            Pattern flagsPattern = Pattern.compile("/(?<flag>by|from|to)\\s+(?<value>[^/]+)", Pattern.CASE_INSENSITIVE);
-            Matcher flagsMatcher = flagsPattern.matcher(arguments);
-            while (flagsMatcher.find()) {
-                FlagType flag = FlagType.fromString(flagsMatcher.group("flag").toLowerCase().trim());
-                String value = flagsMatcher.group("value").trim();
-
-                switch (flag) {
-                    case BY:
-                        by = value;
-                        break;
-                    case FROM:
-                        from = value;
-                        break;
-                    case TO:
-                        to = value;
-                        break;
-                    default:
-                        break;
+                    switch (flag) {
+                        case BY:
+                            by = value;
+                            break;
+                        case FROM:
+                            from = value;
+                            break;
+                        case TO:
+                            to = value;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
-        }
 
-        int idx = -1;
-        switch (command) {
-            case MARK:
-            case UNMARK:
-            case DELETE:
-                try {
-                    idx = Integer.parseInt(description) - 1;
-                } catch (NumberFormatException e) {
-                    throw new InputException("Task number cannot be empty for a '" + command + "' command!");
-                }
-                if (idx <= 0 || idx > tasks.size()) {
-                    throw new DuskException("Invalid task number: " + description);
-                }
-                break;
-            case TODO:
-            case DEADLINE:
-            case EVENT:
-                if (description.isEmpty()) {
-                    throw new InputException("A '" + command + "' command must include a description.");
-                }
-                break;
-            default:
-                break;
-        }
-
-        switch (command) {
-            case LIST:
-                listTasks(writer);
-                break;
-            case MARK:
-            case UNMARK:
-                markTask(writer, idx, command == CommandType.MARK);
-                break;
-            case DELETE:
-                deleteTask(writer, idx);
-                break;
-            case TODO:
-                addTodo(writer, description);
-                break;
-            case DEADLINE:
-                addDeadline(writer, description, by);
-                break;
-            case EVENT:
-                addEvent(writer, description, from, to);
-                break;
-            default:
-                break;
+            switch (commandType) {
+                case LIST:
+                    return new ListCommand(tasks, writer);
+                case MARK:
+                    return new MarkCommand(tasks, writer, description, true);
+                case UNMARK:
+                    return new MarkCommand(tasks, writer, description, false);
+                case DELETE:
+                    return new DeleteCommand(tasks, writer, description);
+                case TODO:
+                    return new CreateTodoCommand(tasks, writer, description);
+                case DEADLINE:
+                    return new CreateDeadlineCommand(tasks, writer, description, by);
+                case EVENT:
+                    return new CreateEventCommand(tasks, writer, description, from, to);
+                default:
+                    throw new InputException("Unknown command: " + commandType);
+            }
         }
     }
 
-    private static void addTodo(BufferedWriter writer, String description) throws IOException {
-        Todo newTask = new Todo(description);
-        tasks.add(newTask);
-        printMessage(writer, new String[] {
-                "Got it. I've added this task:",
-                "  " + newTask,
-                "Now you have " + tasks.size() + " tasks in the list."
-        });
+    public static class ListCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+
+        public ListCommand(List<Task> tasks, BufferedWriter writer) {
+            this.tasks = tasks;
+            this.writer = writer;
+        }
+
+        @Override
+        public void execute() throws IOException {
+            if (tasks.isEmpty()) {
+                Dusk.printMessage(writer, "Task list is empty!");
+            } else {
+                String[] messages = new String[tasks.size() + 1];
+                messages[0] = "Here are the tasks in your list:";
+                for (int i = 1; i <= tasks.size(); i++) {
+                    messages[i] = i + "." + tasks.get(i - 1);
+                }
+                Dusk.printMessage(writer, messages);
+            }
+        }
     }
 
-    private static void addDeadline(BufferedWriter writer, String description, String by) throws IOException {
-        Deadline newTask = new Deadline(description, by);
-        tasks.add(newTask);
-        printMessage(writer, new String[] {
-                "Got it. I've added this task:",
-                "  " + newTask,
-                "Now you have " + tasks.size() + " tasks in the list."
-        });
-    }
+    public static class MarkCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+        private final String description;
+        private final boolean isMark;
 
-    private static void addEvent(BufferedWriter writer, String description, String from, String to) throws IOException {
-        Event newTask = new Event(description, from, to);
-        tasks.add(newTask);
-        printMessage(writer, new String[] {
-                "Got it. I've added this task:",
-                "  " + newTask,
-                "Now you have " + tasks.size() + " tasks in the list."
-        });
-    }
+        public MarkCommand(List<Task> tasks, BufferedWriter writer, String description, boolean isMark) {
+            this.tasks = tasks;
+            this.writer = writer;
+            this.description = description;
+            this.isMark = isMark;
+        }
 
-    private static void markTask(BufferedWriter writer, int idx, boolean isDone) throws IOException, DuskException {
-        try {
+        @Override
+        public void execute() throws IOException, DuskException, InputException {
+            int idx;
+            try {
+                idx = Integer.parseInt(description) - 1;
+            } catch (NumberFormatException e) {
+                throw new InputException("Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!");
+            }
+            if (idx < 0 || idx >= tasks.size()) {
+                throw new DuskException("Invalid task number: " + description);
+            }
+
             Task task = tasks.get(idx);
-            if (isDone) {
+            if (isMark) {
                 task.markDone();
-                printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
+                Dusk.printMessage(writer, new String[]{"Nice! I've marked this task as done:", "  " + task});
             } else {
                 task.markUndone();
-                printMessage(writer, new String[]{"OK! I've updated this task as undone:", "  " + task});
+                Dusk.printMessage(writer, new String[]{"OK! I've updated this task as undone:", "  " + task});
             }
-        } catch (IndexOutOfBoundsException e) {
-            throw new DuskException("Invalid task number: " + idx);
         }
     }
 
-    private static void deleteTask(BufferedWriter writer, int idx) throws IOException, DuskException {
-        try {
+    public static class DeleteCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+        private final String description;
+
+        public DeleteCommand(List<Task> tasks, BufferedWriter writer, String description) {
+            this.tasks = tasks;
+            this.writer = writer;
+            this.description = description;
+        }
+
+        @Override
+        public void execute() throws IOException, DuskException, InputException {
+            int idx;
+            try {
+                idx = Integer.parseInt(description) - 1;
+            } catch (NumberFormatException e) {
+                throw new InputException("Task number cannot be empty or invalid for a 'DELETE' command!");
+            }
+            if (idx < 0 || idx >= tasks.size()) {
+                throw new DuskException("Invalid task number: " + description);
+            }
+
             Task removedTask = tasks.remove(idx);
-            printMessage(writer, new String[] {
+            Dusk.printMessage(writer, new String[] {
                     "Noted. I've removed this task:",
                     "  " + removedTask,
                     "Now you have " + tasks.size() + " tasks in the list."
             });
-        } catch (IndexOutOfBoundsException e) {
-            throw new DuskException("Invalid task number: " + idx);
         }
     }
 
-    private static void listTasks(BufferedWriter writer) throws IOException {
-        if (tasks.isEmpty()) {
-            printMessage(writer, "Task list is empty!");
-        } else {
-            String[] messages = new String[tasks.size() + 1];
-            messages[0] = "Here are the tasks in your list:";
-            for (int i = 1; i <= tasks.size(); i++) {
-                messages[i] = i + "." + tasks.get(i - 1);
+    public static class CreateTodoCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+        private final String description;
+
+        public CreateTodoCommand(List<Task> tasks, BufferedWriter writer, String description) {
+            this.tasks = tasks;
+            this.writer = writer;
+            this.description = description;
+        }
+
+        @Override
+        public void execute() throws IOException, InputException {
+            if (description.isEmpty()) {
+                throw new InputException("A 'TODO' command must include a description.");
             }
-            printMessage(writer, messages);
+            Todo newTask = new Todo(description);
+            tasks.add(newTask);
+            Dusk.printMessage(writer, new String[] {
+                    "Got it. I've added this task:",
+                    "  " + newTask,
+                    "Now you have " + tasks.size() + " tasks in the list."
+            });
+        }
+    }
+
+    public static class CreateDeadlineCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+        private final String description;
+        private final String by;
+
+        public CreateDeadlineCommand(List<Task> tasks, BufferedWriter writer, String description, String by) {
+            this.tasks = tasks;
+            this.writer = writer;
+            this.description = description;
+            this.by = by;
+        }
+
+        @Override
+        public void execute() throws IOException, InputException {
+            if (description.isEmpty()) {
+                throw new InputException("A 'DEADLINE' command must include a description.");
+            }
+            Deadline newTask = new Deadline(description, by);
+            tasks.add(newTask);
+            Dusk.printMessage(writer, new String[] {
+                    "Got it. I've added this task:",
+                    "  " + newTask,
+                    "Now you have " + tasks.size() + " tasks in the list."
+            });
+        }
+    }
+
+    public static class CreateEventCommand implements Command {
+        private final List<Task> tasks;
+        private final BufferedWriter writer;
+        private final String description;
+        private final String from;
+        private final String to;
+
+        public CreateEventCommand(List<Task> tasks, BufferedWriter writer, String description, String from, String to) {
+            this.tasks = tasks;
+            this.writer = writer;
+            this.description = description;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public void execute() throws IOException, InputException {
+            if (description.isEmpty()) {
+                throw new InputException("An 'EVENT' command must include a description.");
+            }
+            Event newTask = new Event(description, from, to);
+            tasks.add(newTask);
+            Dusk.printMessage(writer, new String[] {
+                    "Got it. I've added this task:",
+                    "  " + newTask,
+                    "Now you have " + tasks.size() + " tasks in the list."
+            });
         }
     }
 }
