@@ -1,5 +1,5 @@
-public class ObjectNotFoundException extends Exception {
-    public ObjectNotFoundException(String message) {
+public class FileNotFoundException extends Exception {
+    public FileNotFoundException(String message) {
         super(message);
     }
 }
