@@ -1,20 +1,21 @@
 import storage.Storage;
 import task.Deadline;
 import task.Task;
+import task.TaskList;
 import ui.ConsoleIO;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CreateDeadlineCommand implements Command {
-    private final List<Task> tasks;
+    private final TaskList tasks;
     private final ConsoleIO consoleIO;
     private final Storage storage;
     private final String description;
     private final String by;
 
-    public CreateDeadlineCommand(List<Task> tasks, ConsoleIO consoleIO, Storage storage, String description, String by) {
+    public CreateDeadlineCommand(TaskList tasks, ConsoleIO consoleIO,
+                                 Storage storage, String description, String by) {
         this.tasks = tasks;
         this.consoleIO = consoleIO;
         this.storage = storage;
@@ -28,7 +29,7 @@ public class CreateDeadlineCommand implements Command {
             throw new InputException("A 'DEADLINE' command must include a description.");
         }
         Deadline newTask = new Deadline(description, by);
-        tasks.add(newTask);
+        tasks.addTask(newTask);
         consoleIO.print(
                 "Got it. I've added this task:",
                 "  " + newTask,
@@ -36,7 +37,7 @@ public class CreateDeadlineCommand implements Command {
         );
 
         // Async save, then wait for completion
-        CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+        CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
             try {
                 consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + newTask);
             } catch (IOException e) {

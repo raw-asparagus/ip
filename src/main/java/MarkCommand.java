@@ -1,19 +1,20 @@
 import storage.Storage;
 import task.Task;
+import task.TaskList;
 import ui.ConsoleIO;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class MarkCommand implements Command {
-    private final List<Task> tasks;
+    private final TaskList tasks;
     private final ConsoleIO consoleIO;
     private final Storage storage;
     private final String description;
     private final boolean isMark;
 
-    public MarkCommand(List<Task> tasks, ConsoleIO consoleIO, Storage storage, String description, boolean isMark) {
+    public MarkCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage,
+                       String description, boolean isMark) {
         this.tasks = tasks;
         this.consoleIO = consoleIO;
         this.storage = storage;
@@ -34,7 +35,7 @@ public class MarkCommand implements Command {
             throw new DuskException("Invalid task number: " + description);
         }
 
-        Task task = tasks.get(idx);
+        Task task = tasks.getTask(idx);
         if (isMark) {
             if (task.getDone()) {
                 consoleIO.print("task.Task already mark as done!");
@@ -43,11 +44,12 @@ public class MarkCommand implements Command {
                 consoleIO.print("Nice! I've marked this task as done:", "  " + task);
 
                 // Async save, then wait for completion
-                CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
                     try {
-                        consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " mark");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        consoleIO.print("<!> Error saving tasks asynchronously: "
+                                + ex.getMessage() + " at task " + description + " mark");
+                    } catch (IOException e2) {
+                        throw new RuntimeException(e2);
                     }
                     return null;
                 });
@@ -61,11 +63,12 @@ public class MarkCommand implements Command {
                 consoleIO.print("OK! I've updated this task as not done:", "  " + task);
 
                 // Async save, then wait for completion
-                CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+                CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
                     try {
-                        consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " unmark");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        consoleIO.print("<!> Error saving tasks asynchronously: "
+                                + ex.getMessage() + " at task " + description + " unmark");
+                    } catch (IOException e2) {
+                        throw new RuntimeException(e2);
                     }
                     return null;
                 });

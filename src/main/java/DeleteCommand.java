@@ -1,18 +1,18 @@
 import storage.Storage;
 import task.Task;
+import task.TaskList;
 import ui.ConsoleIO;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class DeleteCommand implements Command {
-    private final List<Task> tasks;
+    private final TaskList tasks;
     private final ConsoleIO consoleIO;
     private final Storage storage;
     private final String description;
 
-    public DeleteCommand(List<Task> tasks, ConsoleIO consoleIO, Storage storage, String description) {
+    public DeleteCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage, String description) {
         this.tasks = tasks;
         this.consoleIO = consoleIO;
         this.storage = storage;
@@ -32,7 +32,7 @@ public class DeleteCommand implements Command {
             throw new DuskException("Invalid task number: " + description);
         }
 
-        Task removedTask = tasks.remove(idx);
+        Task removedTask = tasks.removeTask(idx);
         consoleIO.print(
                 "Noted. I've removed this task:",
                 "  " + removedTask,
@@ -40,11 +40,12 @@ public class DeleteCommand implements Command {
         );
 
         // Async save, then wait for completion
-        CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
+        CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
             try {
-                consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage() + " at task " + description + " deletion");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage()
+                        + " at task " + description + " deletion");
+            } catch (IOException e2) {
+                throw new RuntimeException(e2);
             }
             return null;
         });

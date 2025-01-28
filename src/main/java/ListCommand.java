@@ -1,14 +1,14 @@
 import task.Task;
+import task.TaskList;
 import ui.ConsoleIO;
 
 import java.io.IOException;
-import java.util.List;
 
 public class ListCommand implements Command {
-    private final List<Task> tasks;
+    private final TaskList tasks;
     private final ConsoleIO consoleIO;
 
-    public ListCommand(List<Task> tasks, ConsoleIO consoleIO) {
+    public ListCommand(TaskList tasks, ConsoleIO consoleIO) {
         this.tasks = tasks;
         this.consoleIO = consoleIO;
     }
@@ -21,7 +21,8 @@ public class ListCommand implements Command {
             String[] messages = new String[tasks.size() + 1];
             messages[0] = "Here are the tasks in your list:";
             for (int i = 1; i <= tasks.size(); i++) {
-                messages[i] = i + "." + tasks.get(i - 1);
+                Task task = tasks.getTask(i - 1);
+                messages[i] = i + "." + task;
             }
             consoleIO.print(messages);
         }

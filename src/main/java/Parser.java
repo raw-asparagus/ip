@@ -1,13 +1,12 @@
 import storage.Storage;
-import task.Task;
+import task.TaskList;
 import ui.ConsoleIO;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
-    public static Command parse(ConsoleIO consoleIO, Storage storage, String input, List<Task> tasks)
+    public static Command parse(ConsoleIO consoleIO, Storage storage, TaskList tasks, String input)
             throws InputException {
         if (input.isEmpty()) {
             throw new InputException("Input cannot be null or empty.");
@@ -29,9 +28,9 @@ public class Parser {
         }
 
         String rawDescription = inputMatcher.group("description");
-        String rawArguments = inputMatcher.group("arguments");
-
         String description = (rawDescription == null) ? "" : rawDescription.trim();
+
+        String rawArguments = inputMatcher.group("arguments");
         String arguments = (rawArguments == null) ? "" : rawArguments.trim();
 
         String by = "";
