@@ -1,9 +1,6 @@
 package storage;
 
-import task.Deadline;
-import task.Event;
-import task.Task;
-import task.Todo;
+import task.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -23,34 +19,34 @@ public class Storage {
 
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public CompletableFuture<List<Task>> loadTasksAsync() {
-        return CompletableFuture.supplyAsync(() -> loadTasks(), executor);
+    public CompletableFuture<TaskList> loadTasksAsync(TaskList tasks) {
+        return CompletableFuture.supplyAsync(() -> loadTasks(tasks), executor);
     }
 
     public CompletableFuture<Void> saveTasksAsync(List<Task> tasks) {
         return CompletableFuture.runAsync(() -> saveTasks(tasks), executor);
     }
 
-    public List<Task> loadTasks() {
-        List<Task> taskList = new ArrayList<>();
+    public TaskList loadTasks(TaskList tasks) {
         try {
             Files.createDirectories(DATA_FILE.getParent());
             if (!Files.exists(DATA_FILE)) {
-                return taskList;
+                return tasks;
             }
             try (BufferedReader reader = Files.newBufferedReader(DATA_FILE, StandardCharsets.UTF_8)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Task parsedTask = parseTask(line);
                     if (parsedTask != null) {
-                        taskList.add(parsedTask);
+                        tasks.addTask(parsedTask);
                     }
                 }
             }
         } catch (IOException e) {
             System.err.println("Error loading tasks: " + e.getMessage());
         }
-        return taskList;
+
+        return tasks;
     }
 
     public void saveTasks(List<Task> tasks) {

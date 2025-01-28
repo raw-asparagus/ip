@@ -35,8 +35,9 @@ public class ConsoleIO implements Closeable {
         writer.write("\t" + "_".repeat(60) + "\n");
     }
 
-    public BufferedWriter getWriter() {
-        return writer;
+    public void debugPrint(String message) throws IOException {
+        writer.write(message + "\n");
+        writer.flush();
     }
 
     @Override

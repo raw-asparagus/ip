@@ -1,10 +1,8 @@
 import storage.Storage;
-import task.Task;
 import task.TaskList;
 import ui.ConsoleIO;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -23,24 +21,24 @@ public class Dusk {
     private static final Storage storage = new Storage();
     private static final TaskList tasks = new TaskList();
 
-    public static void main(String[] args) {
+    public Dusk() {
         // Load data
-        CompletableFuture<List<Task>> loadFuture = storage.loadTasksAsync();
+        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync(tasks);
         try {
-            tasks.addAll(loadFuture.get());
+            loadFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
         }
+    }
 
-        // App script
+    public static void app() {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
             consoleIO.print(GREETING);
 
             String input;
             while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
                 // Echo user input for debugging
-                consoleIO.getWriter().write(input + "\n");
-                consoleIO.getWriter().flush();
+                consoleIO.debugPrint(input);
 
                 try {
                     Command command = Parser.parse(consoleIO, storage, tasks, input);
@@ -60,5 +58,9 @@ public class Dusk {
         } finally {
             storage.shutdownExecutor();
         }
+    }
+
+    public static void main(String[] args) {
+        app();
     }
 }
