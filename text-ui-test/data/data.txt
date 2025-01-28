@@ -1,0 +1,16 @@
+T|false|task 1
+D|true|task2|
+D|false|task4|
+E|false|task6||
+E|false|task 7||
+E|false|task9|time1|
+E|false|task10||
+E|false|task11||time2
+E|false|task12||
+E|false|task13||
+E|false|task14|time3|
+E|false|task15||time4
+E|false|task16|time5|time6
+E|false|task17||time7
+E|false|task18|time8|
+E|false|task19|time10|time9
