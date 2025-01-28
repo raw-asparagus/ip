@@ -1,6 +1,5 @@
 import storage.Storage;
 import task.Event;
-import task.Task;
 import task.TaskList;
 import ui.ConsoleIO;
 

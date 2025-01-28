@@ -24,7 +24,7 @@ public class Storage {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public CompletableFuture<List<Task>> loadTasksAsync() {
-        return CompletableFuture.supplyAsync(this::loadTasks, executor);
+        return CompletableFuture.supplyAsync(() -> loadTasks(), executor);
     }
 
     public CompletableFuture<Void> saveTasksAsync(List<Task> tasks) {
