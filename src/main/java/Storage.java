@@ -108,7 +108,7 @@ public class Storage {
     }
 
     private String formatTask(Task task) {
-        char type = 'T';
+        char type = 0;
         String details = "";
         if (task instanceof Todo) {
             type = 'T';
@@ -119,7 +119,7 @@ public class Storage {
             type = 'E';
             details = "|" + ((Event) task).getFrom() + "|" + ((Event) task).getTo();
         }
-        return type + "|" + task.getDone() + "|" + task.description + details;
+        return type + "|" + task.getDone() + "|" + task.getName() + details;
     }
 
     public void shutdownExecutor() {
