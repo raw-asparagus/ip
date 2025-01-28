@@ -1,3 +1,6 @@
+import task.Task;
+import ui.ConsoleIO;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -13,7 +16,7 @@ public class ListCommand implements Command {
     @Override
     public void execute() throws IOException {
         if (tasks.isEmpty()) {
-            consoleIO.print("Task list is empty!");
+            consoleIO.print("task.Task list is empty!");
         } else {
             String[] messages = new String[tasks.size() + 1];
             messages[0] = "Here are the tasks in your list:";

@@ -1,3 +1,7 @@
+import storage.Storage;
+import task.Task;
+import ui.ConsoleIO;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +25,7 @@ public class DeleteCommand implements Command {
         try {
             idx = Integer.parseInt(description) - 1;
         } catch (NumberFormatException e) {
-            throw new InputException("Task number cannot be empty or invalid for a 'DELETE' command!");
+            throw new InputException("task.Task number cannot be empty or invalid for a 'DELETE' command!");
         }
 
         if (idx < 0 || idx >= tasks.size()) {

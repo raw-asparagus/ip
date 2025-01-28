@@ -1,3 +1,7 @@
+import storage.Storage;
+import task.Task;
+import ui.ConsoleIO;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +27,7 @@ public class MarkCommand implements Command {
         try {
             idx = Integer.parseInt(description) - 1;
         } catch (NumberFormatException e) {
-            throw new InputException("Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!");
+            throw new InputException("task.Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!");
         }
 
         if (idx < 0 || idx >= tasks.size()) {
@@ -33,7 +37,7 @@ public class MarkCommand implements Command {
         Task task = tasks.get(idx);
         if (isMark) {
             if (task.getDone()) {
-                consoleIO.print("Task already mark as done!");
+                consoleIO.print("task.Task already mark as done!");
             } else {
                 task.markDone();
                 consoleIO.print("Nice! I've marked this task as done:", "  " + task);
@@ -51,7 +55,7 @@ public class MarkCommand implements Command {
             }
         } else {
             if (!task.getDone()) {
-                consoleIO.print("Task already mark as not done!");
+                consoleIO.print("task.Task already mark as not done!");
             } else {
                 task.markUndone();
                 consoleIO.print("OK! I've updated this task as not done:", "  " + task);

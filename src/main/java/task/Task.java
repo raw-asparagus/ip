@@ -1,5 +1,7 @@
-public class Task {
-    protected String description;
+package task;
+
+public abstract class Task {
+    protected final String description;
     protected boolean isDone;
 
     public Task(String desc) {

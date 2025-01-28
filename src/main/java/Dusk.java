@@ -1,3 +1,7 @@
+import storage.Storage;
+import task.Task;
+import ui.ConsoleIO;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +55,7 @@ public class Dusk {
         } catch (IOException e) {
             logger.log(
                     Level.SEVERE,
-                    "An error occurred while handling I/O operations using ConsoleIO.",
+                    "An error occurred while handling I/O operations using ui.ConsoleIO.",
                     e
             );
         } finally {
