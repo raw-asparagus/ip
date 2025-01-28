@@ -13,6 +13,7 @@ public class ConsoleIO implements Closeable {
     private final BufferedReader reader;
     private final BufferedWriter writer;
 
+    // Constructor
     public ConsoleIO(InputStream in, OutputStream out) {
         this.reader = new BufferedReader(new InputStreamReader(in));
         this.writer = new BufferedWriter(new OutputStreamWriter(out));

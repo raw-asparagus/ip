@@ -9,24 +9,57 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Storage {
     private static final Path DATA_FILE = Paths.get("data", "data.txt");
-
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    // Asynchronous wrappers
+    public CompletableFuture<Void> saveTasksAsync(TaskList tasks) {
+        return CompletableFuture.runAsync(() -> saveTasks(tasks), executor);
+    }
 
     public CompletableFuture<TaskList> loadTasksAsync(TaskList tasks) {
         return CompletableFuture.supplyAsync(() -> loadTasks(tasks), executor);
     }
 
-    public CompletableFuture<Void> saveTasksAsync(List<Task> tasks) {
-        return CompletableFuture.runAsync(() -> saveTasks(tasks), executor);
+    // Mutators
+    public void saveTasks(TaskList tasks) {
+        try {
+            Files.createDirectories(DATA_FILE.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(DATA_FILE, StandardCharsets.UTF_8)) {
+                for (int i = 0; i < tasks.size(); i++) {
+                    String line = formatTask(tasks.getTask(i));
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error saving tasks: " + e.getMessage());
+        }
     }
 
+    private String formatTask(Task task) {
+        String taskType;
+        String taskDetails = "";
+        if (task instanceof Todo) {
+            taskType = "T";
+        } else if (task instanceof Deadline d) {
+            taskType = "D";
+            taskDetails = "|" + d.getBy();
+        } else if (task instanceof Event e) {
+            taskType = "E";
+            taskDetails = "|" + e.getFrom() + "|" + e.getTo();
+        } else {
+            throw new IllegalArgumentException("Unknown Task type");
+        }
+        return taskType + "|" + task.getDone() + "|" + task.getName() + taskDetails;
+    }
+
+    // Accessors
     public TaskList loadTasks(TaskList tasks) {
         try {
             Files.createDirectories(DATA_FILE.getParent());
@@ -42,87 +75,43 @@ public class Storage {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             System.err.println("Error loading tasks: " + e.getMessage());
         }
 
         return tasks;
     }
 
-    public void saveTasks(List<Task> tasks) {
+    private Task parseTask(String taskLine) throws StorageException {
         try {
-            Files.createDirectories(DATA_FILE.getParent());
-            try (BufferedWriter writer = Files.newBufferedWriter(DATA_FILE, StandardCharsets.UTF_8)) {
-                for (Task task : tasks) {
-                    String line = formatTask(task);
-                    writer.write(line);
-                    writer.newLine();
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error saving tasks: " + e.getMessage());
-        }
-    }
-
-    private Task parseTask(String line) {
-        try {
-            String[] parts = line.split("\\|");
+            String[] parts = taskLine.split("\\|");
             if (parts.length < 3) {
                 return null;
             }
-            String taskType = parts[0];
-            boolean done = Boolean.parseBoolean(parts[1]);
-            String description = parts[2];
 
-            switch (taskType) {
-                case "T":
-                    Todo todo = new Todo(description);
-                    if (done) {
-                        todo.markDone();
-                    }
-                    return todo;
-                case "D":
-                    if (parts.length < 4) {
-                        return null;
-                    }
-                    String by = parts[3];
-                    Deadline deadline = new Deadline(description, by);
-                    if (done) {
-                        deadline.markDone();
-                    }
-                    return deadline;
-                case "E":
-                    if (parts.length < 5) {
-                        return null;
-                    }
-                    String from = parts[3];
-                    String to = parts[4];
-                    Event event = new Event(description, from, to);
-                    if (done) {
-                        event.markDone();
-                    }
-                    return event;
-                default:
-                    return null;
-            }
+            String taskType = parts[0];
+
+            return getTask(parts, taskType);
         } catch (Exception e) {
-            return null;
+            throw new StorageException("An error occurred while attempting to load data!" + e.getMessage());
         }
     }
 
-    private String formatTask(Task task) {
-        char type = 0;
-        String details = "";
-        if (task instanceof Todo) {
-            type = 'T';
-        } else if (task instanceof Deadline) {
-            type = 'D';
-            details = "|" + ((Deadline) task).getBy();
-        } else if (task instanceof Event) {
-            type = 'E';
-            details = "|" + ((Event) task).getFrom() + "|" + ((Event) task).getTo();
+    private static Task getTask(String[] parts, String taskType) {
+        boolean isDone = Boolean.parseBoolean(parts[1]);
+        String description = parts[2];
+
+        Task task = switch (taskType) {
+            case "E" -> parts.length >= 5 ? new Event(description, parts[3], parts[4]) : null;
+            case "D" -> parts.length >= 4 ? new Deadline(description, parts[3]) : null;
+            case "T" -> new Todo(description);
+            default -> null;
+        };
+
+        if (task != null && isDone) {
+            task.markDone();
         }
-        return type + "|" + task.getDone() + "|" + task.getName() + details;
+        return task;
     }
 
     public void shutdownExecutor() {

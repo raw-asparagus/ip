@@ -1,3 +1,5 @@
+package command;
+
 import storage.Storage;
 import task.Task;
 import task.TaskList;
@@ -40,7 +42,7 @@ public class DeleteCommand implements Command {
         );
 
         // Async save, then wait for completion
-        CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
+        CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
             try {
                 consoleIO.print("<!> Error saving tasks asynchronously: " + ex.getMessage()
                         + " at task " + description + " deletion");

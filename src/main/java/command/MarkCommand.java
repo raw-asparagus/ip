@@ -1,3 +1,5 @@
+package command;
+
 import storage.Storage;
 import task.Task;
 import task.TaskList;
@@ -44,7 +46,7 @@ public class MarkCommand implements Command {
                 consoleIO.print("Nice! I've marked this task as done:", "  " + task);
 
                 // Async save, then wait for completion
-                CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
+                CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
                     try {
                         consoleIO.print("<!> Error saving tasks asynchronously: "
                                 + ex.getMessage() + " at task " + description + " mark");
@@ -63,7 +65,7 @@ public class MarkCommand implements Command {
                 consoleIO.print("OK! I've updated this task as not done:", "  " + task);
 
                 // Async save, then wait for completion
-                CompletableFuture<Void> future = storage.saveTasksAsync(tasks.getTasks()).exceptionally(ex -> {
+                CompletableFuture<Void> future = storage.saveTasksAsync(tasks).exceptionally(ex -> {
                     try {
                         consoleIO.print("<!> Error saving tasks asynchronously: "
                                 + ex.getMessage() + " at task " + description + " unmark");
