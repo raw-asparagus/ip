@@ -1,6 +1,6 @@
-package storage;
+package dusk.storage;
 
-import task.*;
+import dusk.task.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -127,7 +127,7 @@ public class Storage {
         };
 
         if (task == null) {
-            throw new StorageException("Unknown task type: " + taskType + "|" + description + "|" + done);
+            throw new StorageException("Unknown dusk.task type: " + taskType + "|" + description + "|" + done);
         }
 
         if (done) {

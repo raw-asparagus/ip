@@ -1,4 +1,4 @@
-package task;
+package dusk.task;
 
 public class Todo extends Task {
     // Constructor

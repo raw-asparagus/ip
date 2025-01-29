@@ -1,9 +1,9 @@
-package command;
+package dusk.command;
 
-import task.Task;
-import task.TaskList;
-import task.TaskListException;
-import ui.ConsoleIO;
+import dusk.task.Task;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 

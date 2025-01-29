@@ -1,4 +1,4 @@
-package ui;
+package dusk.ui;
 
 import java.io.*;
 

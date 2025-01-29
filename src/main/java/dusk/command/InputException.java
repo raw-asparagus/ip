@@ -1,4 +1,4 @@
-package command;
+package dusk.command;
 
 public class InputException extends Exception {
     public InputException(String message) {

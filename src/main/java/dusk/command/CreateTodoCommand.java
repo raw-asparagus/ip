@@ -1,9 +1,9 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.TaskList;
-import task.Todo;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.task.Todo;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 
@@ -23,13 +23,13 @@ public class CreateTodoCommand extends Command {
     @Override
     public void execute() throws IOException, InputException {
         if (description.isEmpty()) {
-            throw new InputException("A 'TODO' command must include a description.");
+            throw new InputException("A 'TODO' dusk.command must include a description.");
         }
         Todo newTask = new Todo(description);
         tasks.addTask(newTask);
 
         consoleIO.print(
-                "Got it. I've added this task:",
+                "Got it. I've added this dusk.task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );

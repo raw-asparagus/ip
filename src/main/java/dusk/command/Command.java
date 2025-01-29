@@ -1,10 +1,10 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.MarkTaskException;
-import task.TaskList;
-import task.TaskListException;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.MarkTaskException;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;

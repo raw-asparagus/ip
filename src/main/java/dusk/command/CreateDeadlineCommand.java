@@ -1,9 +1,9 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.Deadline;
-import task.TaskList;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.Deadline;
+import dusk.task.TaskList;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 
@@ -26,13 +26,13 @@ public class CreateDeadlineCommand extends Command {
     @Override
     public void execute() throws IOException, InputException {
         if (description.isEmpty()) {
-            throw new InputException("A 'DEADLINE' command must include a description.");
+            throw new InputException("A 'DEADLINE' dusk.command must include a description.");
         }
         Deadline newTask = new Deadline(description, by);
         tasks.addTask(newTask);
 
         consoleIO.print(
-                "Got it. I've added this task:",
+                "Got it. I've added this dusk.task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );

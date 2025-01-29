@@ -1,8 +1,8 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.TaskList;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.ui.ConsoleIO;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,12 +21,12 @@ public class Parser {
         Matcher inputMatcher = inputPattern.matcher(input);
 
         if (!inputMatcher.matches()) {
-            throw new InputException("Invalid command: " + input);
+            throw new InputException("Invalid dusk.command: " + input);
         }
 
         CommandType commandType = CommandType.fromString(inputMatcher.group("command"));
         if (commandType == null) {
-            throw new InputException("Unknown command: " + input);
+            throw new InputException("Unknown dusk.command: " + input);
         }
 
         String rawDescription = inputMatcher.group("description");

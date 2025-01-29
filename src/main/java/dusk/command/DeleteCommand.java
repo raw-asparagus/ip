@@ -1,10 +1,10 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.Task;
-import task.TaskList;
-import task.TaskListException;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.Task;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 
@@ -28,13 +28,13 @@ public class DeleteCommand extends Command {
             idx = Integer.parseInt(description) - 1;
         } catch (NumberFormatException e) {
             throw new InputException(
-                    "Task number cannot be empty or invalid for a 'DELETE' command!"
+                    "Task number cannot be empty or invalid for a 'DELETE' dusk.command!"
             );
         }
 
         Task removedTask = tasks.removeTask(idx);
         consoleIO.print(
-                "Noted. I've removed this task:",
+                "Noted. I've removed this dusk.task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );

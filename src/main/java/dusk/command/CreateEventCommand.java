@@ -1,9 +1,9 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.Event;
-import task.TaskList;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.Event;
+import dusk.task.TaskList;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 
@@ -28,13 +28,13 @@ public class CreateEventCommand extends Command {
     @Override
     public void execute() throws IOException, InputException {
         if (description.isEmpty()) {
-            throw new InputException("An 'EVENT' command must include a description.");
+            throw new InputException("An 'EVENT' dusk.command must include a description.");
         }
         Event newTask = new Event(description, from, to);
         tasks.addTask(newTask);
 
         consoleIO.print(
-                "Got it. I've added this task:",
+                "Got it. I've added this dusk.task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );

@@ -1,4 +1,4 @@
-package command;
+package dusk.command;
 
 public enum CommandType {
     LIST,

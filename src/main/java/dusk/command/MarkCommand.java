@@ -1,10 +1,10 @@
-package command;
+package dusk.command;
 
-import storage.Storage;
-import task.MarkTaskException;
-import task.TaskList;
-import task.TaskListException;
-import ui.ConsoleIO;
+import dusk.storage.Storage;
+import dusk.task.MarkTaskException;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
 
@@ -31,16 +31,16 @@ public class MarkCommand extends Command {
             idx = Integer.parseInt(description) - 1;
         } catch (NumberFormatException e) {
             throw new InputException(
-                    "Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!"
+                    "Task number cannot be empty or invalid for a 'MARK'/'UNMARK' dusk.command!"
             );
         }
 
         if (isMark) {
             tasks.markTask(idx);
-            consoleIO.print("Nice! I've marked this task as done:", "  " + tasks.getTask(idx));
+            consoleIO.print("Nice! I've marked this dusk.task as done:", "  " + tasks.getTask(idx));
         } else {
             tasks.unmarkTask(idx);
-            consoleIO.print("OK! I've updated this task to not done:", "  " + tasks.getTask(idx));
+            consoleIO.print("OK! I've updated this dusk.task to not done:", "  " + tasks.getTask(idx));
         }
 
         saveAsync(storage, tasks, consoleIO);
