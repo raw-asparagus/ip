@@ -16,6 +16,6 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + (by.isEmpty() ? "no idea :p" : by) + ")";
+        return "[D]" + super.toString() + " (by: " + (getBy().isEmpty() ? "no idea :p" : getBy()) + ")";
     }
 }

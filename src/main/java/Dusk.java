@@ -39,22 +39,22 @@ public class Dusk {
 
     public static void app() {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
-            consoleIO.print(GREETING);                          // print: IOException
+            consoleIO.print(GREETING);
 
             String input;
-            while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {  // readLine: IOException
+            while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
                 // Echo user input for debugging
-                consoleIO.debugPrint(input);                    // print: IOException
+                consoleIO.debugPrint(input);
 
                 try {
                     Command command = Parser.parse(consoleIO, storage, tasks, input);
                     command.execute();
                 } catch (Exception e) {
-                    consoleIO.print("<!> " + e.getMessage());   // print: IOException
+                    consoleIO.print("<!> " + e.getMessage());
                 }
             }
 
-            consoleIO.print(BYE);                               // print: IOException
+            consoleIO.print(BYE);
         } catch (IOException e) {
             logger.log(
                     Level.SEVERE,

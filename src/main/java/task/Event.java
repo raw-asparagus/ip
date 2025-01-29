@@ -23,14 +23,14 @@ public class Event extends Task {
     @Override
     public String toString() {
         String message;
-        if (from.isEmpty() && to.isEmpty()) {
+        if (getFrom().isEmpty() && getTo().isEmpty()) {
             message = "";
-        } else if (from.isEmpty()) {
-            message = " (to: " + to + ")";
-        } else if (to.isEmpty()) {
-            message = " (from: " + from + ")";
+        } else if (getFrom().isEmpty()) {
+            message = " (to: " + getTo() + ")";
+        } else if (getTo().isEmpty()) {
+            message = " (from: " + getFrom() + ")";
         } else {
-            message = " (from: " + from + " to: " + to + ")";
+            message = " (from: " + getFrom() + " to: " + getTo() + ")";
         }
         return "[E]" + super.toString() + message;
     }

@@ -30,6 +30,6 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "[" + (getDone() ? "X" : " ") + "] " + description;
+        return "[" + (getDone() ? "X" : " ") + "] " + getName();
     }
 }

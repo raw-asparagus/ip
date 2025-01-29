@@ -22,7 +22,7 @@ public class Storage {
     public CompletableFuture<Void> saveTasksAsync(TaskList tasks) throws CompletionException {
         return CompletableFuture.runAsync(() -> {
             try {
-                saveTasks(tasks);   // saveTasks: StorageException
+                saveTasks(tasks);
             } catch (StorageException e) {
                 throw new CompletionException(e);
             }
@@ -45,8 +45,8 @@ public class Storage {
             Files.createDirectories(DATA_FILE.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(DATA_FILE, StandardCharsets.UTF_8)) {
                 for (int i = 0; i < tasks.size(); i++) {
-                    Task task = tasks.getTask(i);   // getTask: TaskListException
-                    String line = stringify(task);  // stringify: IllegalArgumentException
+                    Task task = tasks.getTask(i);
+                    String line = stringify(task);
                     writer.write(line);
                     writer.newLine();
                 }
@@ -59,28 +59,6 @@ public class Storage {
     }
 
     // Accessors
-    public TaskList loadTasks() throws StorageException {
-        TaskList tasks = new TaskList();
-
-        try {
-            Files.createDirectories(DATA_FILE.getParent());
-            if (!Files.exists(DATA_FILE)) {
-                return tasks;
-            }
-            try (BufferedReader reader = Files.newBufferedReader(DATA_FILE, StandardCharsets.UTF_8)) {
-                String line;
-                while ((line = reader.readLine()) != null) {    // readLine: IOException
-                    Task task = parseTask(line);                // parseTask: StorageException
-                    tasks.addTask(task);
-                }
-            }
-
-            return tasks;
-        } catch (IOException e) {
-            throw new StorageException("An error occurred while handling I/O operations using ConsoleIO.");
-        }
-    }
-
     private String stringify(Task task) throws IllegalArgumentException {
         String taskType;
         String taskDetails = "";
@@ -98,6 +76,28 @@ public class Storage {
         return taskType + "|" + task.getDone() + "|" + task.getName() + taskDetails;
     }
 
+    public TaskList loadTasks() throws StorageException {
+        TaskList tasks = new TaskList();
+
+        try {
+            Files.createDirectories(DATA_FILE.getParent());
+            if (!Files.exists(DATA_FILE)) {
+                return tasks;
+            }
+            try (BufferedReader reader = Files.newBufferedReader(DATA_FILE, StandardCharsets.UTF_8)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Task task = parseTask(line);
+                    tasks.addTask(task);
+                }
+            }
+
+            return tasks;
+        } catch (IOException e) {
+            throw new StorageException("An error occurred while handling I/O operations using ConsoleIO.");
+        }
+    }
+
     private Task parseTask(String taskLine) throws StorageException {
         String[] parts = taskLine.split("\\|", -1);
         if (parts.length < 3) {
@@ -106,11 +106,33 @@ public class Storage {
 
         Task task;
         try {
-            task = TaskList.getTask(parts);     // getTask: TaskListException
-        } catch (TaskListException e) {
+            task = getDataFile(parts);
+        } catch (StorageException e) {
             throw new StorageException("Data corrupted: " + e.getMessage());
         }
 
+        return task;
+    }
+
+    private Task getDataFile(String[] parts) throws StorageException {
+        String taskType = parts[0];
+        boolean done = Boolean.parseBoolean(parts[1]);
+        String description = parts[2];
+
+        Task task = switch (taskType) {
+            case "E" -> parts.length >= 5 ? new Event(description, parts[3], parts[4]) : null;
+            case "D" -> parts.length >= 4 ? new Deadline(description, parts[3]) : null;
+            case "T" -> new Todo(description);
+            default -> null;
+        };
+
+        if (task == null) {
+            throw new StorageException("Unknown task type: " + taskType + "|" + description + "|" + done);
+        }
+
+        if (done) {
+            task.markDone();
+        }
         return task;
     }
 
