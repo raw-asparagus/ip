@@ -2,11 +2,12 @@ package command;
 
 import task.Task;
 import task.TaskList;
+import task.TaskListException;
 import ui.ConsoleIO;
 
 import java.io.IOException;
 
-public class ListCommand implements Command {
+public class ListCommand extends Command {
     private final TaskList tasks;
     private final ConsoleIO consoleIO;
 
@@ -16,9 +17,9 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public void execute() throws IOException, DuskException {
+    public void execute() throws IOException, TaskListException {
         if (tasks.isEmpty()) {
-            consoleIO.print("task.Task list is empty!");
+            consoleIO.print("Task list is empty!");
         } else {
             String[] messages = new String[tasks.size() + 1];
             messages[0] = "Here are the tasks in your list:";
@@ -27,7 +28,7 @@ public class ListCommand implements Command {
                 try {
                     task = tasks.getTask(i - 1);
                 } catch (Exception e) {
-                    throw new DuskException(e.getMessage());
+                    throw new TaskListException(e.getMessage());
                 }
                 messages[i] = i + "." + task;
             }

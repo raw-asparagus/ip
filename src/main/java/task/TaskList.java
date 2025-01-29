@@ -16,34 +16,44 @@ public class TaskList {
         tasks.add(task);
     }
 
-    public Task removeTask(int index) {
-        return tasks.remove(index);
+    public Task removeTask(int index) throws TaskListException {
+        try {
+            return tasks.remove(index);
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
+        }
     }
 
     public void markTask(int index) throws TaskListException, MarkTaskException {
-        Task task = getTask(index);     // getTask: TaskList Exception
-        if (task.getDone()) {
-            throw new MarkTaskException("Task already marked as done!");
+        try {
+            Task task = getTask(index);     // getTask: TaskList Exception
+            if (task.getDone()) {
+                throw new MarkTaskException("Task already marked as done!");
+            }
+            task.markDone();
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
         }
-        task.markDone();
     }
 
     public void unmarkTask(int index) throws TaskListException, MarkTaskException {
-        Task task = getTask(index);     // getTask: TaskList Exception
-        if (!task.getDone()) {
-            throw new MarkTaskException("Task already marked as not done");
+        try {
+            Task task = getTask(index);     // getTask: TaskList Exception
+            if (!task.getDone()) {
+                throw new MarkTaskException("Task already marked as not done!");
+            }
+            task.markUndone();
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
         }
-        task.markUndone();
     }
 
     // Accessors
     public Task getTask(int index) throws TaskListException {
-        Task task;
         try {
-            task = tasks.get(index);
-            return task;
+            return tasks.get(index);
         } catch (IndexOutOfBoundsException e) {
-            throw new TaskListException("Index out of bounds: " + index);
+            throw new TaskListException("Index out of bounds: " + (index + 1));
         }
     }
 
