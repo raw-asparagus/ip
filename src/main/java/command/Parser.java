@@ -18,8 +18,8 @@ public class Parser {
                 "^(?<command>list|mark|unmark|delete|todo|deadline|event)(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
                 Pattern.CASE_INSENSITIVE
         );
-
         Matcher inputMatcher = inputPattern.matcher(input);
+
         if (!inputMatcher.matches()) {
             throw new InputException("Invalid command: " + input);
         }
@@ -38,6 +38,7 @@ public class Parser {
         String by = "";
         String from = "";
         String to = "";
+
         if (!arguments.isBlank()) {
             Pattern flagsPattern = Pattern.compile("/(?<flag>by|from|to)\\s+(?<value>[^/]+)", Pattern.CASE_INSENSITIVE);
             Matcher flagsMatcher = flagsPattern.matcher(arguments);

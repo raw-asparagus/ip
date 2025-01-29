@@ -13,23 +13,59 @@ public class TaskList {
 
     // Mutators
     public void addTask(Task task) {
-        tasks.add(task);
+        getTasks().add(task);
     }
 
-    public Task removeTask(int index) {
-        return tasks.remove(index);
+    public Task removeTask(int index) throws TaskListException {
+        try {
+            return getTasks().remove(index);
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
+        }
+    }
+
+    public void markTask(int index) throws TaskListException, MarkTaskException {
+        try {
+            Task task = getTask(index);
+            if (task.getDone()) {
+                throw new MarkTaskException("Task already marked as done!");
+            }
+            task.markDone();
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
+        }
+    }
+
+    public void unmarkTask(int index) throws TaskListException, MarkTaskException {
+        try {
+            Task task = getTask(index);
+            if (!task.getDone()) {
+                throw new MarkTaskException("Task already marked as not done!");
+            }
+            task.markUndone();
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
+        }
     }
 
     // Accessors
-    public Task getTask(int index) {
-        return tasks.get(index);
+    private List<Task> getTasks() {
+        return tasks;
+    }
+
+    public Task getTask(int index) throws TaskListException {
+        try {
+            return getTasks().get(index);
+        } catch (IndexOutOfBoundsException e) {
+            throw new TaskListException("Index out of bounds: " + (index + 1));
+        }
     }
 
     public int size() {
-        return tasks.size();
+        return getTasks().size();
     }
 
     public boolean isEmpty() {
-        return tasks.isEmpty();
+        return getTasks().isEmpty();
     }
 }

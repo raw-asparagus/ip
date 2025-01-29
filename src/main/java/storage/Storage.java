@@ -4,12 +4,13 @@ import task.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,31 +19,47 @@ public class Storage {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     // Asynchronous wrappers
-    public CompletableFuture<Void> saveTasksAsync(TaskList tasks) {
-        return CompletableFuture.runAsync(() -> saveTasks(tasks), executor);
+    public CompletableFuture<Void> saveTasksAsync(TaskList tasks) throws CompletionException {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                saveTasks(tasks);
+            } catch (StorageException e) {
+                throw new CompletionException(e);
+            }
+        }, executor);
     }
 
-    public CompletableFuture<TaskList> loadTasksAsync(TaskList tasks) {
-        return CompletableFuture.supplyAsync(() -> loadTasks(tasks), executor);
+    public CompletableFuture<TaskList> loadTasksAsync() throws CompletionException {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return loadTasks();
+            } catch (StorageException e) {
+                throw new CompletionException(e);
+            }
+        }, executor);
     }
 
     // Mutators
-    public void saveTasks(TaskList tasks) {
+    public void saveTasks(TaskList tasks) throws StorageException {
         try {
             Files.createDirectories(DATA_FILE.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(DATA_FILE, StandardCharsets.UTF_8)) {
                 for (int i = 0; i < tasks.size(); i++) {
-                    String line = formatTask(tasks.getTask(i));
+                    Task task = tasks.getTask(i);
+                    String line = stringify(task);
                     writer.write(line);
                     writer.newLine();
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error saving tasks: " + e.getMessage());
+            throw new StorageException("An error occurred while handling I/O operations using ConsoleIO.");
+        } catch (IllegalArgumentException | TaskListException e) {
+            throw new StorageException("Error saving tasks: " + e.getMessage());
         }
     }
 
-    private String formatTask(Task task) {
+    // Accessors
+    private String stringify(Task task) throws IllegalArgumentException {
         String taskType;
         String taskDetails = "";
         if (task instanceof Todo) {
@@ -59,8 +76,9 @@ public class Storage {
         return taskType + "|" + task.getDone() + "|" + task.getName() + taskDetails;
     }
 
-    // Accessors
-    public TaskList loadTasks(TaskList tasks) {
+    public TaskList loadTasks() throws StorageException {
+        TaskList tasks = new TaskList();
+
         try {
             Files.createDirectories(DATA_FILE.getParent());
             if (!Files.exists(DATA_FILE)) {
@@ -69,36 +87,36 @@ public class Storage {
             try (BufferedReader reader = Files.newBufferedReader(DATA_FILE, StandardCharsets.UTF_8)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    Task parsedTask = parseTask(line);
-                    if (parsedTask != null) {
-                        tasks.addTask(parsedTask);
-                    }
+                    Task task = parseTask(line);
+                    tasks.addTask(task);
                 }
             }
-        } catch (IOException | StorageException e) {
-            System.err.println("Error loading tasks: " + e.getMessage());
-        }
 
-        return tasks;
+            return tasks;
+        } catch (IOException e) {
+            throw new StorageException("An error occurred while handling I/O operations using ConsoleIO.");
+        }
     }
 
     private Task parseTask(String taskLine) throws StorageException {
-        try {
-            String[] parts = taskLine.split("\\|");
-            if (parts.length < 3) {
-                return null;
-            }
-
-            String taskType = parts[0];
-
-            return getTask(parts, taskType);
-        } catch (Exception e) {
-            throw new StorageException("An error occurred while attempting to load data!" + e.getMessage());
+        String[] parts = taskLine.split("\\|", -1);
+        if (parts.length < 3) {
+            throw new StorageException("Data corrupted: less than 3 fields!");
         }
+
+        Task task;
+        try {
+            task = getDataFile(parts);
+        } catch (StorageException e) {
+            throw new StorageException("Data corrupted: " + e.getMessage());
+        }
+
+        return task;
     }
 
-    private static Task getTask(String[] parts, String taskType) {
-        boolean isDone = Boolean.parseBoolean(parts[1]);
+    private Task getDataFile(String[] parts) throws StorageException {
+        String taskType = parts[0];
+        boolean done = Boolean.parseBoolean(parts[1]);
         String description = parts[2];
 
         Task task = switch (taskType) {
@@ -108,7 +126,11 @@ public class Storage {
             default -> null;
         };
 
-        if (task != null && isDone) {
+        if (task == null) {
+            throw new StorageException("Unknown task type: " + taskType + "|" + description + "|" + done);
+        }
+
+        if (done) {
             task.markDone();
         }
         return task;

@@ -1,6 +1,6 @@
+package dusk;
+
 import command.Command;
-import command.DuskException;
-import command.InputException;
 import command.Parser;
 import storage.Storage;
 import task.TaskList;
@@ -8,6 +8,7 @@ import ui.ConsoleIO;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,16 +24,18 @@ public class Dusk {
     // Commons
     private static final Logger logger = Logger.getLogger(Dusk.class.getName());
     private static final Storage storage = new Storage();
-    private static final TaskList tasks = new TaskList();
+    private static TaskList tasks;
 
     // Constructor
     public Dusk() {
         // Load data
-        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync(tasks);
+        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
         try {
-            loadFuture.get();
+            tasks = loadFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+        } catch (CompletionException e) {
+            logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -48,7 +51,7 @@ public class Dusk {
                 try {
                     Command command = Parser.parse(consoleIO, storage, tasks, input);
                     command.execute();
-                } catch (DuskException | InputException e) {
+                } catch (Exception e) {
                     consoleIO.print("<!> " + e.getMessage());
                 }
             }
@@ -57,7 +60,7 @@ public class Dusk {
         } catch (IOException e) {
             logger.log(
                     Level.SEVERE,
-                    "An error occurred while handling I/O operations using ui.ConsoleIO.",
+                    "An error occurred while handling I/O operations using ConsoleIO.",
                     e
             );
         } finally {
@@ -66,6 +69,7 @@ public class Dusk {
     }
 
     public static void main(String[] args) {
+        new Dusk();
         app();
     }
 }

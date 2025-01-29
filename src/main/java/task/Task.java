@@ -1,8 +1,8 @@
 package task;
 
 public abstract class Task {
-    protected final String description;
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     // Constructor
     public Task(String desc) {
@@ -30,6 +30,6 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "[" + (getDone() ? "X" : " ") + "] " + description;
+        return "[" + (getDone() ? "X" : " ") + "] " + getName();
     }
 }
