@@ -1,13 +1,17 @@
-public class Event extends Task {
-    protected String from;
-    protected String to;
+package task;
 
+public class Event extends Task {
+    protected final String from;
+    protected final String to;
+
+    // Constructor
     public Event(String description, String from, String to) {
         super(description);
         this.from = from;
         this.to = to;
     }
 
+    // Accessors
     public String getFrom() {
         return from;
     }

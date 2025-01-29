@@ -1,3 +1,5 @@
+package command;
+
 public enum FlagType {
     BY,
     FROM,
