@@ -1,8 +1,8 @@
 package task;
 
 public abstract class Task {
-    protected final String description;
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     // Constructor
     public Task(String desc) {

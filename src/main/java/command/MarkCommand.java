@@ -37,7 +37,12 @@ public class MarkCommand implements Command {
             throw new DuskException("Invalid task number: " + description);
         }
 
-        Task task = tasks.getTask(idx);
+        Task task;
+        try {
+            task = tasks.getTask(idx);
+        } catch (Exception e) {
+            throw new DuskException(e.getMessage());
+        }
         if (isMark) {
             if (task.getDone()) {
                 consoleIO.print("task.Task already mark as done!");

@@ -1,8 +1,8 @@
 package task;
 
 public class Event extends Task {
-    protected final String from;
-    protected final String to;
+    private final String from;
+    private final String to;
 
     // Constructor
     public Event(String description, String from, String to) {

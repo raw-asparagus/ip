@@ -1,7 +1,7 @@
 package task;
 
 public class Deadline extends Task {
-    protected final String by;
+    private final String by;
 
     // Constructor
     public Deadline(String description, String by) {
@@ -16,10 +16,6 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        String by = this.by;
-        if (by.isEmpty()) {
-            by = "no idea :p";
-        }
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + (by.isEmpty() ? "no idea :p" : by) + ")";
     }
 }

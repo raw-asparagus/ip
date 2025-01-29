@@ -16,14 +16,19 @@ public class ListCommand implements Command {
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() throws IOException, DuskException {
         if (tasks.isEmpty()) {
             consoleIO.print("task.Task list is empty!");
         } else {
             String[] messages = new String[tasks.size() + 1];
             messages[0] = "Here are the tasks in your list:";
             for (int i = 1; i <= tasks.size(); i++) {
-                Task task = tasks.getTask(i - 1);
+                Task task;
+                try {
+                    task = tasks.getTask(i - 1);
+                } catch (Exception e) {
+                    throw new DuskException(e.getMessage());
+                }
                 messages[i] = i + "." + task;
             }
             consoleIO.print(messages);
