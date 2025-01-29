@@ -1,3 +1,5 @@
+package dusk;
+
 import command.Command;
 import command.Parser;
 import storage.Storage;
