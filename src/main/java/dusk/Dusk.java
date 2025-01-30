@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class Dusk {
     // Common messages
     public static final String[] GREETING_MESSAGES = {
-            "Hello! I'm Dusk",
+            "Hello! I'm Dusk!",
             "Anything you want me to do for you? :D"
     };
     public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
