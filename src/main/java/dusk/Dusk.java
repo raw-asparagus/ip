@@ -30,17 +30,6 @@ public class Dusk {
         loadTasks();
     }
 
-    private void loadTasks() {
-        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
-        try {
-            taskList = loadFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
-        } catch (CompletionException e) {
-            logger.log(Level.SEVERE, e.getMessage());
-        }
-    }
-
     public static void runApp() {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
             consoleIO.print(GREETING_MESSAGES);
@@ -69,5 +58,16 @@ public class Dusk {
     public static void main(String[] args) {
         new Dusk();
         runApp();
+    }
+
+    private void loadTasks() {
+        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
+        try {
+            taskList = loadFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+        } catch (CompletionException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
     }
 }

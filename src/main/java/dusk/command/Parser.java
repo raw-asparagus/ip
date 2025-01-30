@@ -27,7 +27,6 @@ public class Parser {
                     .toFormatter();
 
 
-
     public static Command parse(ConsoleIO consoleIO, Storage storage, TaskList tasks, String input)
             throws InputException {
 
