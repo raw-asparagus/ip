@@ -1,37 +1,43 @@
 package dusk.task;
 
-public class Event extends Task {
-    private final String from;
-    private final String to;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    // Constructor
-    public Event(String description, String from, String to) {
+public class Event extends Task {
+    private final LocalDateTime from;
+    private final LocalDateTime to;
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
+
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
     }
 
-    // Accessors
-    public String getFrom() {
+    public LocalDateTime getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public LocalDateTime getTo() {
         return to;
     }
 
     @Override
     public String toString() {
+        String fromStr = (from == null) ? "" : from.format(OUTPUT_FORMATTER);
+        String toStr = (to == null) ? "" : to.format(OUTPUT_FORMATTER);
+
         String message;
-        if (getFrom().isEmpty() && getTo().isEmpty()) {
+        if (fromStr.isEmpty() && toStr.isEmpty()) {
             message = "";
-        } else if (getFrom().isEmpty()) {
-            message = " (to: " + getTo() + ")";
-        } else if (getTo().isEmpty()) {
-            message = " (from: " + getFrom() + ")";
+        } else if (fromStr.isEmpty()) {
+            message = " (to: " + toStr + ")";
+        } else if (toStr.isEmpty()) {
+            message = " (from: " + fromStr + ")";
         } else {
-            message = " (from: " + getFrom() + " to: " + getTo() + ")";
+            message = " (from: " + fromStr + " to: " + toStr + ")";
         }
+
         return "[E]" + super.toString() + message;
     }
 }
