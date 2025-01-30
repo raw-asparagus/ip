@@ -67,4 +67,10 @@ delete 3
 delete 4
 delete 6
 list
+list test /on
+list test /on 2025-01-30
+list test /from /to
+list test /from 2025-01-01 /to
+list test /from /to 2026-01-01 0000
+list test /from 2025-03-01 /to 2025-09-01
 bye

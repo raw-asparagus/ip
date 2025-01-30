@@ -1,24 +1,23 @@
 package dusk.task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
     private final List<Task> tasks;
 
-    // Constructor
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
-    // Mutators
     public void addTask(Task task) {
-        getTasks().add(task);
+        tasks.add(task);
     }
 
     public Task removeTask(int index) throws TaskListException {
         try {
-            return getTasks().remove(index);
+            return tasks.remove(index);
         } catch (IndexOutOfBoundsException e) {
             throw new TaskListException("Index out of bounds: " + (index + 1));
         }
@@ -48,24 +47,55 @@ public class TaskList {
         }
     }
 
-    // Accessors
-    private List<Task> getTasks() {
-        return tasks;
-    }
-
     public Task getTask(int index) throws TaskListException {
         try {
-            return getTasks().get(index);
+            return tasks.get(index);
         } catch (IndexOutOfBoundsException e) {
             throw new TaskListException("Index out of bounds: " + (index + 1));
         }
     }
 
     public int size() {
-        return getTasks().size();
+        return tasks.size();
     }
 
     public boolean isEmpty() {
-        return getTasks().isEmpty();
+        return tasks.isEmpty();
+    }
+
+    public TaskList getTasksWithin(LocalDateTime start, LocalDateTime end) {
+        TaskList result = new TaskList();
+        for (Task task : tasks) {
+            if (task instanceof Event e) {
+                if (e.isWithinRange(start, end)) {
+                    result.addTask(e);
+                }
+            } else if (task instanceof Deadline d) {
+                if (d.isWithinRange(start, end)) {
+                    result.addTask(d);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a new TaskList containing only tasks that occur on the specified date.
+     * Actual “on-date” checking is done in Event/Deadline themselves (e.g., isOnDate).
+     */
+    public TaskList getTasksOn(LocalDateTime date) {
+        TaskList result = new TaskList();
+        for (Task task : tasks) {
+            if (task instanceof Event e) {
+                if (e.isOnDate(date)) {
+                    result.addTask(e);
+                }
+            } else if (task instanceof Deadline d) {
+                if (d.isOnDate(date)) {
+                    result.addTask(d);
+                }
+            }
+        }
+        return result;
     }
 }

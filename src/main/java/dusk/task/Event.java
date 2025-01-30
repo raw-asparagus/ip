@@ -22,6 +22,27 @@ public class Event extends Task {
         return to;
     }
 
+    public boolean isWithinRange(LocalDateTime start, LocalDateTime end) {
+        if (from != null && to != null) {
+            return (from.isAfter(start) && from.isBefore(end)) || (to.isAfter(start) && to.isBefore(end));
+        } else if (from != null) {
+            return from.isAfter(start) && from.isBefore(end);
+        } else if (to != null) {
+            return to.isAfter(start) && to.isBefore(end);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isOnDate(LocalDateTime date) {
+        if (from == null || to == null) {
+            return false;
+        }
+        var dayStart = date.toLocalDate().atStartOfDay();
+        var dayEnd = dayStart.plusDays(1).minusNanos(1);
+        return !from.isAfter(dayEnd) && !to.isBefore(dayStart);
+    }
+
     @Override
     public String toString() {
         String fromStr = (from == null) ? "" : from.format(OUTPUT_FORMATTER);

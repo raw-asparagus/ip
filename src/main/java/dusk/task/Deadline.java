@@ -16,6 +16,20 @@ public class Deadline extends Task {
         return by;
     }
 
+    public boolean isWithinRange(LocalDateTime start, LocalDateTime end) {
+        if (by == null) {
+            return false;
+        }
+        return !by.isBefore(start) && !by.isAfter(end);
+    }
+
+    public boolean isOnDate(LocalDateTime date) {
+        if (by == null) {
+            return false;
+        }
+        return by.toLocalDate().isEqual(date.toLocalDate());
+    }
+
     @Override
     public String toString() {
         String formatted = (by == null)

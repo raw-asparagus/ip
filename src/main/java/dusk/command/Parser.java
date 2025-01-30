@@ -13,9 +13,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
-
     private static final Pattern FLAGS_PATTERN = Pattern.compile(
-            "/(?<flag>by|from|to)\\s+(?<value>[^/]+)", Pattern.CASE_INSENSITIVE);
+            "/(?<flag>on|from|to|by)\\s*(?<value>[^/]+)?",
+            Pattern.CASE_INSENSITIVE
+    );
+
+    private static final Pattern INPUT_PATTERN = Pattern.compile(
+            "^(?<command>list|mark|unmark|delete|todo|deadline|event)"
+                    + "(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
+            Pattern.CASE_INSENSITIVE
+    );
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             new DateTimeFormatterBuilder()
@@ -26,21 +33,13 @@ public class Parser {
                     .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                     .toFormatter();
 
-
-    public static Command parse(ConsoleIO consoleIO, Storage storage, TaskList tasks, String input)
-            throws InputException {
-
-        if (input.isEmpty()) {
+    public static Command parse(ConsoleIO consoleIO, Storage storage,
+                                TaskList tasks, String input) throws InputException {
+        if (input.isBlank()) {
             throw new InputException("Input cannot be null or empty.");
         }
 
-        Pattern inputPattern = Pattern.compile(
-                "^(?<command>list|mark|unmark|delete|todo|deadline|event)"
-                        + "(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
-                Pattern.CASE_INSENSITIVE
-        );
-        Matcher inputMatcher = inputPattern.matcher(input);
-
+        Matcher inputMatcher = INPUT_PATTERN.matcher(input);
         if (!inputMatcher.matches()) {
             throw new InputException("Invalid command: " + input);
         }
@@ -56,38 +55,39 @@ public class Parser {
         String rawArguments = inputMatcher.group("arguments");
         String arguments = (rawArguments == null) ? "" : rawArguments.trim();
 
-        String by = "";
-        String from = "";
-        String to = "";
+        String onStr = null;
+        String fromStr = null;
+        String toStr = null;
+        String byStr = null;
 
         if (!arguments.isBlank()) {
             Matcher flagsMatcher = FLAGS_PATTERN.matcher(arguments);
             while (flagsMatcher.find()) {
-                FlagType flag = FlagType.fromString(flagsMatcher.group("flag"));
-                String value = flagsMatcher.group("value").trim();
-                if (flag != null) {
-                    switch (flag) {
-                        case BY:
-                            by = value;
-                            break;
-                        case FROM:
-                            from = value;
-                            break;
-                        case TO:
-                            to = value;
-                            break;
-                        default:
+                String foundFlag = flagsMatcher.group("flag");
+                String foundValue = flagsMatcher.group("value");
+                if (foundValue != null) {
+                    foundValue = foundValue.trim();
+                }
+                if (foundFlag != null) {
+                    switch (foundFlag.toLowerCase()) {
+                        case "on" -> onStr = foundValue;
+                        case "from" -> fromStr = foundValue;
+                        case "to" -> toStr = foundValue;
+                        case "by" -> byStr = foundValue;
+                        default -> {
+                        }
                     }
                 }
             }
         }
 
-        LocalDateTime byDateTime = parseDateTime(by);
-        LocalDateTime fromDateTime = parseDateTime(from);
-        LocalDateTime toDateTime = parseDateTime(to);
+        LocalDateTime onDateTime = parseDateTime(onStr);
+        LocalDateTime fromDateTime = parseDateTime(fromStr);
+        LocalDateTime toDateTime = parseDateTime(toStr);
+        LocalDateTime byDateTime = parseDateTime(byStr);
 
         return switch (commandType) {
-            case LIST -> new ListCommand(tasks, consoleIO);
+            case LIST -> new ListCommand(tasks, consoleIO, onDateTime, fromDateTime, toDateTime);
             case MARK -> new MarkCommand(tasks, consoleIO, storage, description, true);
             case UNMARK -> new MarkCommand(tasks, consoleIO, storage, description, false);
             case DELETE -> new DeleteCommand(tasks, consoleIO, storage, description);
@@ -99,13 +99,15 @@ public class Parser {
     }
 
     private static LocalDateTime parseDateTime(String dateTimeStr) throws InputException {
-        if (dateTimeStr.isBlank()) {
+        if (dateTimeStr == null || dateTimeStr.isBlank()) {
             return null;
         }
         try {
             return LocalDateTime.parse(dateTimeStr, DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
-            throw new InputException("Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: " + dateTimeStr);
+            throw new InputException("Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: "
+                    + dateTimeStr);
         }
     }
+
 }
