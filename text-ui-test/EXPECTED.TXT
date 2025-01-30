@@ -4,18 +4,18 @@
 	____________________________________________________________
 todo
 	____________________________________________________________
-	 <!> A 'TODO' command must include a description.
+	 <!> A 'TODO' dusk.command must include a description.
 	____________________________________________________________
 todo task0
 	____________________________________________________________
-	 Got it. I've added this task:
+	 Got it. I've added this dusk.task:
 	   [T][ ] task0
 	 Now you have 1 tasks in the list.
 	____________________________________________________________
-todo task 1
+todo task1
 	____________________________________________________________
-	 Got it. I've added this task:
-	   [T][ ] task 1
+	 Got it. I've added this dusk.task:
+	   [T][ ] task1
 	 Now you have 2 tasks in the list.
 	____________________________________________________________
 deadline
@@ -28,10 +28,10 @@ deadline task2
 	   [D][ ] task2 (by: no idea :p)
 	 Now you have 3 tasks in the list.
 	____________________________________________________________
-deadline task 3
+deadline task3
 	____________________________________________________________
 	 Got it. I've added this task:
-	   [D][ ] task 3 (by: no idea :p)
+	   [D][ ] task3 (by: no idea :p)
 	 Now you have 4 tasks in the list.
 	____________________________________________________________
 deadline task4 /by
@@ -42,9 +42,31 @@ deadline task4 /by
 	____________________________________________________________
 deadline task5 /by time0
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time0
+	____________________________________________________________
+deadline task5a /by 2025
+	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: 2025
+	____________________________________________________________
+deadline task5b /by 2025-01
+	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: 2025-01
+	____________________________________________________________
+deadline task5c /by 2025-01-30
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [D][ ] task5 (by: time0)
+	   [D][ ] task5c (by: Jan 30 2025 00:00)
 	 Now you have 6 tasks in the list.
+	____________________________________________________________
+deadline task5d /by 2025-01-30 23
+	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: 2025-01-30 23
+	____________________________________________________________
+deadline task5e /by 2025-01-30 2359
+	____________________________________________________________
+	 Got it. I've added this task:
+	   [D][ ] task5e (by: Jan 30 2025 23:59)
+	 Now you have 7 tasks in the list.
 	____________________________________________________________
 event
 	____________________________________________________________
@@ -54,113 +76,143 @@ event task6
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task6
-	 Now you have 7 tasks in the list.
+	 Now you have 8 tasks in the list.
 	____________________________________________________________
 event task 7
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task 7
-	 Now you have 8 tasks in the list.
+	 Now you have 9 tasks in the list.
 	____________________________________________________________
 event task8 /from
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task8
-	 Now you have 9 tasks in the list.
+	 Now you have 10 tasks in the list.
 	____________________________________________________________
 event task9 /from time1
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time1
+	____________________________________________________________
+event task9a /from 2025-02-01 1200
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task9 (from: time1)
-	 Now you have 10 tasks in the list.
+	   [E][ ] task9a (from: Feb 01 2025 12:00)
+	 Now you have 11 tasks in the list.
 	____________________________________________________________
 event task10 /to
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task10
-	 Now you have 11 tasks in the list.
+	 Now you have 12 tasks in the list.
 	____________________________________________________________
 event task11 /to time2
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time2
+	____________________________________________________________
+event task11a /from 2025-03-01 1200
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task11 (to: time2)
-	 Now you have 12 tasks in the list.
+	   [E][ ] task11a (from: Mar 01 2025 12:00)
+	 Now you have 13 tasks in the list.
 	____________________________________________________________
 event task12 /from /to
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task12
-	 Now you have 13 tasks in the list.
+	 Now you have 14 tasks in the list.
 	____________________________________________________________
 event task13 /to /from
 	____________________________________________________________
 	 Got it. I've added this task:
 	   [E][ ] task13
-	 Now you have 14 tasks in the list.
+	 Now you have 15 tasks in the list.
 	____________________________________________________________
 event task14 /from time3 /to
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time3
+	____________________________________________________________
+event task14a /from 2025-04-01 /to
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task14 (from: time3)
-	 Now you have 15 tasks in the list.
+	   [E][ ] task14a (from: Apr 01 2025 00:00)
+	 Now you have 16 tasks in the list.
 	____________________________________________________________
 event task15 /from /to time4
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time4
+	____________________________________________________________
+event task15a /from /to 2025-05-01
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task15 (to: time4)
-	 Now you have 16 tasks in the list.
+	   [E][ ] task15a (to: May 01 2025 00:00)
+	 Now you have 17 tasks in the list.
 	____________________________________________________________
 event task16 /from time5 /to time6
 	____________________________________________________________
-	 Got it. I've added this task:
-	   [E][ ] task16 (from: time5 to: time6)
-	 Now you have 17 tasks in the list.
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time5
+	____________________________________________________________
+event task16a /from 2025-06-01 1200 \to 2025-07-01
+	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: 2025-06-01 1200 \to 2025-07-01
 	____________________________________________________________
 event task17 /to time7 /from
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time7
+	____________________________________________________________
+event task17a /to 2025-08-01 /from
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task17 (to: time7)
+	   [E][ ] task17a (to: Aug 01 2025 00:00)
 	 Now you have 18 tasks in the list.
 	____________________________________________________________
 event task18 /to /from time8
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time8
+	____________________________________________________________
+event task18a /to /from 2025-09-01
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task18 (from: time8)
+	   [E][ ] task18a (from: Sep 01 2025 00:00)
 	 Now you have 19 tasks in the list.
 	____________________________________________________________
 event task19 /to time9 /from time10
 	____________________________________________________________
+	 <!> Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: time10
+	____________________________________________________________
+event task19a /to 2025-10-01 /from 2025-11-01
+	____________________________________________________________
 	 Got it. I've added this task:
-	   [E][ ] task19 (from: time10 to: time9)
+	   [E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	 Now you have 20 tasks in the list.
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][ ] task2 (by: no idea :p)
-	 4.[D][ ] task 3 (by: no idea :p)
+	 4.[D][ ] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 mark
 	____________________________________________________________
-	 <!> Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!
+	 <!> Task number cannot be empty or invalid for a 'MARK'/'UNMARK' dusk.command!
 	____________________________________________________________
 mark 0
 	____________________________________________________________
@@ -172,31 +224,31 @@ mark 21
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][ ] task2 (by: no idea :p)
-	 4.[D][ ] task 3 (by: no idea :p)
+	 4.[D][ ] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 unmark
 	____________________________________________________________
-	 <!> Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!
+	 <!> Task number cannot be empty or invalid for a 'MARK'/'UNMARK' dusk.command!
 	____________________________________________________________
 unmark 0
 	____________________________________________________________
@@ -208,114 +260,114 @@ unmark 21
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][ ] task2 (by: no idea :p)
-	 4.[D][ ] task 3 (by: no idea :p)
+	 4.[D][ ] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 mark 1
 	____________________________________________________________
-	 Nice! I've marked this task as done:
+	 Nice! I've marked this dusk.task as done:
 	   [T][X] task0
 	____________________________________________________________
 mark 3
 	____________________________________________________________
-	 Nice! I've marked this task as done:
+	 Nice! I've marked this dusk.task as done:
 	   [D][X] task2 (by: no idea :p)
 	____________________________________________________________
 mark 4
 	____________________________________________________________
-	 Nice! I've marked this task as done:
-	   [D][X] task 3 (by: no idea :p)
+	 Nice! I've marked this dusk.task as done:
+	   [D][X] task3 (by: no idea :p)
 	____________________________________________________________
 mark 6
 	____________________________________________________________
-	 Nice! I've marked this task as done:
-	   [D][X] task5 (by: time0)
+	 Nice! I've marked this dusk.task as done:
+	   [D][X] task5c (by: Jan 30 2025 00:00)
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][X] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][X] task2 (by: no idea :p)
-	 4.[D][X] task 3 (by: no idea :p)
+	 4.[D][X] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][X] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][X] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 unmark 1
 	____________________________________________________________
-	 OK! I've updated this task to not done:
+	 OK! I've updated this dusk.task to not done:
 	   [T][ ] task0
 	____________________________________________________________
 unmark 6
 	____________________________________________________________
-	 OK! I've updated this task to not done:
-	   [D][ ] task5 (by: time0)
+	 OK! I've updated this dusk.task to not done:
+	   [D][ ] task5c (by: Jan 30 2025 00:00)
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][X] task2 (by: no idea :p)
-	 4.[D][X] task 3 (by: no idea :p)
+	 4.[D][X] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 unmark 3
 	____________________________________________________________
-	 OK! I've updated this task to not done:
+	 OK! I've updated this dusk.task to not done:
 	   [D][ ] task2 (by: no idea :p)
 	____________________________________________________________
 mark 3
 	____________________________________________________________
-	 Nice! I've marked this task as done:
+	 Nice! I've marked this dusk.task as done:
 	   [D][X] task2 (by: no idea :p)
 	____________________________________________________________
 mark 3
@@ -324,32 +376,32 @@ mark 3
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][X] task2 (by: no idea :p)
-	 4.[D][X] task 3 (by: no idea :p)
+	 4.[D][X] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 unmark 4
 	____________________________________________________________
-	 OK! I've updated this task to not done:
-	   [D][ ] task 3 (by: no idea :p)
+	 OK! I've updated this dusk.task to not done:
+	   [D][ ] task3 (by: no idea :p)
 	____________________________________________________________
 unmark 4
 	____________________________________________________________
@@ -357,31 +409,31 @@ unmark 4
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][X] task2 (by: no idea :p)
-	 4.[D][ ] task 3 (by: no idea :p)
+	 4.[D][ ] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 delete
 	____________________________________________________________
-	 <!> Task number cannot be empty or invalid for a 'DELETE' command!
+	 <!> Task number cannot be empty or invalid for a 'DELETE' dusk.command!
 	____________________________________________________________
 delete 0
 	____________________________________________________________
@@ -393,71 +445,132 @@ delete 21
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
+	 Here are all the tasks:
 	 1.[T][ ] task0
-	 2.[T][ ] task 1
+	 2.[T][ ] task1
 	 3.[D][X] task2 (by: no idea :p)
-	 4.[D][ ] task 3 (by: no idea :p)
+	 4.[D][ ] task3 (by: no idea :p)
 	 5.[D][ ] task4 (by: no idea :p)
-	 6.[D][ ] task5 (by: time0)
-	 7.[E][ ] task6
-	 8.[E][ ] task 7
-	 9.[E][ ] task8
-	 10.[E][ ] task9 (from: time1)
-	 11.[E][ ] task10
-	 12.[E][ ] task11 (to: time2)
-	 13.[E][ ] task12
-	 14.[E][ ] task13
-	 15.[E][ ] task14 (from: time3)
-	 16.[E][ ] task15 (to: time4)
-	 17.[E][ ] task16 (from: time5 to: time6)
-	 18.[E][ ] task17 (to: time7)
-	 19.[E][ ] task18 (from: time8)
-	 20.[E][ ] task19 (from: time10 to: time9)
+	 6.[D][ ] task5c (by: Jan 30 2025 00:00)
+	 7.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 8.[E][ ] task6
+	 9.[E][ ] task 7
+	 10.[E][ ] task8
+	 11.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 12.[E][ ] task10
+	 13.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 14.[E][ ] task12
+	 15.[E][ ] task13
+	 16.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 17.[E][ ] task15a (to: May 01 2025 00:00)
+	 18.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 19.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 20.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
 	____________________________________________________________
 delete 1
 	____________________________________________________________
-	 Noted. I've removed this task:
+	 Noted. I've removed this dusk.task:
 	   [T][ ] task0
 	 Now you have 19 tasks in the list.
 	____________________________________________________________
 delete 3
 	____________________________________________________________
-	 Noted. I've removed this task:
-	   [D][ ] task 3 (by: no idea :p)
+	 Noted. I've removed this dusk.task:
+	   [D][ ] task3 (by: no idea :p)
 	 Now you have 18 tasks in the list.
 	____________________________________________________________
 delete 4
 	____________________________________________________________
-	 Noted. I've removed this task:
-	   [D][ ] task5 (by: time0)
+	 Noted. I've removed this dusk.task:
+	   [D][ ] task5c (by: Jan 30 2025 00:00)
 	 Now you have 17 tasks in the list.
 	____________________________________________________________
 delete 6
 	____________________________________________________________
-	 Noted. I've removed this task:
-	   [E][ ] task8
+	 Noted. I've removed this dusk.task:
+	   [E][ ] task 7
 	 Now you have 16 tasks in the list.
 	____________________________________________________________
 list
 	____________________________________________________________
-	 Here are the tasks in your list:
-	 1.[T][ ] task 1
+	 Here are all the tasks:
+	 1.[T][ ] task1
 	 2.[D][X] task2 (by: no idea :p)
 	 3.[D][ ] task4 (by: no idea :p)
-	 4.[E][ ] task6
-	 5.[E][ ] task 7
-	 6.[E][ ] task9 (from: time1)
-	 7.[E][ ] task10
-	 8.[E][ ] task11 (to: time2)
-	 9.[E][ ] task12
-	 10.[E][ ] task13
-	 11.[E][ ] task14 (from: time3)
-	 12.[E][ ] task15 (to: time4)
-	 13.[E][ ] task16 (from: time5 to: time6)
-	 14.[E][ ] task17 (to: time7)
-	 15.[E][ ] task18 (from: time8)
-	 16.[E][ ] task19 (from: time10 to: time9)
+	 4.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 5.[E][ ] task6
+	 6.[E][ ] task8
+	 7.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 8.[E][ ] task10
+	 9.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 10.[E][ ] task12
+	 11.[E][ ] task13
+	 12.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 13.[E][ ] task15a (to: May 01 2025 00:00)
+	 14.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 15.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 16.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
+	____________________________________________________________
+list test /on
+	____________________________________________________________
+	 Here are all the tasks:
+	 1.[T][ ] task1
+	 2.[D][X] task2 (by: no idea :p)
+	 3.[D][ ] task4 (by: no idea :p)
+	 4.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 5.[E][ ] task6
+	 6.[E][ ] task8
+	 7.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 8.[E][ ] task10
+	 9.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 10.[E][ ] task12
+	 11.[E][ ] task13
+	 12.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 13.[E][ ] task15a (to: May 01 2025 00:00)
+	 14.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 15.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 16.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
+	____________________________________________________________
+list test /on 2025-01-30
+	____________________________________________________________
+	 Here are the tasks on 2025-01-30:
+	 1.[D][ ] task5e (by: Jan 30 2025 23:59)
+	____________________________________________________________
+list test /from /to
+	____________________________________________________________
+	 Here are all the tasks:
+	 1.[T][ ] task1
+	 2.[D][X] task2 (by: no idea :p)
+	 3.[D][ ] task4 (by: no idea :p)
+	 4.[D][ ] task5e (by: Jan 30 2025 23:59)
+	 5.[E][ ] task6
+	 6.[E][ ] task8
+	 7.[E][ ] task9a (from: Feb 01 2025 12:00)
+	 8.[E][ ] task10
+	 9.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 10.[E][ ] task12
+	 11.[E][ ] task13
+	 12.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 13.[E][ ] task15a (to: May 01 2025 00:00)
+	 14.[E][ ] task17a (to: Aug 01 2025 00:00)
+	 15.[E][ ] task18a (from: Sep 01 2025 00:00)
+	 16.[E][ ] task19a (from: Nov 01 2025 00:00 to: Oct 01 2025 00:00)
+	____________________________________________________________
+list test /from 2025-01-01 /to
+	____________________________________________________________
+	 <!> Both /from and /to must be specified together.
+	____________________________________________________________
+list test /from /to 2026-01-01 0000
+	____________________________________________________________
+	 <!> Both /from and /to must be specified together.
+	____________________________________________________________
+list test /from 2025-03-01 /to 2025-09-01
+	____________________________________________________________
+	 Here are the tasks between 2025-03-01T00:00 and 2025-09-01T00:00:
+	 1.[E][ ] task11a (from: Mar 01 2025 12:00)
+	 2.[E][ ] task14a (from: Apr 01 2025 00:00)
+	 3.[E][ ] task15a (to: May 01 2025 00:00)
+	 4.[E][ ] task17a (to: Aug 01 2025 00:00)
 	____________________________________________________________
 	____________________________________________________________
 	 See ya! Hope to see you again soon! :3

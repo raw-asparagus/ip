@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class Dusk {
     // Common messages
     public static final String[] GREETING_MESSAGES = {
-            "Hello! I'm Dusk",
+            "Hello! I'm Dusk!",
             "Anything you want me to do for you? :D"
     };
     public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
@@ -28,17 +28,6 @@ public class Dusk {
     // Constructor
     public Dusk() {
         loadTasks();
-    }
-
-    private void loadTasks() {
-        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
-        try {
-            taskList = loadFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
-        } catch (CompletionException e) {
-            logger.log(Level.SEVERE, e.getMessage());
-        }
     }
 
     public static void runApp() {
@@ -69,5 +58,16 @@ public class Dusk {
     public static void main(String[] args) {
         new Dusk();
         runApp();
+    }
+
+    private void loadTasks() {
+        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
+        try {
+            taskList = loadFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+        } catch (CompletionException e) {
+            logger.log(Level.SEVERE, e.getMessage());
+        }
     }
 }

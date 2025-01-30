@@ -1,21 +1,40 @@
 package dusk.task;
 
-public class Deadline extends Task {
-    private final String by;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    // Constructor
-    public Deadline(String description, String by) {
+public class Deadline extends Task {
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
+    private final LocalDateTime by;
+
+    public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
     }
 
-    // Accessor
-    public String getBy() {
+    public LocalDateTime getBy() {
         return by;
+    }
+
+    public boolean isWithinRange(LocalDateTime start, LocalDateTime end) {
+        if (by == null) {
+            return false;
+        }
+        return !by.isBefore(start) && !by.isAfter(end);
+    }
+
+    public boolean isOnDate(LocalDateTime date) {
+        if (by == null) {
+            return false;
+        }
+        return by.toLocalDate().isEqual(date.toLocalDate());
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + (getBy().isEmpty() ? "no idea :p" : getBy()) + ")";
+        String formatted = (by == null)
+                ? "no idea :p"
+                : by.format(OUTPUT_FORMATTER);
+        return "[D]" + super.toString() + " (by: " + formatted + ")";
     }
 }
