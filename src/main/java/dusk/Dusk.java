@@ -14,24 +14,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Dusk {
-    // Commons messages
-    public static final String[] GREETING = {
+    // Common messages
+    public static final String[] GREETING_MESSAGES = {
             "Hello! I'm Dusk",
             "Anything you want me to do for you? :D"
     };
-    public static final String BYE = "See ya! Hope to see you again soon! :3";
+    public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
 
-    // Commons
     private static final Logger logger = Logger.getLogger(Dusk.class.getName());
     private static final Storage storage = new Storage();
-    private static TaskList tasks;
+    private static TaskList taskList;
 
     // Constructor
     public Dusk() {
-        // Load data
+        loadTasks();
+    }
+
+    private void loadTasks() {
         CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
         try {
-            tasks = loadFuture.get();
+            taskList = loadFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
         } catch (CompletionException e) {
@@ -39,24 +41,20 @@ public class Dusk {
         }
     }
 
-    public static void app() {
+    public static void runApp() {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
-            consoleIO.print(GREETING);
-
+            consoleIO.print(GREETING_MESSAGES);
             String input;
             while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
-                // Echo user input for debugging
                 consoleIO.debugPrint(input);
-
                 try {
-                    Command command = Parser.parse(consoleIO, storage, tasks, input);
+                    Command command = Parser.parse(consoleIO, storage, taskList, input);
                     command.execute();
                 } catch (Exception e) {
                     consoleIO.print("<!> " + e.getMessage());
                 }
             }
-
-            consoleIO.print(BYE);
+            consoleIO.print(FAREWELL_MESSAGE);
         } catch (IOException e) {
             logger.log(
                     Level.SEVERE,
@@ -70,6 +68,6 @@ public class Dusk {
 
     public static void main(String[] args) {
         new Dusk();
-        app();
+        runApp();
     }
 }
