@@ -17,16 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ListCommandTest {
 
-    private TaskList tasks;
-    private ConsoleIO consoleIO;
+    private TaskList taskList;
+    private ConsoleIO consoleIo;
 
     /**
      * Sets up the test environment before each test method.
      */
     @BeforeEach
     void setUp() {
-        tasks = new TaskList();
-        consoleIO = new ConsoleIO(System.in, System.out);
+        taskList = new TaskList();
+        consoleIo = new ConsoleIO(System.in, System.out);
     }
 
     /**
@@ -36,11 +36,10 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecute_emptyTaskList_printsEmptyMessage() throws IOException, TaskListException {
-        ListCommand command = new ListCommand(tasks, consoleIO, null, null, null);
-
+    void testExecuteEmptyTaskListPrintsEmptyMessage() throws IOException, TaskListException {
+        ListCommand command = new ListCommand(taskList, consoleIo, null, null, null);
         command.execute();
-        // Verifies that no exception is thrown and method completes successfully
+        // Verifies no exceptions are thrown and execution completes
     }
 
     /**
@@ -50,15 +49,14 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecute_withTasks_noDateFilters() throws IOException, TaskListException {
-        tasks.addTask(new Todo("First Task"));
-        tasks.addTask(new Todo("Second Task"));
+    void testExecuteWithTasksNoDateFilters() throws IOException, TaskListException {
+        taskList.addTask(new Todo("First Task"));
+        taskList.addTask(new Todo("Second Task"));
 
-        ListCommand command = new ListCommand(tasks, consoleIO, null, null, null);
-
+        ListCommand command = new ListCommand(taskList, consoleIo, null, null, null);
         command.execute();
 
-        assertEquals(2, tasks.size(), "Should still have 2 tasks in the list.");
+        assertEquals(2, taskList.size(), "Should still have 2 tasks in the list.");
     }
 
     /**
@@ -68,10 +66,9 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecute_onDateFilter() throws IOException, TaskListException {
-        ListCommand command = new ListCommand(tasks, consoleIO, LocalDateTime.now(), null, null);
-
+    void testExecuteOnDateFilter() throws IOException, TaskListException {
+        ListCommand command = new ListCommand(taskList, consoleIo, LocalDateTime.now(), null, null);
         command.execute();
-        // Verifies that no exception is thrown and method completes successfully
+        // Verifies no exceptions are thrown and execution completes
     }
 }

@@ -1,7 +1,11 @@
 package dusk.task;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for verifying functionality of the {@link TaskList}.
@@ -36,8 +40,10 @@ public class TaskListTest {
         assertEquals(2, taskList.size(), "There should be 2 tasks initially");
 
         Task removedTask = taskList.removeTask(0);
-        assertEquals(sampleTask1, removedTask, "The removed task should match the first task added");
-        assertEquals(1, taskList.size(), "Task list size should be 1 after removal");
+        assertEquals(sampleTask1, removedTask,
+                "The removed task should match the first task added");
+        assertEquals(1, taskList.size(),
+                "Task list size should be 1 after removal");
     }
 
     /**
