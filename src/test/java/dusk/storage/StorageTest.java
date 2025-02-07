@@ -10,11 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 
+/**
+ * Test class for verifying functionality of the Storage component.
+ */
 public class StorageTest {
 
     private Path tempDataFile;
     private Storage storage;
 
+    /**
+     * Sets up the test environment by creating a temporary data file
+     * and initializing the {@link Storage} instance.
+     *
+     * @param tempDir The temporary directory provided by JUnit.
+     * @throws IOException If an I/O error occurs while creating the file.
+     */
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws IOException {
         this.tempDataFile = tempDir.resolve("data.txt");
@@ -27,11 +37,19 @@ public class StorageTest {
         };
     }
 
+    /**
+     * Cleans up any resources used by the storage after each test.
+     */
     @AfterEach
     public void tearDown() {
         storage.shutdownExecutor();
     }
 
+    /**
+     * Tests that saving and then loading tasks results in an identical list of tasks.
+     *
+     * @throws Exception If any exception occurs during the save or load operations.
+     */
     @Test
     public void saveTasks_loadTasks_roundTripSuccess() throws Exception {
         TaskList tasks = new TaskList();
@@ -55,6 +73,11 @@ public class StorageTest {
                 "Second task should remain unmarked by default");
     }
 
+    /**
+     * Tests that an invalid task line in the data file causes a {@link StorageException}.
+     *
+     * @throws Exception If an I/O error occurs while writing to the file.
+     */
     @Test
     public void invalidTaskLine_parseTask_throwsStorageException() throws Exception {
         Files.writeString(tempDataFile, "X|false|InvalidLine\n");
@@ -63,6 +86,11 @@ public class StorageTest {
                 "Corrupted or unrecognized data should throw a StorageException");
     }
 
+    /**
+     * Tests that incomplete data for an Event causes a {@link StorageException}.
+     *
+     * @throws Exception If an I/O error occurs while writing to the file.
+     */
     @Test
     public void incompleteDataForEvent_throwsStorageException() throws Exception {
         Files.writeString(tempDataFile, "E|false|IncompleteEvent|2024-01-01\n");
@@ -71,21 +99,28 @@ public class StorageTest {
                 "Event missing required fields should cause a StorageException");
     }
 
+    /**
+     * Tests that an invalid date/time format in the data file causes a {@link StorageException}.
+     *
+     * @throws Exception If an I/O error occurs while writing to the file.
+     */
     @Test
     public void parseDateTime_invalidFormat_throwsStorageException() throws Exception {
-        // Create a file line with an invalid datetime format
         Files.writeString(tempDataFile, "D|true|BadDate|2024/01/01\n");
 
         assertThrows(StorageException.class, () -> storage.loadTasks(),
                 "Invalid date format should throw a StorageException");
     }
 
+    /**
+     * Verifies that attempting to save tasks does not throw an exception if no I/O errors occur.
+     */
     @Test
     public void saveTasks_ioError_throwsStorageException() {
         TaskList tasks = new TaskList();
         tasks.addTask(new Todo("Unwritable Directory Test"));
 
         assertDoesNotThrow(() -> storage.saveTasks(tasks),
-                "If the path is writable, saving should succeed. Adjust if testing actual I/O failures.");
+                "If the path is writable, saving should succeed.");
     }
 }
