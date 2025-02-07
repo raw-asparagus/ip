@@ -5,8 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+/**
+ * Test class for verifying functionality of the {@link Deadline} task.
+ */
 public class DeadlineTest {
 
+    /**
+     * Tests that the constructor initializes all fields correctly.
+     */
     @Test
     public void constructor_validInputs_initializesCorrectly() {
         LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 23, 59);
@@ -19,6 +25,9 @@ public class DeadlineTest {
         assertFalse(deadline.getDone(), "A newly created deadline should not be marked done");
     }
 
+    /**
+     * Tests that a deadline time within the specified range returns {@code true}.
+     */
     @Test
     public void isWithinRange_timeWithin_returnsTrue() {
         LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 12, 0);
@@ -31,6 +40,9 @@ public class DeadlineTest {
                 "Deadline should be within the given time range");
     }
 
+    /**
+     * Tests that a deadline on a matching date returns {@code true} for isOnDate().
+     */
     @Test
     public void isOnDate_correctDate_returnsTrue() {
         LocalDateTime byTime = LocalDateTime.of(2024, 1, 1, 10, 30);
@@ -41,6 +53,9 @@ public class DeadlineTest {
                 "Deadline should be recognized as occurring on the same day");
     }
 
+    /**
+     * Tests that a deadline on a non-matching date returns {@code false} for isOnDate().
+     */
     @Test
     public void isOnDate_differentDate_returnsFalse() {
         LocalDateTime byTime = LocalDateTime.of(2024, 1, 2, 10, 30);
