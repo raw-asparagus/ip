@@ -1,8 +1,7 @@
 package dusk.command;
 
 /**
- * Enumerates the different types of commands that can be recognized
- * and processed by the application.
+ * Enumerates all supported command types in the application.
  */
 public enum CommandType {
     LIST,
@@ -14,10 +13,11 @@ public enum CommandType {
     EVENT;
 
     /**
-     * Converts a string command into its corresponding {@code CommandType}.
+     * Converts a string to its corresponding CommandType enum,
+     * or returns null if not recognized.
      *
-     * @param command the string representing a command (e.g. "list", "to-do")
-     * @return the matching CommandType, or null if the command is not recognized
+     * @param command the input command string
+     * @return corresponding CommandType or null if not found
      */
     public static CommandType fromString(String command) {
         try {

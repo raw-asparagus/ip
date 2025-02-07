@@ -1,13 +1,12 @@
 package dusk.command;
 
 /**
- * Represents an exception related to invalid or insufficient user inputs
- * for a command.
+ * Represents an exception that occurs due to invalid user input.
  */
 public class InputException extends Exception {
 
     /**
-     * Constructs an {@code InputException} with the specified detail message.
+     * Constructs an InputException with the specified message.
      *
      * @param message the detail message
      */

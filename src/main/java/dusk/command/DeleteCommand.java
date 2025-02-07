@@ -9,22 +9,22 @@ import dusk.ui.ConsoleIO;
 import java.io.IOException;
 
 /**
- * Removes a task from the task list by its index and saves
- * the updated list to storage.
+ * Deletes the task at the specified index from the task list.
  */
 public class DeleteCommand extends Command {
+
     private final TaskList tasks;
     private final ConsoleIO consoleIO;
     private final Storage storage;
     private final String description;
 
     /**
-     * Constructs a DeleteCommand.
+     * Constructs a command for deleting a task.
      *
-     * @param tasks       the task list from which a task will be removed
-     * @param consoleIO   the console I/O for interaction
-     * @param storage     the storage facility for saving task data
-     * @param description the index of the task to be removed
+     * @param tasks       the current task list
+     * @param consoleIO   the console I/O
+     * @param storage     the storage object
+     * @param description the description containing the index of the task to delete
      */
     public DeleteCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage, String description) {
         this.tasks = tasks;
@@ -33,28 +33,18 @@ public class DeleteCommand extends Command {
         this.description = description;
     }
 
-    /**
-     * Removes a task by its index (parsed from the description),
-     * displays a confirmation message, and saves the tasks asynchronously.
-     *
-     * @throws IOException       if an I/O error occurs while printing to the console
-     * @throws InputException    if the index is invalid or not specified
-     * @throws TaskListException if the task cannot be removed from the list
-     */
     @Override
     public void execute() throws IOException, InputException, TaskListException {
-        int idx;
+        int taskIndex;
         try {
-            idx = Integer.parseInt(description) - 1;
-        } catch (NumberFormatException e) {
-            throw new InputException(
-                    "Task number cannot be empty or invalid for a 'DELETE' dusk.command!"
-            );
+            taskIndex = Integer.parseInt(description) - 1;
+        } catch (NumberFormatException exception) {
+            throw new InputException("Task number cannot be empty or invalid for a 'DELETE' command!");
         }
 
-        Task removedTask = tasks.removeTask(idx);
+        Task removedTask = tasks.removeTask(taskIndex);
         consoleIO.print(
-                "Noted. I've removed this dusk.task:",
+                "Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
