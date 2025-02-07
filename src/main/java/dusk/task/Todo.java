@@ -6,7 +6,7 @@ package dusk.task;
 public class Todo extends Task {
 
     /**
-     * Constructs a Todo task with the specified description.
+     * Constructs a To-do task with the specified description.
      *
      * @param description the description of the to-do task
      */

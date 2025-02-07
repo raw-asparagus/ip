@@ -17,16 +17,44 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Manages reading and writing Task data to a persistent storage file, as well
+ * as providing asynchronous operations for loading and saving.
+ */
 public class Storage {
-    private static final DateTimeFormatter STORAGE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd[ HHmm]");
+
+    /**
+     * Formatter to handle date/time information stored in the data file.
+     */
+    private static final DateTimeFormatter STORAGE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd[ HHmm]");
+
+    /**
+     * Path to the file used for persistent storage of tasks.
+     */
     private static final Path DATA_FILE = Paths.get("data", "data.txt");
+
+    /**
+     * Single-threaded executor service for asynchronous operations.
+     */
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Retrieves the path to the data file.
+     *
+     * @return the path of the data file
+     */
     protected Path getDataFile() {
         return DATA_FILE;
     }
 
-    // Asynchronous wrappers
+    /**
+     * Asynchronously saves all tasks in the specified TaskList to the storage file.
+     *
+     * @param tasks the TaskList containing tasks to be saved
+     * @return a CompletableFuture representing the completion of the save operation
+     * @throws CompletionException if a StorageException occurs during the save process
+     */
     public CompletableFuture<Void> saveTasksAsync(TaskList tasks) throws CompletionException {
         return CompletableFuture.runAsync(() -> {
             try {
@@ -37,6 +65,12 @@ public class Storage {
         }, executor);
     }
 
+    /**
+     * Asynchronously loads all tasks from the storage file into a TaskList.
+     *
+     * @return a CompletableFuture resolving to the loaded TaskList
+     * @throws CompletionException if a StorageException occurs during the load process
+     */
     public CompletableFuture<TaskList> loadTasksAsync() throws CompletionException {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -47,7 +81,12 @@ public class Storage {
         }, executor);
     }
 
-    // Mutators
+    /**
+     * Saves all tasks from the given TaskList to the data file.
+     *
+     * @param tasks the TaskList containing tasks to be saved
+     * @throws StorageException if an I/O error occurs or tasks cannot be saved properly
+     */
     public void saveTasks(TaskList tasks) throws StorageException {
         Path dataFile = getDataFile();
 
@@ -68,6 +107,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Converts a Task to its string representation for storage.
+     *
+     * @param task the Task to be converted
+     * @return the string form of the Task suitable for storage
+     * @throws IllegalArgumentException if the Task type is unrecognized
+     */
     private String stringify(Task task) throws IllegalArgumentException {
         String taskType;
         String taskDetails = "";
@@ -92,7 +138,12 @@ public class Storage {
         return taskType + "|" + isDone + "|" + name + taskDetails;
     }
 
-    // Accessors
+    /**
+     * Loads all tasks from the data file into a new TaskList and returns it.
+     *
+     * @return a TaskList containing the loaded Task objects
+     * @throws StorageException if an I/O error occurs during load operations
+     */
     public TaskList loadTasks() throws StorageException {
         TaskList tasks = new TaskList();
         Path dataFile = getDataFile();
@@ -115,6 +166,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Parses a single line of stored data into a Task.
+     *
+     * @param taskLine the string representing the Task's data
+     * @return the Task parsed from the line data
+     * @throws StorageException if the data is corrupted or invalid
+     */
     private Task parseTask(String taskLine) throws StorageException {
         String[] parts = taskLine.split("\\|", -1);
         if (parts.length < 3) {
@@ -131,6 +189,13 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Interprets the split string array as components of a Task object.
+     *
+     * @param parts the array of data fields
+     * @return a Task object (To-do, Deadline, or Event) based on the data
+     * @throws StorageException if the data is missing required fields or has an unknown type
+     */
     private Task parseTaskParts(String[] parts) throws StorageException {
         String taskType = parts[0];
         boolean done = Boolean.parseBoolean(parts[1]);
@@ -166,6 +231,13 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Parses a string into a LocalDateTime based on the designated formatter.
+     *
+     * @param dateStr the string representing the date/time
+     * @return a LocalDateTime if valid, or {@code null} if blank
+     * @throws StorageException if the date/time string is invalid
+     */
     private LocalDateTime parseDateTime(String dateStr) throws StorageException {
         if (dateStr.isBlank()) {
             return null;
@@ -177,6 +249,9 @@ public class Storage {
         }
     }
 
+    /**
+     * Shuts down the executor service used for asynchronous operations.
+     */
     public void shutdownExecutor() {
         executor.shutdown();
     }
