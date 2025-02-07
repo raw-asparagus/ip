@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CreateDeadlineCommandTest {
 
-    private TaskList tasks;
-    private ConsoleIO consoleIO;
+    private TaskList taskList;
+    private ConsoleIO consoleIo;
     private Storage storage;
 
     /**
@@ -26,8 +26,8 @@ class CreateDeadlineCommandTest {
      */
     @BeforeEach
     void setUp() {
-        tasks = new TaskList();
-        consoleIO = new ConsoleIO(System.in, System.out);
+        taskList = new TaskList();
+        consoleIo = new ConsoleIO(System.in, System.out);
         storage = new Storage();
     }
 
@@ -39,27 +39,36 @@ class CreateDeadlineCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecute_validData() throws IOException, InputException, TaskListException {
-        LocalDateTime by = LocalDateTime.now().plusDays(1);
-        CreateDeadlineCommand command = new CreateDeadlineCommand(tasks, consoleIO, storage, "Finish report", by);
+    void testExecuteValidData() throws IOException, InputException, TaskListException {
+        LocalDateTime dueTime = LocalDateTime.now().plusDays(1);
+        CreateDeadlineCommand command = new CreateDeadlineCommand(
+                taskList, consoleIo, storage, "Finish report", dueTime
+        );
 
         command.execute();
 
-        assertEquals(1, tasks.size(), "TaskList should have 1 task after executing a valid CreateDeadlineCommand.");
-        assertFalse(tasks.getTask(0).getDone(), "Newly created task should not be marked done.");
-        assertTrue(tasks.getTask(0).toString().contains("Finish report"),
-                "Task should contain the given description in its string representation.");
+        assertEquals(1, taskList.size(), "TaskList should have 1 task after executing a valid CreateDeadlineCommand.");
+        assertFalse(taskList.getTask(0).getDone(), "Newly created task should not be marked done.");
+        assertTrue(
+                taskList.getTask(0).toString().contains("Finish report"),
+                "Task should contain the given description in its string representation."
+        );
     }
 
     /**
      * Tests that executing CreateDeadlineCommand with an empty description throws an InputException.
      */
     @Test
-    void testExecute_emptyDescription_throwsException() {
-        LocalDateTime by = LocalDateTime.now().plusDays(1);
-        CreateDeadlineCommand command = new CreateDeadlineCommand(tasks, consoleIO, storage, "", by);
+    void testExecuteEmptyDescriptionThrowsException() {
+        LocalDateTime dueTime = LocalDateTime.now().plusDays(1);
+        CreateDeadlineCommand command = new CreateDeadlineCommand(
+                taskList, consoleIo, storage, "", dueTime
+        );
 
-        assertThrows(InputException.class, command::execute,
-                "Executing CreateDeadlineCommand with empty description should throw an InputException.");
+        assertThrows(
+                InputException.class,
+                command::execute,
+                "Executing CreateDeadlineCommand with empty description should throw an InputException."
+        );
     }
 }

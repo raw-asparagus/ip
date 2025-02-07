@@ -13,8 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Parses raw user input into corresponding {@link Command} objects.
- * Extracts command type, description, and date/time flags.
+ * Parses user input strings and returns the corresponding command object.
  */
 public class Parser {
 
@@ -32,21 +31,23 @@ public class Parser {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             new DateTimeFormatterBuilder()
                     .appendPattern("yyyy-MM-dd")
-                    .optionalStart().appendLiteral(' ')
-                    .appendPattern("HHmm").optionalEnd()
+                    .optionalStart()
+                    .appendLiteral(' ')
+                    .appendPattern("HHmm")
+                    .optionalEnd()
                     .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                     .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                     .toFormatter();
 
     /**
-     * Parses a line of user input and returns the corresponding {@link Command}.
+     * Parses a user input string and constructs the appropriate command object.
      *
-     * @param consoleIO the console I/O for interaction
-     * @param storage   the storage facility for saving task data
-     * @param tasks     the task list that commands will act upon
-     * @param input     the raw user input to parse
-     * @return a {@link Command} object representing the parsed input
-     * @throws InputException if the input is empty, invalid, or the command is unknown
+     * @param consoleIO the console I/O
+     * @param storage   the storage object
+     * @param tasks     the current task list
+     * @param input     the raw user input string
+     * @return the command object corresponding to the user input
+     * @throws InputException if the command is invalid or incorrectly formatted
      */
     public static Command parse(ConsoleIO consoleIO, Storage storage,
                                 TaskList tasks, String input) throws InputException {
@@ -90,7 +91,6 @@ public class Parser {
                     case "to" -> toStr = foundValue;
                     case "by" -> byStr = foundValue;
                     default -> {
-                        // Ignore unknown flags
                     }
                     }
                 }
@@ -109,18 +109,10 @@ public class Parser {
             case DELETE -> new DeleteCommand(tasks, consoleIO, storage, description);
             case TODO -> new CreateTodoCommand(tasks, consoleIO, storage, description);
             case DEADLINE -> new CreateDeadlineCommand(tasks, consoleIO, storage, description, byDateTime);
-            case EVENT -> new CreateEventCommand(tasks, consoleIO, storage, description,
-                    fromDateTime, toDateTime);
+            case EVENT -> new CreateEventCommand(tasks, consoleIO, storage, description, fromDateTime, toDateTime);
         };
     }
 
-    /**
-     * Parses a date/time string into a {@link LocalDateTime} using the specified format.
-     *
-     * @param dateTimeStr the string representing the date/time
-     * @return a {@link LocalDateTime} parsed from the string, or {@code null} if the string is blank
-     * @throws InputException if the string cannot be parsed to a valid date/time
-     */
     private static LocalDateTime parseDateTime(String dateTimeStr) throws InputException {
         if (dateTimeStr == null || dateTimeStr.isBlank()) {
             return null;

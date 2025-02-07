@@ -13,27 +13,28 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ParserTest {
 
-    private ConsoleIO consoleIO;
+    private ConsoleIO consoleIo;
     private Storage storage;
-    private TaskList tasks;
+    private TaskList taskList;
 
     /**
      * Sets up the test environment before each test method.
      */
     @BeforeEach
     void setUp() {
-        consoleIO = new ConsoleIO(System.in, System.out);
+        consoleIo = new ConsoleIO(System.in, System.out);
         storage = new Storage();
-        tasks = new TaskList();
+        taskList = new TaskList();
     }
 
     /**
      * Tests that parsing an empty input string throws an InputException.
      */
     @Test
-    void parse_emptyInput_throwsInputException() {
-        assertThrows(InputException.class, () ->
-                        Parser.parse(consoleIO, storage, tasks, ""),
+    void parseEmptyInputThrowsInputException() {
+        assertThrows(
+                InputException.class,
+                () -> Parser.parse(consoleIo, storage, taskList, ""),
                 "Parser should throw InputException for empty input."
         );
     }
@@ -42,9 +43,10 @@ class ParserTest {
      * Tests that parsing an unrecognized command string throws an InputException.
      */
     @Test
-    void parse_invalidCommand_throwsInputException() {
-        assertThrows(InputException.class, () ->
-                        Parser.parse(consoleIO, storage, tasks, "unknowncommand"),
+    void parseInvalidCommandThrowsInputException() {
+        assertThrows(
+                InputException.class,
+                () -> Parser.parse(consoleIo, storage, taskList, "unknowncommand"),
                 "Parser should throw InputException for invalid or unrecognized commands."
         );
     }
@@ -55,9 +57,13 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_listCommand_returnsListCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "list");
-        assertInstanceOf(ListCommand.class, command, "Parser should return a ListCommand for 'list' input.");
+    void parseListCommandReturnsListCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "list");
+        assertInstanceOf(
+                ListCommand.class,
+                command,
+                "Parser should return a ListCommand for 'list' input."
+        );
     }
 
     /**
@@ -66,10 +72,13 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_todoCommand_returnsCreateTodoCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "todo Buy groceries");
-        assertInstanceOf(CreateTodoCommand.class, command,
-                "Parser should return a CreateTodoCommand for 'todo' input.");
+    void parseTodoCommandReturnsCreateTodoCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "todo Buy groceries");
+        assertInstanceOf(
+                CreateTodoCommand.class,
+                command,
+                "Parser should return a CreateTodoCommand for 'todo' input."
+        );
     }
 
     /**
@@ -78,10 +87,18 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_deadlineCommand_returnsCreateDeadlineCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "deadline Finish assignment /by 2023-10-10 1300");
-        assertInstanceOf(CreateDeadlineCommand.class, command,
-                "Parser should return a CreateDeadlineCommand for 'deadline' input with /by date.");
+    void parseDeadlineCommandReturnsCreateDeadlineCommand() throws InputException {
+        Command command = Parser.parse(
+                consoleIo,
+                storage,
+                taskList,
+                "deadline Finish assignment /by 2023-10-10 1300"
+        );
+        assertInstanceOf(
+                CreateDeadlineCommand.class,
+                command,
+                "Parser should return a CreateDeadlineCommand for 'deadline' input with /by date."
+        );
     }
 
     /**
@@ -90,24 +107,28 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_eventCommand_returnsCreateEventCommand() throws InputException {
+    void parseEventCommandReturnsCreateEventCommand() throws InputException {
         Command command = Parser.parse(
-                consoleIO,
+                consoleIo,
                 storage,
-                tasks,
+                taskList,
                 "event Team meeting /from 2023-12-01 /to 2023-12-01 1500"
         );
-        assertInstanceOf(CreateEventCommand.class, command,
-                "Parser should return a CreateEventCommand for 'event' input with /from and /to dates.");
+        assertInstanceOf(
+                CreateEventCommand.class,
+                command,
+                "Parser should return a CreateEventCommand for 'event' input with /from and /to dates."
+        );
     }
 
     /**
      * Tests that parsing an invalid date/time format throws an InputException.
      */
     @Test
-    void parse_invalidDateTime_throwsInputException() {
-        assertThrows(InputException.class, () ->
-                        Parser.parse(consoleIO, storage, tasks, "deadline Something /by 2023-99-99"),
+    void parseInvalidDateTimeThrowsInputException() {
+        assertThrows(
+                InputException.class,
+                () -> Parser.parse(consoleIo, storage, taskList, "deadline Something /by 2023-99-99"),
                 "Parser should throw InputException on invalid date/time format."
         );
     }
@@ -118,9 +139,13 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_markCommand_returnsMarkCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "mark 1");
-        assertInstanceOf(MarkCommand.class, command, "Parser should return a MarkCommand for 'mark' input.");
+    void parseMarkCommandReturnsMarkCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "mark 1");
+        assertInstanceOf(
+                MarkCommand.class,
+                command,
+                "Parser should return a MarkCommand for 'mark' input."
+        );
     }
 
     /**
@@ -129,9 +154,13 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_unmarkCommand_returnsMarkCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "unmark 1");
-        assertInstanceOf(MarkCommand.class, command, "Parser should return a MarkCommand for 'unmark' input.");
+    void parseUnmarkCommandReturnsMarkCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "unmark 1");
+        assertInstanceOf(
+                MarkCommand.class,
+                command,
+                "Parser should return a MarkCommand for 'unmark' input."
+        );
     }
 
     /**
@@ -140,9 +169,12 @@ class ParserTest {
      * @throws InputException if there is an invalid input to the command.
      */
     @Test
-    void parse_deleteCommand_returnsDeleteCommand() throws InputException {
-        Command command = Parser.parse(consoleIO, storage, tasks, "delete 1");
-        assertInstanceOf(DeleteCommand.class, command,
-                "Parser should return a DeleteCommand for 'delete' input.");
+    void parseDeleteCommandReturnsDeleteCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "delete 1");
+        assertInstanceOf(
+                DeleteCommand.class,
+                command,
+                "Parser should return a DeleteCommand for 'delete' input."
+        );
     }
 }

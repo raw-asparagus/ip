@@ -32,15 +32,36 @@ public class Dusk {
      */
     public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
 
-    private static final Logger logger = Logger.getLogger(Dusk.class.getName());
-    private static final Storage storage = new Storage();
+    /**
+     * Logger used throughout the Dusk application.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Dusk.class.getName());
+
+    /**
+     * Provides task-related storage, including loading and saving tasks asynchronously.
+     */
+    private static final Storage STORAGE = new Storage();
+
+    /**
+     * Maintains the current list of tasks.
+     */
     private static TaskList taskList;
 
     /**
-     * Constructs a new Dusk instance and attempts to load tasks.
+     * Constructs a new Dusk instance and attempts to load tasks from storage.
      */
     public Dusk() {
-        loadTasks();
+        loadTasksFromStorage();
+    }
+
+    /**
+     * Main entry point for the Dusk application.
+     *
+     * @param args command-line arguments (not used in this application)
+     */
+    public static void main(String[] args) {
+        new Dusk();
+        runApplication();
     }
 
     /**
@@ -48,14 +69,13 @@ public class Dusk {
      * continues reading user input until "bye" is entered, and then prints a
      * farewell message before shutting down.
      */
-    public static void runApp() {
+    public static void runApplication() {
         try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
             consoleIO.print(GREETING_MESSAGES);
             String input;
             while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
-                consoleIO.debugPrint(input);
                 try {
-                    Command command = Parser.parse(consoleIO, storage, taskList, input);
+                    Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
                     command.execute();
                 } catch (Exception e) {
                     consoleIO.print("<!> " + e.getMessage());
@@ -63,39 +83,25 @@ public class Dusk {
             }
             consoleIO.print(FAREWELL_MESSAGE);
         } catch (IOException e) {
-            logger.log(
-                    Level.SEVERE,
-                    "An error occurred while handling I/O operations using ConsoleIO.",
-                    e
-            );
+            LOGGER.log(Level.SEVERE, "An error occurred while handling I/O operations using ConsoleIO.", e);
         } finally {
-            storage.shutdownExecutor();
+            STORAGE.shutdownExecutor();
         }
     }
 
     /**
-     * The main entry point for the Dusk application. Creates a Dusk instance
-     * and invokes the runApp() method.
-     *
-     * @param args command-line arguments (not used in this application)
-     */
-    public static void main(String[] args) {
-        new Dusk();
-        runApp();
-    }
-
-    /**
-     * Loads tasks asynchronously from storage into a TaskList object.
+     * Loads tasks asynchronously from STORAGE into a TaskList.
      * If the loading process results in an error, the exception is logged.
      */
-    private void loadTasks() {
-        CompletableFuture<TaskList> loadFuture = storage.loadTasksAsync();
+    private void loadTasksFromStorage() {
+        CompletableFuture<TaskList> loadFuture = STORAGE.loadTasksAsync();
         try {
             taskList = loadFuture.get();
         } catch (InterruptedException | ExecutionException e) {
-            logger.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+            LOGGER.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
+            Thread.currentThread().interrupt();
         } catch (CompletionException e) {
-            logger.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 }

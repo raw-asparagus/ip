@@ -55,8 +55,8 @@ public class Deadline extends Task {
     }
 
     /**
-     * Checks if this deadline occurs on the specified date.
-     * Matches only the date portion, ignoring specific times.
+     * Checks if this deadline occurs on the specified date
+     * (matching only the date portion, ignoring specific times).
      *
      * @param date the LocalDateTime whose date will be compared against this deadline
      * @return true if the deadline's date is the same as the specified date, false otherwise

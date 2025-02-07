@@ -20,10 +20,10 @@ public abstract class Task {
      * Constructs a Task with the specified description.
      * The task is initially marked as not done.
      *
-     * @param desc the text description for the task
+     * @param description the text description for the task
      */
-    public Task(String desc) {
-        this.description = desc;
+    public Task(String description) {
+        this.description = description;
         this.isDone = false;
     }
 
