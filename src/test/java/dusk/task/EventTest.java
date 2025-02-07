@@ -1,0 +1,70 @@
+package dusk.task;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+
+public class EventTest {
+
+    @Test
+    public void constructor_validInputs_initializesCorrectly() {
+        LocalDateTime startTime = LocalDateTime.of(2023, 11, 1, 14, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 11, 1, 16, 0);
+        Event event = new Event("Company Meeting", startTime, endTime);
+
+        assertEquals("Company Meeting", event.getName(),
+                "Event description should match constructor argument");
+        assertEquals(startTime, event.getFrom(),
+                "Start time should match constructor argument");
+        assertEquals(endTime, event.getTo(),
+                "End time should match constructor argument");
+        assertFalse(event.getDone(), "A newly created event should not be marked done");
+    }
+
+    @Test
+    public void isWithinRange_inRange_returnsTrue() {
+        LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 10, 0);
+        LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 12, 0);
+        Event event = new Event("Morning Session", fromTime, toTime);
+
+        LocalDateTime rangeStart = LocalDateTime.of(2023, 11, 1, 9, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2023, 11, 1, 13, 0);
+
+        assertTrue(event.isWithinRange(rangeStart, rangeEnd),
+                "Event times should lie within the specified range");
+    }
+
+    @Test
+    public void isWithinRange_outOfRange_returnsFalse() {
+        LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 15, 0);
+        LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 16, 0);
+        Event event = new Event("Afternoon Session", fromTime, toTime);
+
+        LocalDateTime rangeStart = LocalDateTime.of(2023, 11, 1, 9, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2023, 11, 1, 10, 0);
+
+        assertFalse(event.isWithinRange(rangeStart, rangeEnd),
+                "Event times should not lie within the specified range");
+    }
+
+    @Test
+    public void isOnDate_exactDate_returnsTrue() {
+        LocalDateTime startTime = LocalDateTime.of(2024, 3, 1, 9, 30);
+        LocalDateTime endTime = LocalDateTime.of(2024, 3, 1, 11, 30);
+        Event event = new Event("Conference", startTime, endTime);
+
+        LocalDateTime sameDay = LocalDateTime.of(2024, 3, 1, 0, 0);
+        assertTrue(event.isOnDate(sameDay), "Event should be found on the same day");
+    }
+
+    @Test
+    public void isOnDate_differentDate_returnsFalse() {
+        LocalDateTime startTime = LocalDateTime.of(2024, 3, 2, 12, 0);
+        LocalDateTime endTime = LocalDateTime.of(2024, 3, 2, 13, 0);
+        Event event = new Event("March Gathering", startTime, endTime);
+
+        LocalDateTime otherDay = LocalDateTime.of(2024, 3, 1, 0, 0);
+        assertFalse(event.isOnDate(otherDay), "Event should not be found on a different day");
+    }
+}

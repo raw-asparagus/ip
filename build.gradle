@@ -1,11 +1,14 @@
 plugins {
     id 'java'
     id 'application'
+//    id 'checkstyle'
+//    uncomment above after implementing checkstyle
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -28,11 +31,11 @@ test {
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("dusk.Dusk")
 }
 
 shadowJar {
-    archiveBaseName = "duke"
+    archiveBaseName = "dusk"
     archiveClassifier = null
 }
 
