@@ -37,7 +37,7 @@ public class Storage {
     /**
      * Single-threaded executor service for asynchronous operations.
      */
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     /**
      * Retrieves the path to the data file.
@@ -62,7 +62,7 @@ public class Storage {
             } catch (StorageException e) {
                 throw new CompletionException(e);
             }
-        }, executor);
+        }, EXECUTOR_SERVICE);
     }
 
     /**
@@ -78,7 +78,7 @@ public class Storage {
             } catch (StorageException e) {
                 throw new CompletionException(e);
             }
-        }, executor);
+        }, EXECUTOR_SERVICE);
     }
 
     /**
@@ -89,7 +89,6 @@ public class Storage {
      */
     public void saveTasks(TaskList tasks) throws StorageException {
         Path dataFile = getDataFile();
-
         try {
             Files.createDirectories(dataFile.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(dataFile, StandardCharsets.UTF_8)) {
@@ -105,6 +104,40 @@ public class Storage {
         } catch (IllegalArgumentException | TaskListException e) {
             throw new StorageException("Error saving tasks: " + e.getMessage());
         }
+    }
+
+    /**
+     * Loads all tasks from the data file into a new TaskList and returns it.
+     *
+     * @return a TaskList containing the loaded Task objects
+     * @throws StorageException if an I/O error occurs during load operations
+     */
+    public TaskList loadTasks() throws StorageException {
+        TaskList tasks = new TaskList();
+        Path dataFile = getDataFile();
+        try {
+            Files.createDirectories(dataFile.getParent());
+            if (!Files.exists(dataFile)) {
+                return tasks;
+            }
+            try (BufferedReader reader = Files.newBufferedReader(dataFile, StandardCharsets.UTF_8)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Task task = parseTask(line);
+                    tasks.addTask(task);
+                }
+            }
+            return tasks;
+        } catch (IOException e) {
+            throw new StorageException("An error occurred while handling I/O operations.");
+        }
+    }
+
+    /**
+     * Shuts down the executor service used for asynchronous operations.
+     */
+    public void shutdownExecutor() {
+        EXECUTOR_SERVICE.shutdown();
     }
 
     /**
@@ -139,34 +172,6 @@ public class Storage {
     }
 
     /**
-     * Loads all tasks from the data file into a new TaskList and returns it.
-     *
-     * @return a TaskList containing the loaded Task objects
-     * @throws StorageException if an I/O error occurs during load operations
-     */
-    public TaskList loadTasks() throws StorageException {
-        TaskList tasks = new TaskList();
-        Path dataFile = getDataFile();
-
-        try {
-            Files.createDirectories(dataFile.getParent());
-            if (!Files.exists(dataFile)) {
-                return tasks;
-            }
-            try (BufferedReader reader = Files.newBufferedReader(dataFile, StandardCharsets.UTF_8)) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    Task task = parseTask(line);
-                    tasks.addTask(task);
-                }
-            }
-            return tasks;
-        } catch (IOException e) {
-            throw new StorageException("An error occurred while handling I/O operations.");
-        }
-    }
-
-    /**
      * Parses a single line of stored data into a Task.
      *
      * @param taskLine the string representing the Task's data
@@ -193,7 +198,7 @@ public class Storage {
      * Interprets the split string array as components of a Task object.
      *
      * @param parts the array of data fields
-     * @return a Task object (To-do, Deadline, or Event) based on the data
+     * @return a Task object based on the data
      * @throws StorageException if the data is missing required fields or has an unknown type
      */
     private Task parseTaskParts(String[] parts) throws StorageException {
@@ -247,12 +252,5 @@ public class Storage {
         } catch (DateTimeParseException e) {
             throw new StorageException("Invalid date format: \"" + dateStr + "\"");
         }
-    }
-
-    /**
-     * Shuts down the executor service used for asynchronous operations.
-     */
-    public void shutdownExecutor() {
-        executor.shutdown();
     }
 }
