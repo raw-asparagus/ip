@@ -12,7 +12,12 @@ import java.time.temporal.ChronoField;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Parses raw user input into corresponding {@link Command} objects.
+ * Extracts command type, description, and date/time flags.
+ */
 public class Parser {
+
     private static final Pattern FLAGS_PATTERN = Pattern.compile(
             "/(?<flag>on|from|to|by)\\s*(?<value>[^/]+)?",
             Pattern.CASE_INSENSITIVE
@@ -33,6 +38,16 @@ public class Parser {
                     .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                     .toFormatter();
 
+    /**
+     * Parses a line of user input and returns the corresponding {@link Command}.
+     *
+     * @param consoleIO the console I/O for interaction
+     * @param storage   the storage facility for saving task data
+     * @param tasks     the task list that commands will act upon
+     * @param input     the raw user input to parse
+     * @return a {@link Command} object representing the parsed input
+     * @throws InputException if the input is empty, invalid, or the command is unknown
+     */
     public static Command parse(ConsoleIO consoleIO, Storage storage,
                                 TaskList tasks, String input) throws InputException {
         if (input.isBlank()) {
@@ -70,12 +85,13 @@ public class Parser {
                 }
                 if (foundFlag != null) {
                     switch (foundFlag.toLowerCase()) {
-                        case "on" -> onStr = foundValue;
-                        case "from" -> fromStr = foundValue;
-                        case "to" -> toStr = foundValue;
-                        case "by" -> byStr = foundValue;
-                        default -> {
-                        }
+                    case "on" -> onStr = foundValue;
+                    case "from" -> fromStr = foundValue;
+                    case "to" -> toStr = foundValue;
+                    case "by" -> byStr = foundValue;
+                    default -> {
+                        // Ignore unknown flags
+                    }
                     }
                 }
             }
@@ -98,6 +114,13 @@ public class Parser {
         };
     }
 
+    /**
+     * Parses a date/time string into a {@link LocalDateTime} using the specified format.
+     *
+     * @param dateTimeStr the string representing the date/time
+     * @return a {@link LocalDateTime} parsed from the string, or {@code null} if the string is blank
+     * @throws InputException if the string cannot be parsed to a valid date/time
+     */
     private static LocalDateTime parseDateTime(String dateTimeStr) throws InputException {
         if (dateTimeStr == null || dateTimeStr.isBlank()) {
             return null;
@@ -109,5 +132,4 @@ public class Parser {
                     + dateTimeStr);
         }
     }
-
 }
