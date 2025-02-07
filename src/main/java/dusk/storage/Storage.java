@@ -22,6 +22,10 @@ public class Storage {
     private static final Path DATA_FILE = Paths.get("data", "data.txt");
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    protected Path getDataFile() {
+        return DATA_FILE;
+    }
+
     // Asynchronous wrappers
     public CompletableFuture<Void> saveTasksAsync(TaskList tasks) throws CompletionException {
         return CompletableFuture.runAsync(() -> {
@@ -45,9 +49,11 @@ public class Storage {
 
     // Mutators
     public void saveTasks(TaskList tasks) throws StorageException {
+        Path dataFile = getDataFile();
+
         try {
-            Files.createDirectories(DATA_FILE.getParent());
-            try (BufferedWriter writer = Files.newBufferedWriter(DATA_FILE, StandardCharsets.UTF_8)) {
+            Files.createDirectories(dataFile.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(dataFile, StandardCharsets.UTF_8)) {
                 for (int i = 0; i < tasks.size(); i++) {
                     Task task = tasks.getTask(i);
                     String line = stringify(task);
@@ -89,12 +95,14 @@ public class Storage {
     // Accessors
     public TaskList loadTasks() throws StorageException {
         TaskList tasks = new TaskList();
+        Path dataFile = getDataFile();
+
         try {
-            Files.createDirectories(DATA_FILE.getParent());
-            if (!Files.exists(DATA_FILE)) {
+            Files.createDirectories(dataFile.getParent());
+            if (!Files.exists(dataFile)) {
                 return tasks;
             }
-            try (BufferedReader reader = Files.newBufferedReader(DATA_FILE, StandardCharsets.UTF_8)) {
+            try (BufferedReader reader = Files.newBufferedReader(dataFile, StandardCharsets.UTF_8)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Task task = parseTask(line);
@@ -115,7 +123,7 @@ public class Storage {
 
         Task task;
         try {
-            task = getDataFile(parts);
+            task = parseTaskParts(parts);
         } catch (StorageException e) {
             throw new StorageException("Data corrupted: " + e.getMessage());
         }
@@ -123,7 +131,7 @@ public class Storage {
         return task;
     }
 
-    private Task getDataFile(String[] parts) throws StorageException {
+    private Task parseTaskParts(String[] parts) throws StorageException {
         String taskType = parts[0];
         boolean done = Boolean.parseBoolean(parts[1]);
         String description = parts[2];
