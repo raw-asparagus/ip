@@ -13,7 +13,11 @@ public class ConsoleIO implements Closeable {
     }
 
     public String readLine() throws IOException {
-        return reader.readLine().trim();
+        String line = reader.readLine();
+        if (line == null) {
+            return null;
+        }
+        return line.trim();
     }
 
     public void print(String... messages) throws IOException {
