@@ -163,4 +163,24 @@ public class TaskList {
         }
         return result;
     }
+
+    /**
+     * Searches for tasks whose descriptions contain the specified keyword.
+     *
+     * @param keyword the search keyword
+     * @return a TaskList containing tasks with descriptions that match the keyword
+     * @throws TaskListException if an error occurs while retrieving a task
+     */
+    public TaskList search(String keyword) throws TaskListException {
+        TaskList result = new TaskList();
+        for (int i = 0; i < this.size(); i++) {
+            Task task = this.getTask(i);
+            // Check if the task description contains the keyword (case-insensitive)
+            if (task.getName().toLowerCase().contains(keyword.toLowerCase())) {
+                result.addTask(task);
+            }
+        }
+        return result;
+    }
+
 }
