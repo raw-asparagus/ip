@@ -1,12 +1,21 @@
 package dusk.task;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Test class for verifying functionality of the {@link Event} task.
+ */
 public class EventTest {
 
+    /**
+     * Tests that constructor initializes an event with the expected fields.
+     */
     @Test
     public void constructor_validInputs_initializesCorrectly() {
         LocalDateTime startTime = LocalDateTime.of(2023, 11, 1, 14, 0);
@@ -22,6 +31,9 @@ public class EventTest {
         assertFalse(event.getDone(), "A newly created event should not be marked done");
     }
 
+    /**
+     * Tests that an event falling entirely within the specified range returns {@code true}.
+     */
     @Test
     public void isWithinRange_inRange_returnsTrue() {
         LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 10, 0);
@@ -35,6 +47,9 @@ public class EventTest {
                 "Event times should lie within the specified range");
     }
 
+    /**
+     * Tests that an event completely outside the specified range returns {@code false}.
+     */
     @Test
     public void isWithinRange_outOfRange_returnsFalse() {
         LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 15, 0);
@@ -48,6 +63,9 @@ public class EventTest {
                 "Event times should not lie within the specified range");
     }
 
+    /**
+     * Tests that an event on the exact specified date returns {@code true} for isOnDate().
+     */
     @Test
     public void isOnDate_exactDate_returnsTrue() {
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 1, 9, 30);
@@ -55,9 +73,13 @@ public class EventTest {
         Event event = new Event("Conference", startTime, endTime);
 
         LocalDateTime sameDay = LocalDateTime.of(2024, 3, 1, 0, 0);
-        assertTrue(event.isOnDate(sameDay), "Event should be found on the same day");
+        assertTrue(event.isOnDate(sameDay),
+                "Event should be found on the same day");
     }
 
+    /**
+     * Tests that an event not on the specified date returns {@code false} for isOnDate().
+     */
     @Test
     public void isOnDate_differentDate_returnsFalse() {
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 2, 12, 0);
@@ -65,6 +87,7 @@ public class EventTest {
         Event event = new Event("March Gathering", startTime, endTime);
 
         LocalDateTime otherDay = LocalDateTime.of(2024, 3, 1, 0, 0);
-        assertFalse(event.isOnDate(otherDay), "Event should not be found on a different day");
+        assertFalse(event.isOnDate(otherDay),
+                "Event should not be found on a different day");
     }
 }

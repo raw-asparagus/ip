@@ -12,7 +12,11 @@ import java.time.temporal.ChronoField;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Parses user input strings and returns the corresponding command object.
+ */
 public class Parser {
+
     private static final Pattern FLAGS_PATTERN = Pattern.compile(
             "/(?<flag>on|from|to|by)\\s*(?<value>[^/]+)?",
             Pattern.CASE_INSENSITIVE
@@ -27,12 +31,24 @@ public class Parser {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             new DateTimeFormatterBuilder()
                     .appendPattern("yyyy-MM-dd")
-                    .optionalStart().appendLiteral(' ')
-                    .appendPattern("HHmm").optionalEnd()
+                    .optionalStart()
+                    .appendLiteral(' ')
+                    .appendPattern("HHmm")
+                    .optionalEnd()
                     .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                     .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                     .toFormatter();
 
+    /**
+     * Parses a user input string and constructs the appropriate command object.
+     *
+     * @param consoleIO the console I/O
+     * @param storage   the storage object
+     * @param tasks     the current task list
+     * @param input     the raw user input string
+     * @return the command object corresponding to the user input
+     * @throws InputException if the command is invalid or incorrectly formatted
+     */
     public static Command parse(ConsoleIO consoleIO, Storage storage,
                                 TaskList tasks, String input) throws InputException {
         if (input.isBlank()) {
@@ -70,12 +86,12 @@ public class Parser {
                 }
                 if (foundFlag != null) {
                     switch (foundFlag.toLowerCase()) {
-                        case "on" -> onStr = foundValue;
-                        case "from" -> fromStr = foundValue;
-                        case "to" -> toStr = foundValue;
-                        case "by" -> byStr = foundValue;
-                        default -> {
-                        }
+                    case "on" -> onStr = foundValue;
+                    case "from" -> fromStr = foundValue;
+                    case "to" -> toStr = foundValue;
+                    case "by" -> byStr = foundValue;
+                    default -> {
+                    }
                     }
                 }
             }
@@ -93,8 +109,7 @@ public class Parser {
             case DELETE -> new DeleteCommand(tasks, consoleIO, storage, description);
             case TODO -> new CreateTodoCommand(tasks, consoleIO, storage, description);
             case DEADLINE -> new CreateDeadlineCommand(tasks, consoleIO, storage, description, byDateTime);
-            case EVENT -> new CreateEventCommand(tasks, consoleIO, storage, description,
-                    fromDateTime, toDateTime);
+            case EVENT -> new CreateEventCommand(tasks, consoleIO, storage, description, fromDateTime, toDateTime);
         };
     }
 
@@ -109,5 +124,4 @@ public class Parser {
                     + dateTimeStr);
         }
     }
-
 }

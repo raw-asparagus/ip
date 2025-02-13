@@ -50,7 +50,7 @@ public class TaskList {
      * Marks the specified task as done.
      *
      * @param index the 0-based position of the task to mark
-     * @throws TaskListException   if the index is out of bounds
+     * @throws TaskListException if the index is out of bounds
      * @throws MarkTaskException if the task is already marked as done
      */
     public void markTask(int index) throws TaskListException, MarkTaskException {
@@ -69,7 +69,7 @@ public class TaskList {
      * Marks the specified task as not done.
      *
      * @param index the 0-based position of the task to unmark
-     * @throws TaskListException   if the index is out of bounds
+     * @throws TaskListException if the index is out of bounds
      * @throws MarkTaskException if the task is already marked as not done
      */
     public void unmarkTask(int index) throws TaskListException, MarkTaskException {

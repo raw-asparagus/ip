@@ -8,14 +8,27 @@ import dusk.ui.ConsoleIO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/**
+ * Lists tasks in various ways based on the provided arguments
+ * (e.g., tasks on a certain date, tasks within a date range, or all tasks).
+ */
 public class ListCommand extends Command {
+
     private final TaskList tasks;
     private final ConsoleIO consoleIO;
-
     private final LocalDateTime onDate;
     private final LocalDateTime fromDate;
     private final LocalDateTime toDate;
 
+    /**
+     * Constructs a command for listing tasks.
+     *
+     * @param tasks     the current task list
+     * @param consoleIO the console I/O
+     * @param onDate    date to filter tasks exactly on
+     * @param fromDate  start date to filter tasks
+     * @param toDate    end date to filter tasks
+     */
     public ListCommand(TaskList tasks,
                        ConsoleIO consoleIO,
                        LocalDateTime onDate,
@@ -37,7 +50,7 @@ public class ListCommand extends Command {
 
         if (onDate != null) {
             TaskList onList = tasks.getTasksOn(onDate);
-            printTasks(onList, "Here are the tasks on " + onDate.toLocalDate().toString() + ":");
+            printTasks(onList, "Here are the tasks on " + onDate.toLocalDate() + ":");
             return;
         }
 
