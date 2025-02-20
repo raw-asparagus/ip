@@ -20,7 +20,6 @@ import javafx.scene.layout.HBox;
  * be used within a graphical user interface. It encapsulates a message
  * in the form of text along with an image, typically used to represent
  * dialog from either the user or the application within a chat-like system.
- * <p>
  * The class provides methods to create user-specific and application-specific
  * dialog boxes, with their orientations adjusted accordingly for intuitive
  * visual differentiation.
@@ -50,6 +49,9 @@ public class DialogBox extends HBox {
      * @param img  the image to display alongside the text in the dialog box
      */
     private DialogBox(String text, Image img) {
+        // Assert that text is not null as it's required for dialog
+        assert text != null : "Dialog text cannot be null";
+
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);

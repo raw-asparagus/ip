@@ -44,6 +44,8 @@ public class MainWindow extends AnchorPane {
      * Injects the Dusk instance
      */
     public void setDusk(Dusk d) {
+        assert d != null : "Dusk instance cannot be null";
+
         dusk = d;
 
         // Display greeting messages when window initializes
@@ -59,6 +61,13 @@ public class MainWindow extends AnchorPane {
         if (input.isEmpty()) {
             return;
         }
+
+        // Assert that dusk instance has been initialized
+        assert dusk != null : "Dusk instance must be initialized before handling input";
+
+        // Assert that dialog container exists
+        assert dialogContainer != null : "Dialog container must be initialized";
+
 
         // Display user input
         dialogContainer.getChildren().add(
@@ -81,6 +90,10 @@ public class MainWindow extends AnchorPane {
      * @param response the message to display
      */
     private void displayDuskResponse(String response) {
+        // Assert response is not null as it's required for display
+        assert response != null : "Response cannot be null";
+        assert dialogContainer != null : "Dialog container must be initialized";
+
         dialogContainer.getChildren().add(
                 DialogBox.getDuskDialog(response, duskImage));
     }
