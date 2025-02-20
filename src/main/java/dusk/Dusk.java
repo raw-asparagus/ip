@@ -74,18 +74,28 @@ public class Dusk {
             consoleIO.print(GREETING_MESSAGES);
             String input;
             while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
-                try {
-                    Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
-                    command.execute();
-                } catch (Exception e) {
-                    consoleIO.print("<!> " + e.getMessage());
-                }
+                processUserInput(consoleIO, input);
             }
             consoleIO.print(FAREWELL_MESSAGE);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "An error occurred while handling I/O operations using ConsoleIO.", e);
         } finally {
             STORAGE.shutdownExecutor();
+        }
+    }
+
+    /**
+     * Processes a single line of user input by parsing it into a command and executing it.
+     *
+     * @param consoleIO the console I/O handler
+     * @param input the user input to process
+     */
+    private static void processUserInput(ConsoleIO consoleIO, String input) throws IOException {
+        try {
+            Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
+            command.execute();
+        } catch (Exception e) {
+            consoleIO.print(String.format("<!> %s", e.getMessage()));
         }
     }
 
@@ -103,5 +113,12 @@ public class Dusk {
         } catch (CompletionException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
+    }
+
+    /**
+     * Generates a response for the user's chat message.
+     */
+    public String getResponse(String input) {
+        return "Dusk heard: " + input;
     }
 }
