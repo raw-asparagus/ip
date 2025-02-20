@@ -1,5 +1,7 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import dusk.storage.Storage;
