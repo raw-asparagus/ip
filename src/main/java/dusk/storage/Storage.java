@@ -1,12 +1,5 @@
 package dusk.storage;
 
-import dusk.task.Task;
-import dusk.task.Deadline;
-import dusk.task.Event;
-import dusk.task.Todo;
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,6 +14,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import dusk.task.Deadline;
+import dusk.task.Event;
+import dusk.task.Task;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.task.Todo;
 
 /**
  * Manages reading and writing Task data to a persistent storage file, as well

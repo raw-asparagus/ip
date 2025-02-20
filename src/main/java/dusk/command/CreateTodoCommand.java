@@ -1,11 +1,11 @@
 package dusk.command;
 
+import java.io.IOException;
+
 import dusk.storage.Storage;
 import dusk.task.TaskList;
 import dusk.task.Todo;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
 
 /**
  * Creates a new todo task with a specified description.
@@ -21,7 +21,7 @@ public class CreateTodoCommand extends Command {
      * Constructs a command for creating a todo task.
      *
      * @param tasks       the current task list
-     * @param duskIO   the console I/O
+     * @param duskIO      the console I/O
      * @param storage     the storage object
      * @param description the description of the todo
      */

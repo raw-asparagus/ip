@@ -21,6 +21,10 @@ import javafx.stage.Stage;
  * a text input field for user commands, and a button to submit commands.
  */
 public class MainWindow extends AnchorPane {
+    private final Image userImage = new Image(Objects
+            .requireNonNull(this.getClass().getResourceAsStream("/images/surtr.png")));
+    private final Image duskImage = new Image(Objects
+            .requireNonNull(this.getClass().getResourceAsStream("/images/dusk.png")));
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -29,13 +33,7 @@ public class MainWindow extends AnchorPane {
     private TextField userInput;
     @FXML
     private Button sendButton;
-
     private Dusk dusk;
-
-    private final Image userImage = new Image(Objects
-            .requireNonNull(this.getClass().getResourceAsStream("/images/surtr.png")));
-    private final Image duskImage = new Image(Objects
-            .requireNonNull(this.getClass().getResourceAsStream("/images/dusk.png")));
 
     @FXML
     public void initialize() {
