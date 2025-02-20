@@ -5,6 +5,7 @@ package dusk.command;
  */
 public enum CommandType {
     LIST,
+    FIND,
     MARK,
     UNMARK,
     DELETE,

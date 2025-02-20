@@ -177,4 +177,19 @@ class ParserTest {
                 "Parser should return a DeleteCommand for 'delete' input."
         );
     }
+
+    /**
+     * Tests that the "find" command returns a FindCommand instance.
+     *
+     * @throws InputException if there is an invalid input to the command.
+     */
+    @Test
+    void parseFindCommandReturnsFindCommand() throws InputException {
+        Command command = Parser.parse(consoleIo, storage, taskList, "find homework");
+        assertInstanceOf(
+                FindCommand.class,
+                command,
+                "Parser should return a FindCommand for 'find' input."
+        );
+    }
 }

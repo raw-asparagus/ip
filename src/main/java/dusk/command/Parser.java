@@ -23,7 +23,7 @@ public class Parser {
     );
 
     private static final Pattern INPUT_PATTERN = Pattern.compile(
-            "^(?<command>list|mark|unmark|delete|todo|deadline|event)"
+            "^(?<command>list|find|mark|unmark|delete|todo|deadline|event)"
                     + "(?:\\s+(?<description>[^/]+)(?<arguments>.*))?$",
             Pattern.CASE_INSENSITIVE
     );
@@ -104,6 +104,7 @@ public class Parser {
 
         return switch (commandType) {
             case LIST -> new ListCommand(tasks, consoleIO, onDateTime, fromDateTime, toDateTime);
+            case FIND -> new FindCommand(tasks, consoleIO, description);
             case MARK -> new MarkCommand(tasks, consoleIO, storage, description, true);
             case UNMARK -> new MarkCommand(tasks, consoleIO, storage, description, false);
             case DELETE -> new DeleteCommand(tasks, consoleIO, storage, description);
