@@ -59,7 +59,7 @@ public class StorageTest {
      * @throws Exception If any exception occurs during the save or load operations.
      */
     @Test
-    public void saveTasks_loadTasks_roundTripSuccess() throws Exception {
+    public void saveTasksLoadTasksRoundTripSuccess() throws Exception {
         TaskList tasks = new TaskList();
         tasks.addTask(new Todo("Test Todo"));
         tasks.addTask(new Deadline("Test Deadline", LocalDateTime.of(2024, 1, 1, 12, 0)));
@@ -87,7 +87,7 @@ public class StorageTest {
      * @throws Exception If an I/O error occurs while writing to the file.
      */
     @Test
-    public void invalidTaskLine_parseTask_throwsStorageException() throws Exception {
+    public void invalidTaskLineParseTaskThrowsStorageException() throws Exception {
         Files.writeString(tempDataFile, "X|false|InvalidLine\n");
 
         assertThrows(StorageException.class, () -> storage.loadTasks(),
@@ -100,7 +100,7 @@ public class StorageTest {
      * @throws Exception If an I/O error occurs while writing to the file.
      */
     @Test
-    public void incompleteDataForEvent_throwsStorageException() throws Exception {
+    public void incompleteDataForEventThrowsStorageException() throws Exception {
         Files.writeString(tempDataFile, "E|false|IncompleteEvent|2024-01-01\n");
 
         assertThrows(StorageException.class, () -> storage.loadTasks(),
@@ -113,7 +113,7 @@ public class StorageTest {
      * @throws Exception If an I/O error occurs while writing to the file.
      */
     @Test
-    public void parseDateTime_invalidFormat_throwsStorageException() throws Exception {
+    public void parseDateTimeInvalidFormatThrowsStorageException() throws Exception {
         Files.writeString(tempDataFile, "D|true|BadDate|2024/01/01\n");
 
         assertThrows(StorageException.class, () -> storage.loadTasks(),
@@ -124,7 +124,7 @@ public class StorageTest {
      * Verifies that attempting to save tasks does not throw an exception if no I/O errors occur.
      */
     @Test
-    public void saveTasks_ioError_throwsStorageException() {
+    public void saveTasksIoErrorThrowsStorageException() {
         TaskList tasks = new TaskList();
         tasks.addTask(new Todo("Unwritable Directory Test"));
 

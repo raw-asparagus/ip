@@ -75,17 +75,6 @@ public class ConsoleIO implements Closeable {
     }
 
     /**
-     * Writes a debug message to the console output stream, ending with a new line.
-     *
-     * @param message the message to be written
-     * @throws IOException if an I/O error occurs while writing
-     */
-    public void printDebug(String message) throws IOException {
-        bufferedWriter.write(message + System.lineSeparator());
-        bufferedWriter.flush();
-    }
-
-    /**
      * Closes both the reader and writer resources associated with this instance.
      *
      * @throws IOException if an I/O error occurs while closing the resources

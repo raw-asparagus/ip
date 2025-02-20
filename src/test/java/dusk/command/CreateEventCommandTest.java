@@ -1,5 +1,10 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.ui.ConsoleIO;
@@ -9,8 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the CreateEventCommand class.

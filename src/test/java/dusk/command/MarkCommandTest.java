@@ -1,14 +1,20 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import dusk.storage.Storage;
-import dusk.task.*;
+import dusk.task.Task;
+import dusk.task.Todo;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.task.MarkTaskException;
 import dusk.ui.ConsoleIO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the MarkCommand class.

@@ -15,7 +15,7 @@ public class TodoTest {
      * Tests that the constructor initializes the description correctly.
      */
     @Test
-    public void constructor_validDescription_initializesCorrectly() {
+    public void constructorValidDescriptionInitializesCorrectly() {
         Todo todo = new Todo("Buy groceries");
         assertEquals("Buy groceries", todo.getName(),
                 "Todo description should match constructor argument");
@@ -26,7 +26,7 @@ public class TodoTest {
      * Tests that markDone() sets the "done" state to {@code true}.
      */
     @Test
-    public void markDone_setsDoneToTrue() {
+    public void markDoneSetsDoneToTrue() {
         Todo todo = new Todo("Finish homework");
         todo.markDone();
         assertTrue(todo.getDone(), "markDone() should set getDone() to true");
@@ -36,7 +36,7 @@ public class TodoTest {
      * Tests that markUndone() sets the "done" state to {@code false}.
      */
     @Test
-    public void markUndone_setsDoneToFalse() {
+    public void markUndoneSetsDoneToFalse() {
         Todo todo = new Todo("Finish homework");
         todo.markDone();
         todo.markUndone();

@@ -1,5 +1,8 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.task.Todo;
@@ -10,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the FindCommand class.
@@ -39,7 +40,7 @@ class FindCommandTest {
      * @throws TaskListException if an error occurs while retrieving tasks.
      */
     @Test
-    void testExecute_validFind() throws IOException, TaskListException {
+    void testExecuteValidFind() throws IOException, TaskListException {
         tasks.addTask(new Todo("read book"));
         tasks.addTask(new Todo("return book"));
         tasks.addTask(new Todo("go shopping"));
@@ -67,7 +68,7 @@ class FindCommandTest {
      * @throws TaskListException if an error occurs while retrieving tasks.
      */
     @Test
-    void testExecute_noMatchingTasks() throws IOException, TaskListException {
+    void testExecuteNoMatchingTasks() throws IOException, TaskListException {
         tasks.addTask(new Todo("read book"));
         tasks.addTask(new Todo("return book"));
 
