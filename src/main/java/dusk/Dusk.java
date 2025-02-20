@@ -7,6 +7,8 @@ import dusk.task.TaskList;
 import dusk.ui.ConsoleIO;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
@@ -116,9 +118,21 @@ public class Dusk {
     }
 
     /**
-     * Generates a response for the user's chat message.
+     * Generates a response for the user's chat message by parsing and executing the command.
+     * Uses ConsoleIO as an intermediary to capture the output without writing to the terminal.
+     *
+     * @param input the user input to process
+     * @return the response captured from command execution
      */
     public String getResponse(String input) {
-        return "Dusk heard: " + input;
+        // Create a StringWriter-based ConsoleIO to capture output without writing to terminal
+        StringWriter stringWriter = new StringWriter();
+        try (ConsoleIO consoleIO = new ConsoleIO(new StringReader(""), stringWriter)) {
+            Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
+            command.execute();
+            return stringWriter.toString();
+        } catch (Exception e) {
+            return String.format("<!> %s", e.getMessage());
+        }
     }
 }

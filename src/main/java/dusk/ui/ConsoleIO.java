@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * Provides console-based input/output functionality, including reading lines
@@ -37,6 +39,17 @@ public class ConsoleIO implements Closeable {
     }
 
     /**
+     * Constructs a new ConsoleIO instance with the specified reader and writer.
+     *
+     * @param reader the Reader used for input operations
+     * @param writer the Writer used for output operations
+     */
+    public ConsoleIO(Reader reader, Writer writer) {
+        this.bufferedReader = new BufferedReader(reader);
+        this.bufferedWriter = new BufferedWriter(writer);
+    }
+
+    /**
      * Reads a line of text from the console input, trimming any leading and trailing spaces.
      *
      * @return the trimmed line of text, or {@code null} if the end of the stream is reached
@@ -57,21 +70,10 @@ public class ConsoleIO implements Closeable {
      * @throws IOException if an I/O error occurs while writing
      */
     public void print(String... messages) throws IOException {
-        printSeparatorLine();
         for (String message : messages) {
             bufferedWriter.write("\t" + message + System.lineSeparator());
         }
-        printSeparatorLine();
         bufferedWriter.flush();
-    }
-
-    /**
-     * Writes a separator line composed of underscores, preceded by a tab character.
-     *
-     * @throws IOException if an I/O error occurs while writing
-     */
-    private void printSeparatorLine() throws IOException {
-        bufferedWriter.write("\t" + "_".repeat(60) + System.lineSeparator());
     }
 
     /**
