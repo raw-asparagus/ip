@@ -99,8 +99,11 @@ public class MainWindow extends AnchorPane {
         CompletableFuture.delayedExecutor(5000, TimeUnit.MILLISECONDS)
                 .execute(() -> {
                     Platform.runLater(() -> {
-                        Stage stage = (Stage) this.getScene().getWindow();
-                        stage.close();
+                        // Get the scene safely
+                        if (this.getScene() != null && this.getScene().getWindow() != null) {
+                            Stage stage = (Stage) this.getScene().getWindow();
+                            stage.close();
+                        }
                         Platform.exit();
                         System.exit(0);
                     });
