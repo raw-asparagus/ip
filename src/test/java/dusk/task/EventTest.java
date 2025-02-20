@@ -17,7 +17,7 @@ public class EventTest {
      * Tests that constructor initializes an event with the expected fields.
      */
     @Test
-    public void constructor_validInputs_initializesCorrectly() {
+    public void constructorValidInputsInitializesCorrectly() {
         LocalDateTime startTime = LocalDateTime.of(2023, 11, 1, 14, 0);
         LocalDateTime endTime = LocalDateTime.of(2023, 11, 1, 16, 0);
         Event event = new Event("Company Meeting", startTime, endTime);
@@ -35,7 +35,7 @@ public class EventTest {
      * Tests that an event falling entirely within the specified range returns {@code true}.
      */
     @Test
-    public void isWithinRange_inRange_returnsTrue() {
+    public void isWithinRangeInRangeReturnsTrue() {
         LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 10, 0);
         LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 12, 0);
         Event event = new Event("Morning Session", fromTime, toTime);
@@ -51,7 +51,7 @@ public class EventTest {
      * Tests that an event completely outside the specified range returns {@code false}.
      */
     @Test
-    public void isWithinRange_outOfRange_returnsFalse() {
+    public void isWithinRangeOutOfRangeReturnsFalse() {
         LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 15, 0);
         LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 16, 0);
         Event event = new Event("Afternoon Session", fromTime, toTime);
@@ -67,7 +67,7 @@ public class EventTest {
      * Tests that an event on the exact specified date returns {@code true} for isOnDate().
      */
     @Test
-    public void isOnDate_exactDate_returnsTrue() {
+    public void isOnDateExactDateReturnsTrue() {
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 1, 9, 30);
         LocalDateTime endTime = LocalDateTime.of(2024, 3, 1, 11, 30);
         Event event = new Event("Conference", startTime, endTime);
@@ -81,7 +81,7 @@ public class EventTest {
      * Tests that an event not on the specified date returns {@code false} for isOnDate().
      */
     @Test
-    public void isOnDate_differentDate_returnsFalse() {
+    public void isOnDateDifferentDateReturnsFalse() {
         LocalDateTime startTime = LocalDateTime.of(2024, 3, 2, 12, 0);
         LocalDateTime endTime = LocalDateTime.of(2024, 3, 2, 13, 0);
         Event event = new Event("March Gathering", startTime, endTime);

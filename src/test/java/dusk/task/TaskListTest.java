@@ -16,7 +16,7 @@ public class TaskListTest {
      * Tests that adding a task increases the size of the list.
      */
     @Test
-    public void addTask_shouldIncreaseSize() {
+    public void addTaskShouldIncreaseSize() {
         TaskList taskList = new TaskList();
         Task sampleTask = new Todo("Sample Task");
         assertTrue(taskList.isEmpty(), "Task list should initially be empty");
@@ -31,7 +31,7 @@ public class TaskListTest {
      * @throws TaskListException If the index is out of range.
      */
     @Test
-    public void removeTask_validIndex_shouldRemoveCorrectly() throws TaskListException {
+    public void removeTaskValidIndexShouldRemoveCorrectly() throws TaskListException {
         TaskList taskList = new TaskList();
         Task sampleTask1 = new Todo("Task 1");
         Task sampleTask2 = new Todo("Task 2");
@@ -50,7 +50,7 @@ public class TaskListTest {
      * Tests that removing a task with an invalid index throws {@link TaskListException}.
      */
     @Test
-    public void removeTask_invalidIndex_shouldThrowException() {
+    public void removeTaskInvalidIndexShouldThrowException() {
         TaskList taskList = new TaskList();
         // Attempt to remove from an empty list
         assertThrows(TaskListException.class, () -> taskList.removeTask(0),
@@ -64,7 +64,7 @@ public class TaskListTest {
      * @throws MarkTaskException If the task is already marked.
      */
     @Test
-    public void markTask_validIndex_shouldMarkTaskDone() throws TaskListException, MarkTaskException {
+    public void markTaskValidIndexShouldMarkTaskDone() throws TaskListException, MarkTaskException {
         TaskList taskList = new TaskList();
         Task sampleTask = new Todo("Markable Task");
         taskList.addTask(sampleTask);
@@ -80,7 +80,7 @@ public class TaskListTest {
      * @throws MarkTaskException If the task is already marked undone.
      */
     @Test
-    public void unmarkTask_validIndex_shouldMarkTaskUndone() throws TaskListException, MarkTaskException {
+    public void unmarkTaskValidIndexShouldMarkTaskUndone() throws TaskListException, MarkTaskException {
         TaskList taskList = new TaskList();
         Task sampleTask = new Todo("Unmarkable Task");
         sampleTask.markDone(); // Mark it done first
@@ -94,7 +94,7 @@ public class TaskListTest {
      * Tests that marking a task that is already done throws a {@link MarkTaskException}.
      */
     @Test
-    public void markTask_alreadyDone_shouldThrowException() {
+    public void markTaskAlreadyDoneShouldThrowException() {
         TaskList taskList = new TaskList();
         Task sampleTask = new Todo("Already Done Task");
         sampleTask.markDone();
@@ -108,7 +108,7 @@ public class TaskListTest {
      * Tests that unmarking a task that is already undone throws a {@link MarkTaskException}.
      */
     @Test
-    public void unmarkTask_alreadyUndone_shouldThrowException() {
+    public void unmarkTaskAlreadyUndoneShouldThrowException() {
         TaskList taskList = new TaskList();
         Task sampleTask = new Todo("Already Undone Task");
         taskList.addTask(sampleTask);

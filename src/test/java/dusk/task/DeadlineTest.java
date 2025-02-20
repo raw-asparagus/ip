@@ -17,7 +17,7 @@ public class DeadlineTest {
      * Tests that the constructor initializes all fields correctly.
      */
     @Test
-    public void constructor_validInputs_initializesCorrectly() {
+    public void constructorValidInputsInitializesCorrectly() {
         LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 23, 59);
         Deadline deadline = new Deadline("Submit report", byTime);
 
@@ -32,7 +32,7 @@ public class DeadlineTest {
      * Tests that a deadline time within the specified range returns {@code true}.
      */
     @Test
-    public void isWithinRange_timeWithin_returnsTrue() {
+    public void isWithinRangeTimeWithinReturnsTrue() {
         LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 12, 0);
         Deadline deadline = new Deadline("New Deadline", byTime);
 
@@ -47,7 +47,7 @@ public class DeadlineTest {
      * Tests that a deadline on a matching date returns {@code true} for isOnDate().
      */
     @Test
-    public void isOnDate_correctDate_returnsTrue() {
+    public void isOnDateCorrectDateReturnsTrue() {
         LocalDateTime byTime = LocalDateTime.of(2024, 1, 1, 10, 30);
         Deadline deadline = new Deadline("Deadline for New Year", byTime);
 
@@ -60,7 +60,7 @@ public class DeadlineTest {
      * Tests that a deadline on a non-matching date returns {@code false} for isOnDate().
      */
     @Test
-    public void isOnDate_differentDate_returnsFalse() {
+    public void isOnDateDifferentDateReturnsFalse() {
         LocalDateTime byTime = LocalDateTime.of(2024, 1, 2, 10, 30);
         Deadline deadline = new Deadline("Another Deadline", byTime);
 

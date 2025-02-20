@@ -1,12 +1,12 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import dusk.storage.Storage;
 import dusk.task.TaskList;
 import dusk.ui.ConsoleIO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the Parser class, ensuring commands are parsed correctly.

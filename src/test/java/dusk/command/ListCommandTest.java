@@ -1,5 +1,7 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.task.Todo;
@@ -9,8 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the ListCommand class.
