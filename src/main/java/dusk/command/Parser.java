@@ -1,9 +1,5 @@
 package dusk.command;
 
-import dusk.storage.Storage;
-import dusk.task.TaskList;
-import dusk.ui.DuskIO;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -11,6 +7,10 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.ui.DuskIO;
 
 /**
  * Parses user input strings and returns the corresponding command object.
@@ -42,10 +42,10 @@ public class Parser {
     /**
      * Parses a user input string and constructs the appropriate command object.
      *
-     * @param duskIO the console I/O
-     * @param storage   the storage object
-     * @param tasks     the current task list
-     * @param input     the raw user input string
+     * @param duskIO  the console I/O
+     * @param storage the storage object
+     * @param tasks   the current task list
+     * @param input   the raw user input string
      * @return the command object corresponding to the user input
      * @throws InputException if the command is invalid or incorrectly formatted
      */

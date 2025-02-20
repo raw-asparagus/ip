@@ -5,16 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.ui.DuskIO;
-import dusk.storage.Storage;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.DuskIO;
 
 /**
  * Tests for the CreateEventCommand class.
@@ -38,8 +38,8 @@ class CreateEventCommandTest {
     /**
      * Tests executing a valid CreateEventCommand scenario.
      *
-     * @throws IOException if I/O error occurs while executing the command.
-     * @throws InputException if there is an invalid input to the command.
+     * @throws IOException       if I/O error occurs while executing the command.
+     * @throws InputException    if there is an invalid input to the command.
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test

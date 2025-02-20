@@ -20,7 +20,6 @@ import javafx.scene.layout.HBox;
  * be used within a graphical user interface. It encapsulates a message
  * in the form of text along with an image, typically used to represent
  * dialog from either the user or the application within a chat-like system.
- *
  * The class provides methods to create user-specific and application-specific
  * dialog boxes, with their orientations adjusted accordingly for intuitive
  * visual differentiation.
@@ -47,9 +46,12 @@ public class DialogBox extends HBox {
      * to the appropriate UI elements in the dialog box.
      *
      * @param text the text content to display in the dialog box
-     * @param img the image to display alongside the text in the dialog box
+     * @param img  the image to display alongside the text in the dialog box
      */
     private DialogBox(String text, Image img) {
+        // Assert that text is not null as it's required for dialog
+        assert text != null : "Dialog text cannot be null";
+
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
@@ -61,24 +63,6 @@ public class DialogBox extends HBox {
 
         dialog.setText(text);
         displayPicture.setImage(img);
-    }
-
-    /**
-     * Reverses the order of the child nodes within the DialogBox and updates their alignment.
-     * This is used to flip the orientation of the DialogBox, ensuring proper positioning
-     * of the text and image for differentiating between user and application responses.
-     *
-     * The method performs the following operations:
-     * 1. Retrieves the list of child nodes currently present in the DialogBox.
-     * 2. Reverses the order of these child nodes.
-     * 3. Updates the DialogBox's children to reflect the reversed order.
-     * 4. Sets the alignment of the DialogBox to top-left (Pos.TOP_LEFT).
-     */
-    private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
-        setAlignment(Pos.TOP_LEFT);
     }
 
     /**
@@ -102,10 +86,28 @@ public class DialogBox extends HBox {
      * in a graphical layout.
      *
      * @param text the message to be displayed in the dialog box
-     * @param img the image to be displayed alongside the message
+     * @param img  the image to be displayed alongside the message
      * @return a DialogBox containing the specified message and image
      */
     public static DialogBox getDuskDialog(String text, Image img) {
         return new DialogBox(text, img);
+    }
+
+    /**
+     * Reverses the order of the child nodes within the DialogBox and updates their alignment.
+     * This is used to flip the orientation of the DialogBox, ensuring proper positioning
+     * of the text and image for differentiating between user and application responses.
+     * <p>
+     * The method performs the following operations:
+     * 1. Retrieves the list of child nodes currently present in the DialogBox.
+     * 2. Reverses the order of these child nodes.
+     * 3. Updates the DialogBox's children to reflect the reversed order.
+     * 4. Sets the alignment of the DialogBox to top-left (Pos.TOP_LEFT).
+     */
+    private void flip() {
+        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
+        Collections.reverse(tmp);
+        getChildren().setAll(tmp);
+        setAlignment(Pos.TOP_LEFT);
     }
 }
