@@ -49,11 +49,6 @@ public class Dusk {
     private static TaskList taskList;
 
     /**
-     * Represents the delay in milliseconds before the application terminates its execution.
-     */
-    private static final long TERMINATION_DELAY_MS = 5000; // 5 seconds delay
-
-    /**
      * Constructs a new Dusk instance and attempts to load tasks from storage.
      */
     public Dusk() {

@@ -51,21 +51,6 @@ public class DuskIO implements Closeable {
     }
 
     /**
-     * Reads a line of text from the console input, trimming any leading and trailing spaces.
-     * Deprecated, for console I/O
-     *
-     * @return the trimmed line of text, or {@code null} if the end of the stream is reached
-     * @throws IOException if an I/O error occurs while reading
-     */
-    public String readLine() throws IOException {
-        String line = bufferedReader.readLine();
-        if (line == null) {
-            return null;
-        }
-        return line.trim();
-    }
-
-    /**
      * Prints one or more messages to the console, each prefixed with a tab and followed by a new line.
      *
      * @param messages an array of messages to be printed
