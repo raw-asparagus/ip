@@ -127,7 +127,7 @@ public class TaskList {
      */
     public TaskList getTasksWithin(LocalDateTime start, LocalDateTime end) {
         TaskList result = new TaskList();
-        for (Task task : tasks) {
+        tasks.forEach(task -> {
             if (task instanceof Event e) {
                 if (e.isWithinRange(start, end)) {
                     result.addTask(e);
@@ -137,7 +137,7 @@ public class TaskList {
                     result.addTask(d);
                 }
             }
-        }
+        });
         return result;
     }
 
