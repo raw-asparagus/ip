@@ -3,7 +3,7 @@ package dusk.command;
 import dusk.storage.Storage;
 import dusk.task.Event;
 import dusk.task.TaskList;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class CreateEventCommand extends Command {
 
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
     private final LocalDateTime startTime;
@@ -24,16 +24,16 @@ public class CreateEventCommand extends Command {
      * Constructs a command for creating an event task.
      *
      * @param tasks       the current task list
-     * @param consoleIO   the console I/O
+     * @param duskIO   the console I/O
      * @param storage     the storage object
      * @param description the description of the event
      * @param startTime   the start date/time of the event
      * @param endTime     the end date/time of the event
      */
-    public CreateEventCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage,
+    public CreateEventCommand(TaskList tasks, DuskIO duskIO, Storage storage,
                               String description, LocalDateTime startTime, LocalDateTime endTime) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
         this.startTime = startTime;
@@ -49,12 +49,12 @@ public class CreateEventCommand extends Command {
         Event newTask = new Event(description, startTime, endTime);
         tasks.addTask(newTask);
 
-        consoleIO.print(
+        duskIO.print(
                 "Got it. I've added this task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, consoleIO);
+        saveAsync(storage, tasks, duskIO);
     }
 }

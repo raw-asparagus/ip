@@ -4,7 +4,7 @@ import dusk.storage.Storage;
 import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class DeleteCommand extends Command {
 
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
 
@@ -22,13 +22,13 @@ public class DeleteCommand extends Command {
      * Constructs a command for deleting a task.
      *
      * @param tasks       the current task list
-     * @param consoleIO   the console I/O
+     * @param duskIO   the console I/O
      * @param storage     the storage object
      * @param description the description containing the index of the task to delete
      */
-    public DeleteCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage, String description) {
+    public DeleteCommand(TaskList tasks, DuskIO duskIO, Storage storage, String description) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
     }
@@ -43,12 +43,12 @@ public class DeleteCommand extends Command {
         }
 
         Task removedTask = tasks.removeTask(taskIndex);
-        consoleIO.print(
+        duskIO.print(
                 "Noted. I've removed this task:",
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, consoleIO);
+        saveAsync(storage, tasks, duskIO);
     }
 }

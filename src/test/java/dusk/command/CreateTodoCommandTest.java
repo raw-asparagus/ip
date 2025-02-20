@@ -7,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 import dusk.storage.Storage;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ import java.io.IOException;
 class CreateTodoCommandTest {
 
     private TaskList taskList;
-    private ConsoleIO consoleIo;
+    private DuskIO duskIo;
     private Storage storage;
 
     /**
@@ -29,7 +30,7 @@ class CreateTodoCommandTest {
     @BeforeEach
     void setUp() {
         taskList = new TaskList();
-        consoleIo = new ConsoleIO(System.in, System.out);
+        duskIo = new DuskIO(System.in, System.out);
         storage = new Storage();
     }
 
@@ -43,7 +44,7 @@ class CreateTodoCommandTest {
     @Test
     void testExecuteValidData() throws IOException, InputException, TaskListException {
         CreateTodoCommand command = new CreateTodoCommand(
-                taskList, consoleIo, storage, "Buy groceries"
+                taskList, duskIo, storage, "Buy groceries"
         );
 
         command.execute();
@@ -61,7 +62,7 @@ class CreateTodoCommandTest {
      */
     @Test
     void testExecuteEmptyDescriptionThrowsException() {
-        CreateTodoCommand command = new CreateTodoCommand(taskList, consoleIo, storage, "");
+        CreateTodoCommand command = new CreateTodoCommand(taskList, duskIo, storage, "");
 
         assertThrows(
                 InputException.class,

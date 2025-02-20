@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import dusk.storage.Storage;
 import dusk.task.TaskList;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
  */
 class ParserTest {
 
-    private ConsoleIO consoleIo;
+    private DuskIO duskIo;
     private Storage storage;
     private TaskList taskList;
 
@@ -24,7 +25,7 @@ class ParserTest {
      */
     @BeforeEach
     void setUp() {
-        consoleIo = new ConsoleIO(System.in, System.out);
+        duskIo = new DuskIO(System.in, System.out);
         storage = new Storage();
         taskList = new TaskList();
     }
@@ -36,7 +37,7 @@ class ParserTest {
     void parseEmptyInputThrowsInputException() {
         assertThrows(
                 InputException.class,
-                () -> Parser.parse(consoleIo, storage, taskList, ""),
+                () -> Parser.parse(duskIo, storage, taskList, ""),
                 "Parser should throw InputException for empty input."
         );
     }
@@ -48,7 +49,7 @@ class ParserTest {
     void parseInvalidCommandThrowsInputException() {
         assertThrows(
                 InputException.class,
-                () -> Parser.parse(consoleIo, storage, taskList, "unknowncommand"),
+                () -> Parser.parse(duskIo, storage, taskList, "unknowncommand"),
                 "Parser should throw InputException for invalid or unrecognized commands."
         );
     }
@@ -60,7 +61,7 @@ class ParserTest {
      */
     @Test
     void parseListCommandReturnsListCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "list");
+        Command command = Parser.parse(duskIo, storage, taskList, "list");
         assertInstanceOf(
                 ListCommand.class,
                 command,
@@ -75,7 +76,7 @@ class ParserTest {
      */
     @Test
     void parseTodoCommandReturnsCreateTodoCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "todo Buy groceries");
+        Command command = Parser.parse(duskIo, storage, taskList, "todo Buy groceries");
         assertInstanceOf(
                 CreateTodoCommand.class,
                 command,
@@ -91,7 +92,7 @@ class ParserTest {
     @Test
     void parseDeadlineCommandReturnsCreateDeadlineCommand() throws InputException {
         Command command = Parser.parse(
-                consoleIo,
+                duskIo,
                 storage,
                 taskList,
                 "deadline Finish assignment /by 2023-10-10 1300"
@@ -111,7 +112,7 @@ class ParserTest {
     @Test
     void parseEventCommandReturnsCreateEventCommand() throws InputException {
         Command command = Parser.parse(
-                consoleIo,
+                duskIo,
                 storage,
                 taskList,
                 "event Team meeting /from 2023-12-01 /to 2023-12-01 1500"
@@ -130,7 +131,7 @@ class ParserTest {
     void parseInvalidDateTimeThrowsInputException() {
         assertThrows(
                 InputException.class,
-                () -> Parser.parse(consoleIo, storage, taskList, "deadline Something /by 2023-99-99"),
+                () -> Parser.parse(duskIo, storage, taskList, "deadline Something /by 2023-99-99"),
                 "Parser should throw InputException on invalid date/time format."
         );
     }
@@ -142,7 +143,7 @@ class ParserTest {
      */
     @Test
     void parseMarkCommandReturnsMarkCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "mark 1");
+        Command command = Parser.parse(duskIo, storage, taskList, "mark 1");
         assertInstanceOf(
                 MarkCommand.class,
                 command,
@@ -157,7 +158,7 @@ class ParserTest {
      */
     @Test
     void parseUnmarkCommandReturnsMarkCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "unmark 1");
+        Command command = Parser.parse(duskIo, storage, taskList, "unmark 1");
         assertInstanceOf(
                 MarkCommand.class,
                 command,
@@ -172,7 +173,7 @@ class ParserTest {
      */
     @Test
     void parseDeleteCommandReturnsDeleteCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "delete 1");
+        Command command = Parser.parse(duskIo, storage, taskList, "delete 1");
         assertInstanceOf(
                 DeleteCommand.class,
                 command,
@@ -187,7 +188,7 @@ class ParserTest {
      */
     @Test
     void parseFindCommandReturnsFindCommand() throws InputException {
-        Command command = Parser.parse(consoleIo, storage, taskList, "find homework");
+        Command command = Parser.parse(duskIo, storage, taskList, "find homework");
         assertInstanceOf(
                 FindCommand.class,
                 command,

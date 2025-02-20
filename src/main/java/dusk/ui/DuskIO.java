@@ -15,7 +15,7 @@ import java.io.Writer;
  * Provides console-based input/output functionality, including reading lines
  * from an input stream and writing messages to an output stream.
  */
-public class ConsoleIO implements Closeable {
+public class DuskIO implements Closeable {
 
     /**
      * Buffered reader for handling console input.
@@ -28,29 +28,31 @@ public class ConsoleIO implements Closeable {
     private final BufferedWriter bufferedWriter;
 
     /**
-     * Constructs a ConsoleIO instance with the specified input and output streams.
+     * Constructs a DuskIO instance with the specified input and output streams.
+     * Deprecated, for console I/O
      *
      * @param inputStream  the InputStream used to create a BufferedReader
      * @param outputStream the OutputStream used to create a BufferedWriter
      */
-    public ConsoleIO(InputStream inputStream, OutputStream outputStream) {
+    public DuskIO(InputStream inputStream, OutputStream outputStream) {
         this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
     }
 
     /**
-     * Constructs a new ConsoleIO instance with the specified reader and writer.
+     * Constructs a new DuskIO instance with the specified reader and writer.
      *
      * @param reader the Reader used for input operations
      * @param writer the Writer used for output operations
      */
-    public ConsoleIO(Reader reader, Writer writer) {
+    public DuskIO(Reader reader, Writer writer) {
         this.bufferedReader = new BufferedReader(reader);
         this.bufferedWriter = new BufferedWriter(writer);
     }
 
     /**
      * Reads a line of text from the console input, trimming any leading and trailing spaces.
+     * Deprecated, for console I/O
      *
      * @return the trimmed line of text, or {@code null} if the end of the stream is reached
      * @throws IOException if an I/O error occurs while reading

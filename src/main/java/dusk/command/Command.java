@@ -4,7 +4,7 @@ import dusk.storage.Storage;
 import dusk.task.MarkTaskException;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -30,13 +30,13 @@ public abstract class Command {
      *
      * @param storage   the storage object handling file storage
      * @param tasks     the list of tasks
-     * @param consoleIO the console I/O object for printing
+     * @param duskIO the console I/O object for printing
      */
-    protected void saveAsync(Storage storage, TaskList tasks, ConsoleIO consoleIO) {
+    protected void saveAsync(Storage storage, TaskList tasks, DuskIO duskIO) {
         CompletableFuture<Void> future = storage.saveTasksAsync(tasks)
                 .exceptionally(exception -> {
                     try {
-                        consoleIO.print("<!> Error saving tasks asynchronously: " + exception.getMessage());
+                        duskIO.print("<!> Error saving tasks asynchronously: " + exception.getMessage());
                     } catch (IOException ioException) {
                         throw new RuntimeException(ioException);
                     }

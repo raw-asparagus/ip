@@ -2,7 +2,7 @@ package dusk.command;
 
 import dusk.storage.Storage;
 import dusk.task.TaskList;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,14 +42,14 @@ public class Parser {
     /**
      * Parses a user input string and constructs the appropriate command object.
      *
-     * @param consoleIO the console I/O
+     * @param duskIO the console I/O
      * @param storage   the storage object
      * @param tasks     the current task list
      * @param input     the raw user input string
      * @return the command object corresponding to the user input
      * @throws InputException if the command is invalid or incorrectly formatted
      */
-    public static Command parse(ConsoleIO consoleIO, Storage storage,
+    public static Command parse(DuskIO duskIO, Storage storage,
                                 TaskList tasks, String input) throws InputException {
         if (input.isBlank()) {
             throw new InputException("Input cannot be null or empty.");
@@ -103,14 +103,14 @@ public class Parser {
         LocalDateTime byDateTime = parseDateTime(byStr);
 
         return switch (commandType) {
-            case LIST -> new ListCommand(tasks, consoleIO, onDateTime, fromDateTime, toDateTime);
-            case FIND -> new FindCommand(tasks, consoleIO, description);
-            case MARK -> new MarkCommand(tasks, consoleIO, storage, description, true);
-            case UNMARK -> new MarkCommand(tasks, consoleIO, storage, description, false);
-            case DELETE -> new DeleteCommand(tasks, consoleIO, storage, description);
-            case TODO -> new CreateTodoCommand(tasks, consoleIO, storage, description);
-            case DEADLINE -> new CreateDeadlineCommand(tasks, consoleIO, storage, description, byDateTime);
-            case EVENT -> new CreateEventCommand(tasks, consoleIO, storage, description, fromDateTime, toDateTime);
+            case LIST -> new ListCommand(tasks, duskIO, onDateTime, fromDateTime, toDateTime);
+            case FIND -> new FindCommand(tasks, duskIO, description);
+            case MARK -> new MarkCommand(tasks, duskIO, storage, description, true);
+            case UNMARK -> new MarkCommand(tasks, duskIO, storage, description, false);
+            case DELETE -> new DeleteCommand(tasks, duskIO, storage, description);
+            case TODO -> new CreateTodoCommand(tasks, duskIO, storage, description);
+            case DEADLINE -> new CreateDeadlineCommand(tasks, duskIO, storage, description, byDateTime);
+            case EVENT -> new CreateEventCommand(tasks, duskIO, storage, description, fromDateTime, toDateTime);
         };
     }
 

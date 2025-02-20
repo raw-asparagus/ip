@@ -10,7 +10,8 @@ import dusk.task.Todo;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.task.MarkTaskException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ import java.io.IOException;
 class MarkCommandTest {
 
     private TaskList taskList;
-    private ConsoleIO consoleIo;
+    private DuskIO duskIo;
     private Storage storage;
 
     /**
@@ -31,7 +32,7 @@ class MarkCommandTest {
     @BeforeEach
     void setUp() {
         taskList = new TaskList();
-        consoleIo = new ConsoleIO(System.in, System.out);
+        duskIo = new DuskIO(System.in, System.out);
         storage = new Storage();
     }
 
@@ -46,7 +47,7 @@ class MarkCommandTest {
     @Test
     void testExecuteValidMark() throws TaskListException, InputException, MarkTaskException, IOException {
         taskList.addTask(new Todo("Sample Task"));
-        MarkCommand command = new MarkCommand(taskList, consoleIo, storage, "1", true);
+        MarkCommand command = new MarkCommand(taskList, duskIo, storage, "1", true);
 
         command.execute();
         assertTrue(taskList.getTask(0).getDone(), "The task should be marked done.");
@@ -66,7 +67,7 @@ class MarkCommandTest {
         newTask.markDone();
         taskList.addTask(newTask);
 
-        MarkCommand command = new MarkCommand(taskList, consoleIo, storage, "1", false);
+        MarkCommand command = new MarkCommand(taskList, duskIo, storage, "1", false);
         command.execute();
         assertFalse(taskList.getTask(0).getDone(), "The task should be unmarked.");
     }
@@ -76,7 +77,7 @@ class MarkCommandTest {
      */
     @Test
     void testExecuteInvalidIndexThrowsInputException() {
-        MarkCommand command = new MarkCommand(taskList, consoleIo, storage, "abc", true);
+        MarkCommand command = new MarkCommand(taskList, duskIo, storage, "abc", true);
 
         assertThrows(
                 InputException.class,

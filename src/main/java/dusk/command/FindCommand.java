@@ -3,7 +3,7 @@ package dusk.command;
 import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 
@@ -13,19 +13,19 @@ import java.io.IOException;
  */
 public class FindCommand extends Command {
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final String keyword;
 
     /**
      * Constructs a FindCommand.
      *
      * @param tasks     the task list to search through
-     * @param consoleIO the console I/O for user interaction
+     * @param duskIO the console I/O for user interaction
      * @param keyword   the keyword to search for in task descriptions
      */
-    public FindCommand(TaskList tasks, ConsoleIO consoleIO, String keyword) {
+    public FindCommand(TaskList tasks, DuskIO duskIO, String keyword) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.keyword = keyword;
     }
 
@@ -40,7 +40,7 @@ public class FindCommand extends Command {
         TaskList matchingTasks = tasks.search(keyword);
 
         if (matchingTasks.isEmpty()) {
-            consoleIO.print("No matching tasks found!");
+            duskIO.print("No matching tasks found!");
         } else {
             String header = "Here are the matching tasks in your list:";
             String[] messages = new String[matchingTasks.size() + 1];
@@ -49,7 +49,7 @@ public class FindCommand extends Command {
                 Task task = matchingTasks.getTask(i);
                 messages[i + 1] = (i + 1) + "." + task;
             }
-            consoleIO.print(messages);
+            duskIO.print(messages);
         }
     }
 }

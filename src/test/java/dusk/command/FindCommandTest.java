@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.task.Todo;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ import java.io.PrintStream;
 class FindCommandTest {
 
     private TaskList tasks;
-    private ConsoleIO consoleIO;
+    private DuskIO duskIO;
     private ByteArrayOutputStream outContent;
 
     /**
@@ -30,7 +31,7 @@ class FindCommandTest {
     void setUp() {
         tasks = new TaskList();
         outContent = new ByteArrayOutputStream();
-        consoleIO = new ConsoleIO(System.in, new PrintStream(outContent));
+        duskIO = new DuskIO(System.in, new PrintStream(outContent));
     }
 
     /**
@@ -45,7 +46,7 @@ class FindCommandTest {
         tasks.addTask(new Todo("return book"));
         tasks.addTask(new Todo("go shopping"));
 
-        FindCommand command = new FindCommand(tasks, consoleIO, "book");
+        FindCommand command = new FindCommand(tasks, duskIO, "book");
         command.execute();
 
         String output = outContent.toString();
@@ -72,7 +73,7 @@ class FindCommandTest {
         tasks.addTask(new Todo("read book"));
         tasks.addTask(new Todo("return book"));
 
-        FindCommand command = new FindCommand(tasks, consoleIO, "exercise");
+        FindCommand command = new FindCommand(tasks, duskIO, "exercise");
         command.execute();
 
         String output = outContent.toString();

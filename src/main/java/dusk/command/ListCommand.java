@@ -3,7 +3,7 @@ package dusk.command;
 import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class ListCommand extends Command {
 
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final LocalDateTime onDate;
     private final LocalDateTime fromDate;
     private final LocalDateTime toDate;
@@ -24,18 +24,18 @@ public class ListCommand extends Command {
      * Constructs a command for listing tasks.
      *
      * @param tasks     the current task list
-     * @param consoleIO the console I/O
+     * @param duskIO the console I/O
      * @param onDate    date to filter tasks exactly on
      * @param fromDate  start date to filter tasks
      * @param toDate    end date to filter tasks
      */
     public ListCommand(TaskList tasks,
-                       ConsoleIO consoleIO,
+                       DuskIO duskIO,
                        LocalDateTime onDate,
                        LocalDateTime fromDate,
                        LocalDateTime toDate) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.onDate = onDate;
         this.fromDate = fromDate;
         this.toDate = toDate;
@@ -44,7 +44,7 @@ public class ListCommand extends Command {
     @Override
     public void execute() throws IOException, TaskListException {
         if (tasks.isEmpty()) {
-            consoleIO.print("Task list is empty!");
+            duskIO.print("Task list is empty!");
             return;
         }
 
@@ -68,7 +68,7 @@ public class ListCommand extends Command {
 
     private void printTasks(TaskList list, String header) throws IOException, TaskListException {
         if (list.isEmpty()) {
-            consoleIO.print("No matching tasks found!");
+            duskIO.print("No matching tasks found!");
             return;
         }
 
@@ -79,6 +79,6 @@ public class ListCommand extends Command {
             Task task = list.getTask(i);
             messages[i + 1] = (i + 1) + "." + task;
         }
-        consoleIO.print(messages);
+        duskIO.print(messages);
     }
 }

@@ -9,22 +9,31 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-/**
- * A GUI for Dusk using FXML.
- */
 public class Main extends Application {
 
-    private Dusk dusk = new Dusk();
+    /**
+     * An instance of the Dusk application, responsible for handling user interactions,
+     * commands, and task management. This instance is injected into the controller
+     * for communication with the backend logic of the application.
+     */
+    private final Dusk dusk = new Dusk();
 
+    /**
+     * Starts the main application stage by initializing and setting up the primary GUI window.
+     *
+     * @param stage the primary stage for the JavaFX application
+     */
     @Override
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane ap = fxmlLoader.load();
+            MainWindow controller = fxmlLoader.getController();
+            controller.setDusk(dusk);
+
             Scene scene = new Scene(ap);
             stage.setTitle("Dusk");
             stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setDusk(dusk);  // inject the Dusk instance
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

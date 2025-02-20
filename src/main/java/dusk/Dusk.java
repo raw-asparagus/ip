@@ -4,9 +4,8 @@ import dusk.command.Command;
 import dusk.command.Parser;
 import dusk.storage.Storage;
 import dusk.task.TaskList;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +19,6 @@ import java.util.logging.Logger;
  * user interactions, commands, and task storage.
  */
 public class Dusk {
-
     /**
      * Common greeting messages displayed upon application launch.
      */
@@ -33,6 +31,7 @@ public class Dusk {
      * Farewell message displayed when the user terminates the application.
      */
     public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
+
 
     /**
      * Logger used throughout the Dusk application.
@@ -50,55 +49,19 @@ public class Dusk {
     private static TaskList taskList;
 
     /**
+     * Represents the delay in milliseconds before the application terminates its execution.
+     */
+    private static final long TERMINATION_DELAY_MS = 5000; // 5 seconds delay
+
+    /**
      * Constructs a new Dusk instance and attempts to load tasks from storage.
      */
     public Dusk() {
         loadTasksFromStorage();
     }
 
-    /**
-     * Main entry point for the Dusk application.
-     *
-     * @param args command-line arguments (not used in this application)
-     */
-    public static void main(String[] args) {
-        new Dusk();
-        runApplication();
-    }
-
-    /**
-     * Starts the Dusk application loop. This method displays greeting messages,
-     * continues reading user input until "bye" is entered, and then prints a
-     * farewell message before shutting down.
-     */
-    public static void runApplication() {
-        try (ConsoleIO consoleIO = new ConsoleIO(System.in, System.out)) {
-            consoleIO.print(GREETING_MESSAGES);
-            String input;
-            while ((input = consoleIO.readLine()) != null && !"bye".equalsIgnoreCase(input)) {
-                processUserInput(consoleIO, input);
-            }
-            consoleIO.print(FAREWELL_MESSAGE);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred while handling I/O operations using ConsoleIO.", e);
-        } finally {
-            STORAGE.shutdownExecutor();
-        }
-    }
-
-    /**
-     * Processes a single line of user input by parsing it into a command and executing it.
-     *
-     * @param consoleIO the console I/O handler
-     * @param input the user input to process
-     */
-    private static void processUserInput(ConsoleIO consoleIO, String input) throws IOException {
-        try {
-            Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
-            command.execute();
-        } catch (Exception e) {
-            consoleIO.print(String.format("<!> %s", e.getMessage()));
-        }
+    public String getGreeting() {
+        return String.join("\n", GREETING_MESSAGES);
     }
 
     /**
@@ -119,16 +82,16 @@ public class Dusk {
 
     /**
      * Generates a response for the user's chat message by parsing and executing the command.
-     * Uses ConsoleIO as an intermediary to capture the output without writing to the terminal.
+     * Uses DuskIO as an intermediary to capture the output without writing to the terminal.
      *
      * @param input the user input to process
      * @return the response captured from command execution
      */
     public String getResponse(String input) {
-        // Create a StringWriter-based ConsoleIO to capture output without writing to terminal
+        // Create a StringWriter-based DuskIO to capture output without writing to terminal
         StringWriter stringWriter = new StringWriter();
-        try (ConsoleIO consoleIO = new ConsoleIO(new StringReader(""), stringWriter)) {
-            Command command = Parser.parse(consoleIO, STORAGE, taskList, input);
+        try (DuskIO duskIO = new DuskIO(new StringReader(""), stringWriter)) {
+            Command command = Parser.parse(duskIO, STORAGE, taskList, input);
             command.execute();
             return stringWriter.toString();
         } catch (Exception e) {
