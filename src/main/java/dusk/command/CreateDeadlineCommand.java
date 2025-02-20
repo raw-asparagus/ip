@@ -3,7 +3,7 @@ package dusk.command;
 import dusk.storage.Storage;
 import dusk.task.Deadline;
 import dusk.task.TaskList;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class CreateDeadlineCommand extends Command {
 
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
     private final LocalDateTime deadline;
@@ -23,15 +23,15 @@ public class CreateDeadlineCommand extends Command {
      * Constructs a command for creating a deadline task.
      *
      * @param tasks       the current task list
-     * @param consoleIO   the console I/O
+     * @param duskIO   the console I/O
      * @param storage     the storage object
      * @param description the description of the new task
      * @param deadline    the date/time by which the task is due
      */
-    public CreateDeadlineCommand(TaskList tasks, ConsoleIO consoleIO,
+    public CreateDeadlineCommand(TaskList tasks, DuskIO duskIO,
                                  Storage storage, String description, LocalDateTime deadline) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
         this.deadline = deadline;
@@ -46,12 +46,12 @@ public class CreateDeadlineCommand extends Command {
         Deadline newTask = new Deadline(description, deadline);
         tasks.addTask(newTask);
 
-        consoleIO.print(
+        duskIO.print(
                 "Got it. I've added this task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, consoleIO);
+        saveAsync(storage, tasks, duskIO);
     }
 }

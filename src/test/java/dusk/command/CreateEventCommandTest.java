@@ -7,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 import dusk.storage.Storage;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 class CreateEventCommandTest {
 
     private TaskList taskList;
-    private ConsoleIO consoleIo;
+    private DuskIO duskIo;
     private Storage storage;
 
     /**
@@ -30,7 +31,7 @@ class CreateEventCommandTest {
     @BeforeEach
     void setUp() {
         taskList = new TaskList();
-        consoleIo = new ConsoleIO(System.in, System.out);
+        duskIo = new DuskIO(System.in, System.out);
         storage = new Storage();
     }
 
@@ -46,7 +47,7 @@ class CreateEventCommandTest {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         LocalDateTime endTime = LocalDateTime.now().plusDays(1).plusHours(2);
         CreateEventCommand command = new CreateEventCommand(
-                taskList, consoleIo, storage, "Team meeting", startTime, endTime
+                taskList, duskIo, storage, "Team meeting", startTime, endTime
         );
 
         command.execute();
@@ -67,7 +68,7 @@ class CreateEventCommandTest {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
         LocalDateTime endTime = LocalDateTime.now().plusDays(1).plusHours(2);
         CreateEventCommand command = new CreateEventCommand(
-                taskList, consoleIo, storage, "", startTime, endTime
+                taskList, duskIo, storage, "", startTime, endTime
         );
 
         assertThrows(

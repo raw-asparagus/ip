@@ -3,7 +3,7 @@ package dusk.command;
 import dusk.storage.Storage;
 import dusk.task.TaskList;
 import dusk.task.Todo;
-import dusk.ui.ConsoleIO;
+import dusk.ui.DuskIO;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class CreateTodoCommand extends Command {
 
     private final TaskList tasks;
-    private final ConsoleIO consoleIO;
+    private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
 
@@ -21,13 +21,13 @@ public class CreateTodoCommand extends Command {
      * Constructs a command for creating a todo task.
      *
      * @param tasks       the current task list
-     * @param consoleIO   the console I/O
+     * @param duskIO   the console I/O
      * @param storage     the storage object
      * @param description the description of the todo
      */
-    public CreateTodoCommand(TaskList tasks, ConsoleIO consoleIO, Storage storage, String description) {
+    public CreateTodoCommand(TaskList tasks, DuskIO duskIO, Storage storage, String description) {
         this.tasks = tasks;
-        this.consoleIO = consoleIO;
+        this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
     }
@@ -40,12 +40,12 @@ public class CreateTodoCommand extends Command {
         Todo newTask = new Todo(description);
         tasks.addTask(newTask);
 
-        consoleIO.print(
+        duskIO.print(
                 "Got it. I've added this task:",
                 "  " + newTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, consoleIO);
+        saveAsync(storage, tasks, duskIO);
     }
 }

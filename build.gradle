@@ -5,37 +5,44 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
+ext {
+    javaFxVersion = '17.0.7'
+    junitVersion = '5.10.0'
+    checkstyleVersion = '10.21.2'
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.0'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.0'
+    // Testing
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
-    String javaFxVersion = '17.0.7'
+    // JavaFX - Platform specific dependencies
+    ['win', 'mac', 'linux'].each { platform ->
+        ['base', 'controls', 'fxml', 'graphics'].each { module ->
+            implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
+        }
+    }
+}
 
-    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'win'
-    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'mac'
-    implementation group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'linux'
-    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'win'
-    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'mac'
-    implementation group: 'org.openjfx', name: 'javafx-controls', version: javaFxVersion, classifier: 'linux'
-    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'win'
-    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'mac'
-    implementation group: 'org.openjfx', name: 'javafx-fxml', version: javaFxVersion, classifier: 'linux'
-    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'win'
-    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'mac'
-    implementation group: 'org.openjfx', name: 'javafx-graphics', version: javaFxVersion, classifier: 'linux'
+application {
+    mainClass = "Launcher"
+}
+
+shadowJar {
+    archiveBaseName = "dusk"
+    archiveVersion = "0.1.0"
+    archiveClassifier = null
 }
 
 test {
     useJUnitPlatform()
-
     testLogging {
         events "passed", "skipped", "failed"
-
         showExceptions true
         exceptionFormat "full"
         showCauses true
@@ -45,17 +52,7 @@ test {
 }
 
 checkstyle {
-    toolVersion = '10.21.2'
-}
-
-application {
-    mainClass.set("dusk.Dusk")
-}
-
-shadowJar {
-    archiveBaseName = "dusk"
-    archiveVersion = "0.1.0"
-    archiveClassifier = null
+    toolVersion = checkstyleVersion
 }
 
 run {
