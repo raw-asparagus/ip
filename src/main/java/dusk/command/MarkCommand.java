@@ -1,12 +1,12 @@
 package dusk.command;
 
+import java.io.IOException;
+
 import dusk.storage.Storage;
 import dusk.task.MarkTaskException;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
 
 /**
  * Marks or unmarks the task at the specified index from the task list.
@@ -23,7 +23,7 @@ public class MarkCommand extends Command {
      * Constructs a command for marking or unmarking a task as done.
      *
      * @param tasks       the current task list
-     * @param duskIO   the console I/O
+     * @param duskIO      the console I/O
      * @param storage     the storage object
      * @param description the index of the task to mark/unmark
      * @param markAsDone  whether to mark the task as done (true) or not (false)

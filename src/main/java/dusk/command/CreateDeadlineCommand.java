@@ -1,12 +1,12 @@
 package dusk.command;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 import dusk.storage.Storage;
 import dusk.task.Deadline;
 import dusk.task.TaskList;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Creates a new deadline task with a specified description and date/time.
@@ -23,7 +23,7 @@ public class CreateDeadlineCommand extends Command {
      * Constructs a command for creating a deadline task.
      *
      * @param tasks       the current task list
-     * @param duskIO   the console I/O
+     * @param duskIO      the console I/O
      * @param storage     the storage object
      * @param description the description of the new task
      * @param deadline    the date/time by which the task is due

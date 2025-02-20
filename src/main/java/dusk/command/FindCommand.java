@@ -1,11 +1,11 @@
 package dusk.command;
 
+import java.io.IOException;
+
 import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
 
 /**
  * Represents a command that searches the task list for tasks whose
@@ -19,9 +19,9 @@ public class FindCommand extends Command {
     /**
      * Constructs a FindCommand.
      *
-     * @param tasks     the task list to search through
-     * @param duskIO the console I/O for user interaction
-     * @param keyword   the keyword to search for in task descriptions
+     * @param tasks   the task list to search through
+     * @param duskIO  the console I/O for user interaction
+     * @param keyword the keyword to search for in task descriptions
      */
     public FindCommand(TaskList tasks, DuskIO duskIO, String keyword) {
         this.tasks = tasks;

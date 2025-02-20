@@ -1,12 +1,12 @@
 package dusk.command;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 import dusk.storage.Storage;
 import dusk.task.Event;
 import dusk.task.TaskList;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Creates a new event task with a specified time range.
@@ -24,7 +24,7 @@ public class CreateEventCommand extends Command {
      * Constructs a command for creating an event task.
      *
      * @param tasks       the current task list
-     * @param duskIO   the console I/O
+     * @param duskIO      the console I/O
      * @param storage     the storage object
      * @param description the description of the event
      * @param startTime   the start date/time of the event

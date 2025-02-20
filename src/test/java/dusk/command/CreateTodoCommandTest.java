@@ -5,15 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.ui.DuskIO;
-import dusk.storage.Storage;
+import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.ui.DuskIO;
 
 /**
  * Tests for the CreateTodoCommand class.
@@ -37,8 +37,8 @@ class CreateTodoCommandTest {
     /**
      * Tests executing a valid CreateTodoCommand scenario.
      *
-     * @throws IOException if I/O error occurs while executing the command.
-     * @throws InputException if there is an invalid input to the command.
+     * @throws IOException       if I/O error occurs while executing the command.
+     * @throws InputException    if there is an invalid input to the command.
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test

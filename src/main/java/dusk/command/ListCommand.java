@@ -1,12 +1,12 @@
 package dusk.command;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 /**
  * Lists tasks in various ways based on the provided arguments
@@ -23,11 +23,11 @@ public class ListCommand extends Command {
     /**
      * Constructs a command for listing tasks.
      *
-     * @param tasks     the current task list
-     * @param duskIO the console I/O
-     * @param onDate    date to filter tasks exactly on
-     * @param fromDate  start date to filter tasks
-     * @param toDate    end date to filter tasks
+     * @param tasks    the current task list
+     * @param duskIO   the console I/O
+     * @param onDate   date to filter tasks exactly on
+     * @param fromDate start date to filter tasks
+     * @param toDate   end date to filter tasks
      */
     public ListCommand(TaskList tasks,
                        DuskIO duskIO,

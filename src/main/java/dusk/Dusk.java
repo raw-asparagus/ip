@@ -1,11 +1,5 @@
 package dusk;
 
-import dusk.command.Command;
-import dusk.command.Parser;
-import dusk.storage.Storage;
-import dusk.task.TaskList;
-import dusk.ui.DuskIO;
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.concurrent.CompletableFuture;
@@ -13,6 +7,12 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import dusk.command.Command;
+import dusk.command.Parser;
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.ui.DuskIO;
 
 /**
  * The Dusk application is responsible for initializing and managing

@@ -2,16 +2,16 @@ package dusk.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.task.Todo;
-import dusk.ui.DuskIO;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.task.Todo;
+import dusk.ui.DuskIO;
 
 /**
  * Tests for the ListCommand class.
@@ -33,7 +33,7 @@ class ListCommandTest {
     /**
      * Tests executing a ListCommand when the TaskList is empty.
      *
-     * @throws IOException if an I/O error occurs while executing the command.
+     * @throws IOException       if an I/O error occurs while executing the command.
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
@@ -46,7 +46,7 @@ class ListCommandTest {
     /**
      * Tests executing a ListCommand with tasks and no date filters applied.
      *
-     * @throws IOException if an I/O error occurs while executing the command.
+     * @throws IOException       if an I/O error occurs while executing the command.
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
@@ -63,7 +63,7 @@ class ListCommandTest {
     /**
      * Tests executing a ListCommand with an on-date filter.
      *
-     * @throws IOException if an I/O error occurs while executing the command.
+     * @throws IOException       if an I/O error occurs while executing the command.
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test

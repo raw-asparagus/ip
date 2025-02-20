@@ -3,17 +3,17 @@ package dusk.command;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.task.Todo;
-import dusk.ui.DuskIO;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.task.Todo;
+import dusk.ui.DuskIO;
 
 /**
  * Tests for the FindCommand class.

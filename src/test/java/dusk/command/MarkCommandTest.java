@@ -4,18 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dusk.storage.Storage;
-import dusk.task.Task;
-import dusk.task.Todo;
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.task.MarkTaskException;
-import dusk.ui.DuskIO;
+import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import dusk.storage.Storage;
+import dusk.task.MarkTaskException;
+import dusk.task.Task;
+import dusk.task.TaskList;
+import dusk.task.TaskListException;
+import dusk.task.Todo;
+import dusk.ui.DuskIO;
 
 /**
  * Tests for the MarkCommand class.
@@ -40,9 +40,9 @@ class MarkCommandTest {
      * Tests marking a task as done using a valid index.
      *
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
-     * @throws InputException if there is an invalid input to the command.
+     * @throws InputException    if there is an invalid input to the command.
      * @throws MarkTaskException if marking or unmarking the task encounters an issue.
-     * @throws IOException if an I/O error occurs while executing the command.
+     * @throws IOException       if an I/O error occurs while executing the command.
      */
     @Test
     void testExecuteValidMark() throws TaskListException, InputException, MarkTaskException, IOException {
@@ -57,9 +57,9 @@ class MarkCommandTest {
      * Tests unmarking a previously marked task as done.
      *
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
-     * @throws InputException if there is an invalid input to the command.
+     * @throws InputException    if there is an invalid input to the command.
      * @throws MarkTaskException if marking or unmarking the task encounters an issue.
-     * @throws IOException if an I/O error occurs while executing the command.
+     * @throws IOException       if an I/O error occurs while executing the command.
      */
     @Test
     void testExecuteValidUnmark() throws TaskListException, InputException, MarkTaskException, IOException {
