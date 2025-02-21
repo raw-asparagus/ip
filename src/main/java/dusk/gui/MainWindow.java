@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import dusk.Dusk;
+import dusk.ui.DuskResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,12 +46,11 @@ public class MainWindow extends AnchorPane {
      */
     public void setDusk(Dusk d) {
         assert d != null : "Dusk instance cannot be null";
-
         dusk = d;
-
-        // Display greeting messages when window initializes
-        displayDuskResponse(dusk.getGreeting());
+        displayDuskResponse(new DuskResponse(dusk.getGreeting(),
+                DuskResponse.ResponseType.NORMAL));
     }
+
 
     /**
      * Handles the user's input and generates appropriate responses.
@@ -62,41 +62,38 @@ public class MainWindow extends AnchorPane {
             return;
         }
 
-        // Assert that dusk instance has been initialized
         assert dusk != null : "Dusk instance must be initialized before handling input";
-
-        // Assert that dialog container exists
         assert dialogContainer != null : "Dialog container must be initialized";
 
-
-        // Display user input
         dialogContainer.getChildren().add(
                 DialogBox.getUserDialog(input, userImage));
         userInput.clear();
 
-        // Generate and display Dusk's response
         if ("bye".equalsIgnoreCase(input)) {
-            displayDuskResponse(Dusk.FAREWELL_MESSAGE);
+            displayDuskResponse(new DuskResponse(Dusk.FAREWELL_MESSAGE,
+                    DuskResponse.ResponseType.NORMAL));
             handleTermination();
         } else {
-            String response = dusk.getResponse(input);
+            DuskResponse response = dusk.getResponse(input);
             displayDuskResponse(response);
         }
     }
+
 
     /**
      * Displays Dusk's response in the dialog container.
      *
      * @param response the message to display
      */
-    private void displayDuskResponse(String response) {
-        // Assert response is not null as it's required for display
+    private void displayDuskResponse(DuskResponse response) {
         assert response != null : "Response cannot be null";
         assert dialogContainer != null : "Dialog container must be initialized";
 
+        Image imageToUse = response.getType() == DuskResponse.ResponseType.NORMAL ? duskImage : null;
         dialogContainer.getChildren().add(
-                DialogBox.getDuskDialog(response, duskImage));
+                DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
     }
+
 
     /**
      * Handles the termination of the application with a delay.

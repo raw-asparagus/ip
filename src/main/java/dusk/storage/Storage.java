@@ -150,9 +150,9 @@ public class Storage {
      *
      * @param task the Task to be converted
      * @return the string form of the Task suitable for storage
-     * @throws IllegalArgumentException if the Task type is unrecognized
+     * @throws StorageException if the Task type is unrecognized
      */
-    private String stringify(Task task) throws IllegalArgumentException {
+    private String stringify(Task task) throws StorageException {
         String taskType;
         String taskDetails = "";
         boolean isDone = task.getDone();
@@ -170,7 +170,7 @@ public class Storage {
             String toString = (e.getTo() == null) ? "" : e.getTo().format(STORAGE_FORMATTER);
             taskDetails = "|" + fromString + "|" + toString;
         } else {
-            throw new IllegalArgumentException("Unknown Task type");
+            throw new StorageException("Unknown Task type");
         }
 
         return taskType + "|" + isDone + "|" + name + taskDetails;
