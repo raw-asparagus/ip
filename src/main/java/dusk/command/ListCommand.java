@@ -9,8 +9,7 @@ import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
 
 /**
- * Lists tasks in various ways based on the provided arguments
- * (e.g., tasks on a certain date, tasks within a date range, or all tasks).
+ * Command for listing tasks according to various date filters.
  */
 public class ListCommand extends Command {
 
@@ -21,19 +20,16 @@ public class ListCommand extends Command {
     private final LocalDateTime toDate;
 
     /**
-     * Constructs a command for listing tasks.
+     * Constructs a ListCommand.
      *
      * @param tasks    the current task list
-     * @param duskIO   the console I/O
-     * @param onDate   date to filter tasks exactly on
-     * @param fromDate start date to filter tasks
-     * @param toDate   end date to filter tasks
+     * @param duskIO   the I/O interface
+     * @param onDate   filter tasks on this specific date (nullable)
+     * @param fromDate filter tasks from this start date (nullable)
+     * @param toDate   filter tasks until this end date (nullable)
      */
-    public ListCommand(TaskList tasks,
-                       DuskIO duskIO,
-                       LocalDateTime onDate,
-                       LocalDateTime fromDate,
-                       LocalDateTime toDate) {
+    public ListCommand(TaskList tasks, DuskIO duskIO, LocalDateTime onDate,
+                       LocalDateTime fromDate, LocalDateTime toDate) {
         this.tasks = tasks;
         this.duskIO = duskIO;
         this.onDate = onDate;
@@ -52,24 +48,28 @@ public class ListCommand extends Command {
         String header;
 
         if (onDate != null) {
-            // Use search with only date parameter
             filteredTasks = tasks.search(null, onDate, null, null);
             header = "Here are the tasks on " + onDate.toLocalDate() + ":";
         } else if (fromDate != null && toDate != null) {
-            // Use search with date range parameters
             filteredTasks = tasks.search(null, null, fromDate, toDate);
             header = "Here are the tasks between " + fromDate + " and " + toDate + ":";
         } else if (fromDate != null || toDate != null) {
             throw new InputException("Both /from and /to must be specified together.");
         } else {
-            // No date filters, show all tasks
             filteredTasks = tasks;
             header = "Here are all the tasks:";
         }
-
         printTasks(filteredTasks, header);
     }
 
+    /**
+     * Prints the provided task list with a header.
+     *
+     * @param list   the task list to print
+     * @param header the header message to display
+     * @throws IOException       if an I/O error occurs
+     * @throws TaskListException if task retrieval fails
+     */
     private void printTasks(TaskList list, String header) throws IOException, TaskListException {
         if (list.isEmpty()) {
             duskIO.print("No matching tasks found!");
@@ -78,10 +78,8 @@ public class ListCommand extends Command {
 
         String[] messages = new String[list.size() + 1];
         messages[0] = header;
-
         for (int i = 0; i < list.size(); i++) {
-            Task task = list.getTask(i);
-            messages[i + 1] = (i + 1) + "." + task;
+            messages[i + 1] = (i + 1) + ". " + list.getTask(i);
         }
         duskIO.print(messages);
     }

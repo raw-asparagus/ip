@@ -9,7 +9,7 @@ import dusk.task.TaskList;
 import dusk.ui.DuskIO;
 
 /**
- * Creates a new event task with a specified time range.
+ * Command to create an event task.
  */
 public class CreateEventCommand extends Command {
 
@@ -21,14 +21,14 @@ public class CreateEventCommand extends Command {
     private final LocalDateTime endTime;
 
     /**
-     * Constructs a command for creating an event task.
+     * Constructs a CreateEventCommand.
      *
      * @param tasks       the current task list
-     * @param duskIO      the console I/O
-     * @param storage     the storage object
-     * @param description the description of the event
-     * @param startTime   the start date/time of the event
-     * @param endTime     the end date/time of the event
+     * @param duskIO      the I/O interface
+     * @param storage     the storage handler
+     * @param description the event description
+     * @param startTime   the start time of the event
+     * @param endTime     the end time of the event
      */
     public CreateEventCommand(TaskList tasks, DuskIO duskIO, Storage storage,
                               String description, LocalDateTime startTime, LocalDateTime endTime) {

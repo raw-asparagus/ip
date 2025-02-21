@@ -8,7 +8,7 @@ import dusk.task.Todo;
 import dusk.ui.DuskIO;
 
 /**
- * Creates a new todo task with a specified description.
+ * Command to create a todo task.
  */
 public class CreateTodoCommand extends Command {
 
@@ -18,12 +18,12 @@ public class CreateTodoCommand extends Command {
     private final String description;
 
     /**
-     * Constructs a command for creating a todo task.
+     * Constructs a CreateTodoCommand.
      *
      * @param tasks       the current task list
-     * @param duskIO      the console I/O
-     * @param storage     the storage object
-     * @param description the description of the todo
+     * @param duskIO      the I/O interface
+     * @param storage     the storage handler
+     * @param description the task description
      */
     public CreateTodoCommand(TaskList tasks, DuskIO duskIO, Storage storage, String description) {
         this.tasks = tasks;
@@ -37,6 +37,7 @@ public class CreateTodoCommand extends Command {
         if (description.isEmpty()) {
             throw new InputException("A todo command must include a description.");
         }
+
         Todo newTask = new Todo(description);
         tasks.addTask(newTask);
 
