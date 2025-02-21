@@ -5,14 +5,14 @@
 - [Introduction](#introduction)
 - [Command Format](#command-format)
 - [Basic Commands](#basic-commands)
-  - [Viewing Tasks](#viewing-tasks)
-  - [Finding Tasks](#finding-tasks)
-  - [Managing Task Status](#managing-task-status)
-  - [Deleting Tasks](#deleting-tasks)
+    - [Viewing Tasks](#viewing-tasks)
+    - [Finding Tasks](#finding-tasks)
+    - [Managing Task Status](#managing-task-status)
+    - [Deleting Tasks](#deleting-tasks)
 - [Creating Tasks](#creating-tasks)
-  - [Simple Tasks](#simple-tasks)
-  - [Deadlines](#deadlines)
-  - [Events](#events)
+    - [Simple Tasks](#simple-tasks)
+    - [Deadlines](#deadlines)
+    - [Events](#events)
 - [Date and Time Format](#date-and-time-format)
 
 ![User Interface](Ui.png)
@@ -20,7 +20,7 @@
 ## Introduction
 
 Dusk is a command-line task manager that helps you keep track of your todos, deadlines, and events. This guide will help
-you understand how to use all available commands.
+you understand how to use all available commands :DD
 
 ### How to Use
 
