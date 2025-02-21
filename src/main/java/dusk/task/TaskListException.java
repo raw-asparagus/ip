@@ -1,7 +1,7 @@
 package dusk.task;
 
-import dusk.ui.DuskException;
-import dusk.ui.DuskExceptionType;
+import dusk.DuskException;
+import dusk.DuskExceptionType;
 
 /**
  * Exception thrown when processing tasks in the TaskList.

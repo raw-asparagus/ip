@@ -1,7 +1,7 @@
 package dusk.storage;
 
-import dusk.ui.DuskException;
-import dusk.ui.DuskExceptionType;
+import dusk.DuskException;
+import dusk.DuskExceptionType;
 
 /**
  * Indicates an exception that occurs during storage operations,

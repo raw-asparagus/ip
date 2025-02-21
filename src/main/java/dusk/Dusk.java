@@ -14,7 +14,6 @@ import dusk.command.Parser;
 import dusk.storage.Storage;
 import dusk.storage.StorageException;
 import dusk.task.TaskList;
-import dusk.ui.DuskException;
 import dusk.ui.DuskIO;
 import dusk.ui.DuskResponse;
 

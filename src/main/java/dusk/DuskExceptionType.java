@@ -1,4 +1,4 @@
-package dusk.ui;
+package dusk;
 
 public enum DuskExceptionType {
     COMMAND_ERROR("Command Error"),

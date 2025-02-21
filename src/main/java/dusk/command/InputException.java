@@ -1,7 +1,7 @@
 package dusk.command;
 
-import dusk.ui.DuskException;
-import dusk.ui.DuskExceptionType;
+import dusk.DuskException;
+import dusk.DuskExceptionType;
 
 /**
  * Exception thrown when there is an error in user input.

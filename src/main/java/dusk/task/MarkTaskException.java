@@ -1,7 +1,7 @@
 package dusk.task;
 
-import dusk.ui.DuskException;
-import dusk.ui.DuskExceptionType;
+import dusk.DuskException;
+import dusk.DuskExceptionType;
 
 /**
  * Exception thrown when an error occurs while marking a task.

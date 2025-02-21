@@ -1,4 +1,4 @@
-package dusk.ui;
+package dusk;
 
 public class DuskException extends Exception {
 
