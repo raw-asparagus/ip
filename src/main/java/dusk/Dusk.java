@@ -9,8 +9,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import dusk.command.Command;
+import dusk.command.InputException;
 import dusk.command.Parser;
 import dusk.storage.Storage;
+import dusk.storage.StorageException;
 import dusk.task.TaskList;
 import dusk.ui.DuskIO;
 
@@ -51,7 +53,7 @@ public class Dusk {
     /**
      * Constructs a new Dusk instance and attempts to load tasks from storage.
      */
-    public Dusk() {
+    public Dusk() throws StorageException {
         loadTasksFromStorage();
     }
 
@@ -63,17 +65,20 @@ public class Dusk {
      * Loads tasks asynchronously from STORAGE into a TaskList.
      * If the loading process results in an error, the exception is logged.
      */
-    private void loadTasksFromStorage() {
+    private void loadTasksFromStorage() throws StorageException {
         CompletableFuture<TaskList> loadFuture = STORAGE.loadTasksAsync();
         try {
             taskList = loadFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.log(Level.SEVERE, "Error loading tasks asynchronously.", e);
             Thread.currentThread().interrupt();
+            throw new StorageException("Failed to load tasks: " + e.getMessage());
         } catch (CompletionException e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new StorageException("Failed to complete task loading: " + e.getMessage());
         }
     }
+
 
     /**
      * Generates a response for the user's chat message by parsing and executing the command.
@@ -83,14 +88,24 @@ public class Dusk {
      * @return the response captured from command execution
      */
     public String getResponse(String input) {
-        // Create a StringWriter-based DuskIO to capture output without writing to terminal
         StringWriter stringWriter = new StringWriter();
         try (DuskIO duskIO = new DuskIO(new StringReader(""), stringWriter)) {
+            if (input == null || input.trim().isEmpty()) {
+                throw new InputException("Please enter a command.");
+            }
             Command command = Parser.parse(duskIO, STORAGE, taskList, input);
             command.execute();
             return stringWriter.toString();
+        } catch (DuskException e) {
+            // Enhanced error formatting with error type
+            return String.format("❌ %s\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                    e.getErrorType().getLabel(),
+                    e.getMessage());
         } catch (Exception e) {
-            return String.format("<!> %s", e.getMessage());
+            // Unexpected system errors
+            LOGGER.log(Level.SEVERE, "Unexpected error", e);
+            return String.format("⚠️ System Error\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                    e.getMessage());
         }
     }
 }

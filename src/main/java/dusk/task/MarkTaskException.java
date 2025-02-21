@@ -1,10 +1,13 @@
 package dusk.task;
 
+import dusk.DuskException;
+import dusk.DuskExceptionType;
+
 /**
  * Represents an exception thrown when there is an error marking a task
  * as completed or not completed.
  */
-public class MarkTaskException extends Exception {
+public class MarkTaskException extends DuskException {
 
     /**
      * Constructs a MarkTaskException with a specified detail message.
@@ -12,6 +15,6 @@ public class MarkTaskException extends Exception {
      * @param message the detail message
      */
     public MarkTaskException(String message) {
-        super(message);
+        super(message, DuskExceptionType.TASK_ERROR);
     }
 }

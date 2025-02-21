@@ -42,7 +42,7 @@ public class ListCommand extends Command {
     }
 
     @Override
-    public void execute() throws IOException, TaskListException {
+    public void execute() throws IOException, TaskListException, InputException {
         if (tasks.isEmpty()) {
             duskIO.print("Task list is empty!");
             return;
@@ -60,7 +60,7 @@ public class ListCommand extends Command {
                     "Here are the tasks between " + fromDate + " and " + toDate + ":");
             return;
         } else if (fromDate != null || toDate != null) {
-            throw new TaskListException("Both /from and /to must be specified together.");
+            throw new InputException("Both /from and /to must be specified together.");
         }
 
         printTasks(tasks, "Here are all the tasks:");

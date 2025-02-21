@@ -3,6 +3,7 @@ package dusk;
 import java.io.IOException;
 
 import dusk.gui.MainWindow;
+import dusk.storage.StorageException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,9 @@ public class Main extends Application {
      * for communication with the backend logic of the application.
      */
     private final Dusk dusk = new Dusk();
+
+    public Main() throws StorageException {
+    }
 
     /**
      * Starts the main application stage by initializing and setting up the primary GUI window.

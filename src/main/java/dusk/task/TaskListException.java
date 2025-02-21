@@ -1,10 +1,13 @@
 package dusk.task;
 
+import dusk.DuskException;
+import dusk.DuskExceptionType;
+
 /**
  * Represents an exception thrown when there is an error processing tasks
  * within a TaskList.
  */
-public class TaskListException extends Exception {
+public class TaskListException extends DuskException {
 
     /**
      * Constructs a TaskListException with a specified detail message.
@@ -12,6 +15,7 @@ public class TaskListException extends Exception {
      * @param message the detail message
      */
     public TaskListException(String message) {
-        super(message);
+        super(message, DuskExceptionType.TASK_ERROR
+        );
     }
 }
