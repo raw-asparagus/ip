@@ -22,19 +22,27 @@ import javafx.stage.Stage;
  * a text input field for user commands, and a button to submit commands.
  */
 public class MainWindow extends AnchorPane {
-    private final Image userImage = new Image(Objects
-            .requireNonNull(this.getClass().getResourceAsStream("/images/surtr.png")));
-    private final Image duskImage = new Image(Objects
-            .requireNonNull(this.getClass().getResourceAsStream("/images/dusk.png")));
-    @FXML
-    private ScrollPane scrollPane;
-    @FXML
-    private VBox dialogContainer;
-    @FXML
-    private TextField userInput;
-    @FXML
-    private Button sendButton;
+    private static final String USER_IMAGE_PATH = "/images/surtr.png";
+    private static final String DUSK_IMAGE_PATH = "/images/dusk.png";
+
+    private final Image userImage;
+    private final Image duskImage;
     private Dusk dusk;
+
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox dialogContainer;
+    @FXML private TextField userInput;
+    @FXML private Button sendButton;
+
+    public MainWindow() {
+        this.userImage = loadImage(USER_IMAGE_PATH);
+        this.duskImage = loadImage(DUSK_IMAGE_PATH);
+    }
+
+    private Image loadImage(String path) {
+        return new Image(Objects.requireNonNull(
+                this.getClass().getResourceAsStream(path)));
+    }
 
     @FXML
     public void initialize() {
@@ -52,7 +60,6 @@ public class MainWindow extends AnchorPane {
         displayDuskResponse(new DuskResponse(dusk.getGreeting(),
                 DuskResponse.ResponseType.NORMAL));
     }
-
 
     /**
      * Handles the user's input and generates appropriate responses.
@@ -81,11 +88,10 @@ public class MainWindow extends AnchorPane {
         }
     }
 
-
     /**
      * Displays Dusk's response in the dialog container.
      *
-     * @param response the message to display
+     * @param response The response to display
      */
     private void displayDuskResponse(DuskResponse response) {
         assert response != null : "Response cannot be null";
@@ -95,7 +101,6 @@ public class MainWindow extends AnchorPane {
         dialogContainer.getChildren().add(
                 DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
     }
-
 
     /**
      * Handles the termination of the application with a delay.
