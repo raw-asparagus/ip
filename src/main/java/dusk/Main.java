@@ -24,7 +24,7 @@ public class Main extends Application {
     /**
      * Logger used throughout the Dusk application.
      */
-    private static final Logger LOGGER = Logger.getLogger(Dusk.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public Main() throws StorageException {
     }

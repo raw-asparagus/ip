@@ -3,6 +3,9 @@ package dusk.gui;
 import java.io.IOException;
 import java.util.Collections;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,6 +44,11 @@ public class DialogBox extends HBox {
     private ImageView displayPicture;
 
     /**
+     * Logger used throughout the Dusk application.
+     */
+    private static final Logger LOGGER = Logger.getLogger(DialogBox.class.getName());
+
+    /**
      * Constructs a DialogBox instance with the specified text and image.
      * Loads the associated FXML layout and sets the provided text and image
      * to the appropriate UI elements in the dialog box.
@@ -58,7 +66,7 @@ public class DialogBox extends HBox {
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred while starting the application.", e);
         }
 
         dialog.setText(text);
