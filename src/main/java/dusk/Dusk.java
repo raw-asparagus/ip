@@ -18,54 +18,47 @@ import dusk.ui.DuskIO;
 import dusk.ui.DuskResponse;
 
 /**
- * The Dusk application is responsible for initializing and managing
- * user interactions, commands, and task storage.
+ * The main application class for Dusk. This class is responsible for initializing tasks,
+ * managing user commands, and handling responses.
  */
 public class Dusk {
-    /**
-     * Common greeting messages displayed upon application launch.
-     */
+
+    /** Greeting messages displayed upon application launch. */
     public static final String[] GREETING_MESSAGES = {
             "Hello! I'm Dusk!",
             "Anything you want me to do for you? :D"
     };
 
-    /**
-     * Farewell message displayed when the user terminates the application.
-     */
+    /** Farewell message displayed when the application terminates. */
     public static final String FAREWELL_MESSAGE = "See ya! Hope to see you again soon! :3";
 
-
-    /**
-     * Logger used throughout the Dusk application.
-     */
     private static final Logger LOGGER = Logger.getLogger(Dusk.class.getName());
-
-    /**
-     * Provides task-related storage, including loading and saving tasks asynchronously.
-     */
     private static final Storage STORAGE = new Storage();
-
-    /**
-     * Maintains the current list of tasks.
-     */
     private static TaskList taskList;
 
     /**
-     * Constructs a new Dusk instance and attempts to load tasks from storage.
+     * Constructs a new Dusk instance and loads the task list from storage.
+     *
+     * @throws StorageException if an error occurs during task loading.
      */
     public Dusk() throws StorageException {
         loadTasksFromStorage();
     }
 
+    /**
+     * Returns the greeting message.
+     *
+     * @return the greeting message.
+     */
     public String getGreeting() {
         return new DuskResponse(String.join("\n", GREETING_MESSAGES),
                 DuskResponse.ResponseType.NORMAL).getMessage();
     }
 
     /**
-     * Loads tasks asynchronously from STORAGE into a TaskList.
-     * If the loading process results in an error, the exception is logged.
+     * Loads tasks asynchronously from storage.
+     *
+     * @throws StorageException if there is an error loading tasks.
      */
     private void loadTasksFromStorage() throws StorageException {
         CompletableFuture<TaskList> loadFuture = STORAGE.loadTasksAsync();
@@ -81,6 +74,12 @@ public class Dusk {
         }
     }
 
+    /**
+     * Processes the user input and returns the corresponding response.
+     *
+     * @param input the user's input command.
+     * @return a DuskResponse based on the command execution.
+     */
     public DuskResponse getResponse(String input) {
         StringWriter stringWriter = new StringWriter();
         try (DuskIO duskIO = new DuskIO(new StringReader(""), stringWriter)) {
@@ -92,16 +91,13 @@ public class Dusk {
             return new DuskResponse(stringWriter.toString(), DuskResponse.ResponseType.NORMAL);
         } catch (DuskException e) {
             return new DuskResponse(
-                    String.format("❌\t%s:\n\t%s",
-                            e.getErrorType().getLabel(),
-                            e.getMessage()),
+                    String.format("❌\t%s:\n\t%s", e.getErrorType().getLabel(), e.getMessage()),
                     DuskResponse.ResponseType.ERROR
             );
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected error", e);
             return new DuskResponse(
-                    String.format("⚠️\tSystem Error:\n\t%s",
-                            e.getMessage()),
+                    String.format("⚠️\tSystem Error:\n\t%s", e.getMessage()),
                     DuskResponse.ResponseType.SYSTEM_ERROR
             );
         }
