@@ -2,6 +2,8 @@ package dusk;
 
 import java.io.IOException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import dusk.gui.MainWindow;
 import dusk.storage.StorageException;
 import javafx.application.Application;
@@ -18,6 +20,11 @@ public class Main extends Application {
      * for communication with the backend logic of the application.
      */
     private final Dusk dusk = new Dusk();
+
+    /**
+     * Logger used throughout the Dusk application.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Dusk.class.getName());
 
     public Main() throws StorageException {
     }
@@ -40,7 +47,7 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "An error occurred while starting the application.", e);
         }
     }
 }
