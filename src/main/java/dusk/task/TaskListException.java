@@ -4,18 +4,16 @@ import dusk.ui.DuskException;
 import dusk.ui.DuskExceptionType;
 
 /**
- * Represents an exception thrown when there is an error processing tasks
- * within a TaskList.
+ * Exception thrown when processing tasks in the TaskList.
  */
 public class TaskListException extends DuskException {
 
     /**
-     * Constructs a TaskListException with a specified detail message.
+     * Constructs a TaskListException with the specified detail message.
      *
      * @param message the detail message
      */
     public TaskListException(String message) {
-        super(message, DuskExceptionType.TASK_ERROR
-        );
+        super(message, DuskExceptionType.TASK_ERROR);
     }
 }

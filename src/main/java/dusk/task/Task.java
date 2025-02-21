@@ -1,26 +1,17 @@
 package dusk.task;
 
 /**
- * An abstract class representing a general task with a description
- * and completion status.
+ * Abstract representation of a task with a description and completion status.
  */
 public abstract class Task {
 
-    /**
-     * The text description of this task.
-     */
     private final String description;
-
-    /**
-     * Indicates whether this task has been marked as done.
-     */
     private boolean isDone;
 
     /**
      * Constructs a Task with the specified description.
-     * The task is initially marked as not done.
      *
-     * @param description the text description for the task
+     * @param description the task description
      */
     public Task(String description) {
         this.description = description;
@@ -28,45 +19,44 @@ public abstract class Task {
     }
 
     /**
-     * Marks this task as done.
+     * Marks the task as done.
      */
     public void markDone() {
         this.isDone = true;
     }
 
     /**
-     * Marks this task as not done.
+     * Marks the task as not done.
      */
     public void markUndone() {
         this.isDone = false;
     }
 
     /**
-     * Retrieves the description of this task.
+     * Retrieves the task description.
      *
-     * @return the task description as a string
+     * @return the description text
      */
     public String getName() {
         return description;
     }
 
     /**
-     * Checks whether this task is marked as done.
+     * Checks whether the task is completed.
      *
-     * @return true if the task is done, false otherwise
+     * @return true if done, false otherwise
      */
     public boolean getDone() {
         return isDone;
     }
 
     /**
-     * Returns a string representation of this task, showing whether
-     * it is done ([X]) or not ([ ]) along with its description.
+     * Returns the string representation of this task.
      *
-     * @return a formatted string representation of the task
+     * @return a formatted string indicating completion status and description
      */
     @Override
     public String toString() {
-        return "[" + (getDone() ? "X" : " ") + "] " + getName();
+        return "[" + (isDone ? "X" : " ") + "] " + description;
     }
 }

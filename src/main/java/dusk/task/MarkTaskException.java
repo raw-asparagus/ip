@@ -4,13 +4,12 @@ import dusk.ui.DuskException;
 import dusk.ui.DuskExceptionType;
 
 /**
- * Represents an exception thrown when there is an error marking a task
- * as completed or not completed.
+ * Exception thrown when an error occurs while marking a task.
  */
 public class MarkTaskException extends DuskException {
 
     /**
-     * Constructs a MarkTaskException with a specified detail message.
+     * Constructs a MarkTaskException with the specified message.
      *
      * @param message the detail message
      */

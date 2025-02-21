@@ -1,24 +1,23 @@
 package dusk.task;
 
 /**
- * Represents a basic to-do task with only a description and a completion status.
+ * Represents a basic to-do task.
  */
 public class Todo extends Task {
 
     /**
-     * Constructs a To-do task with the specified description.
+     * Constructs a Todo task.
      *
-     * @param description the description of the to-do task
+     * @param description the task description
      */
     public Todo(String description) {
         super(description);
     }
 
     /**
-     * Returns a string representation of this to-do task,
-     * including its type and completion status.
+     * Returns the string representation of this to-do.
      *
-     * @return a string showing the task type and status
+     * @return a formatted string with task type and status
      */
     @Override
     public String toString() {

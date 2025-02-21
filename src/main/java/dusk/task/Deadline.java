@@ -4,27 +4,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Represents a task with a deadline, storing the date and time by which the task
- * must be completed.
+ * Represents a task with a deadline.
  */
 public class Deadline extends Task {
 
-    /**
-     * The formatter used to display the deadline date and time.
-     */
     private static final DateTimeFormatter OUTPUT_FORMATTER =
             DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
 
-    /**
-     * The date and time by which this task must be completed.
-     */
     private final LocalDateTime by;
 
     /**
-     * Constructs a Deadline task with the given description and deadline date/time.
+     * Constructs a Deadline task.
      *
-     * @param description the description of the task
-     * @param by          the LocalDateTime by which the task should be completed
+     * @param description the task description
+     * @param by          the deadline date and time
      */
     public Deadline(String description, LocalDateTime by) {
         super(description);
@@ -32,53 +25,43 @@ public class Deadline extends Task {
     }
 
     /**
-     * Retrieves the deadline of this task.
+     * Retrieves the deadline date and time.
      *
-     * @return the LocalDateTime by which this task must be completed
+     * @return the deadline as a LocalDateTime
      */
     public LocalDateTime getBy() {
         return by;
     }
 
     /**
-     * Checks if this deadline falls within the given start and end date/time range.
+     * Checks if the deadline falls within the specified range.
      *
-     * @param start the start of the date/time range
-     * @param end   the end of the date/time range
-     * @return true if the deadline is within the range, false otherwise
+     * @param start the range start
+     * @param end   the range end
+     * @return true if the deadline is within the range; false otherwise
      */
     public boolean isWithinRange(LocalDateTime start, LocalDateTime end) {
-        if (by == null) {
-            return false;
-        }
-        return !by.isBefore(start) && !by.isAfter(end);
+        return by != null && !by.isBefore(start) && !by.isAfter(end);
     }
 
     /**
-     * Checks if this deadline occurs on the specified date
-     * (matching only the date portion, ignoring specific times).
+     * Checks if the deadline is on the specified date.
      *
-     * @param date the LocalDateTime whose date will be compared against this deadline
-     * @return true if the deadline's date is the same as the specified date, false otherwise
+     * @param date the date to check
+     * @return true if the deadline falls on the given date; false otherwise
      */
     public boolean isOnDate(LocalDateTime date) {
-        if (by == null) {
-            return false;
-        }
-        return by.toLocalDate().isEqual(date.toLocalDate());
+        return by != null && by.toLocalDate().isEqual(date.toLocalDate());
     }
 
     /**
-     * Returns a string representation of this Deadline task, including its type,
-     * completion status, and deadline.
+     * Returns the string representation of this deadline.
      *
-     * @return a string that shows the type of the task, its status, and deadline details
+     * @return a formatted string with task type, status, and deadline
      */
     @Override
     public String toString() {
-        String formatted = (by == null)
-                ? "no idea :p"
-                : by.format(OUTPUT_FORMATTER);
+        String formatted = (by == null) ? "N/A" : by.format(OUTPUT_FORMATTER);
         return "[D]" + super.toString() + " (by: " + formatted + ")";
     }
 }
