@@ -1,3 +1,19 @@
+/* Move from FXML to CSS file */
+.root {
+    -fx-background-color: #f0f0f0;
+}
+
+.text-field {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+.button {
+    -fx-background-radius: 20;
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+}
+
 .scroll-pane {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -6,4 +22,9 @@
 
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
+}
+
+
+.dialog-container {
+    -fx-padding: 10;
 }

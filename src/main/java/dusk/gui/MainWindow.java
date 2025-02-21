@@ -76,6 +76,7 @@ public class MainWindow extends AnchorPane {
 
         dialogContainer.getChildren().add(
                 DialogBox.getUserDialog(input, userImage));
+        scrollToBottom();
         userInput.clear();
 
         if ("bye".equalsIgnoreCase(input)) {
@@ -100,6 +101,7 @@ public class MainWindow extends AnchorPane {
         Image imageToUse = response.getType() == DuskResponse.ResponseType.NORMAL ? duskImage : null;
         dialogContainer.getChildren().add(
                 DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
+        scrollToBottom();
     }
 
     /**
@@ -123,4 +125,7 @@ public class MainWindow extends AnchorPane {
                 }));
     }
 
+    private void scrollToBottom() {
+        Platform.runLater(() -> scrollPane.setVvalue(1.0));
+    }
 }
