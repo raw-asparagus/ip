@@ -48,22 +48,26 @@ public class ListCommand extends Command {
             return;
         }
 
-        if (onDate != null) {
-            TaskList onList = tasks.getTasksOn(onDate);
-            printTasks(onList, "Here are the tasks on " + onDate.toLocalDate() + ":");
-            return;
-        }
+        TaskList filteredTasks;
+        String header;
 
-        if (fromDate != null && toDate != null) {
-            TaskList withinList = tasks.getTasksWithin(fromDate, toDate);
-            printTasks(withinList,
-                    "Here are the tasks between " + fromDate + " and " + toDate + ":");
-            return;
+        if (onDate != null) {
+            // Use search with only date parameter
+            filteredTasks = tasks.search(null, onDate, null, null);
+            header = "Here are the tasks on " + onDate.toLocalDate() + ":";
+        } else if (fromDate != null && toDate != null) {
+            // Use search with date range parameters
+            filteredTasks = tasks.search(null, null, fromDate, toDate);
+            header = "Here are the tasks between " + fromDate + " and " + toDate + ":";
         } else if (fromDate != null || toDate != null) {
             throw new InputException("Both /from and /to must be specified together.");
+        } else {
+            // No date filters, show all tasks
+            filteredTasks = tasks;
+            header = "Here are all the tasks:";
         }
 
-        printTasks(tasks, "Here are all the tasks:");
+        printTasks(filteredTasks, header);
     }
 
     private void printTasks(TaskList list, String header) throws IOException, TaskListException {

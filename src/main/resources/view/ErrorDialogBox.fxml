@@ -12,7 +12,7 @@
     </padding>
     <Label fx:id="dialog"
            style="-fx-background-color: #fff3cd; -fx-background-radius: 10; -fx-padding: 10; -fx-text-fill: #856404; -fx-font-family: 'System'; -fx-wrap-text: true"
-           wrapText="true"/>
+           wrapText="true" minHeight="-Infinity"/>
     <ImageView fx:id="displayPicture" fitHeight="99.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true">
         <HBox.margin>
             <Insets left="10.0"/>

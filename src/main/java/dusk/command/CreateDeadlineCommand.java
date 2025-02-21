@@ -40,7 +40,7 @@ public class CreateDeadlineCommand extends Command {
     @Override
     public void execute() throws IOException, InputException {
         if (description.isEmpty()) {
-            throw new InputException("A 'DEADLINE' command must include a description.");
+            throw new InputException("A deadline command must include a description.");
         }
 
         Deadline newTask = new Deadline(description, deadline);
@@ -52,6 +52,6 @@ public class CreateDeadlineCommand extends Command {
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, duskIO);
+        saveAsync(storage, tasks);
     }
 }

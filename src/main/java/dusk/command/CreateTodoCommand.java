@@ -35,7 +35,7 @@ public class CreateTodoCommand extends Command {
     @Override
     public void execute() throws IOException, InputException {
         if (description.isEmpty()) {
-            throw new InputException("A 'TODO' command must include a description.");
+            throw new InputException("A todo command must include a description.");
         }
         Todo newTask = new Todo(description);
         tasks.addTask(newTask);
@@ -46,6 +46,6 @@ public class CreateTodoCommand extends Command {
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, duskIO);
+        saveAsync(storage, tasks);
     }
 }

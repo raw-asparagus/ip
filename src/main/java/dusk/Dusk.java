@@ -93,7 +93,7 @@ public class Dusk {
             return new DuskResponse(stringWriter.toString(), DuskResponse.ResponseType.NORMAL);
         } catch (DuskException e) {
             return new DuskResponse(
-                    String.format("❌ %s\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                    String.format("❌\t%s:\n\t%s",
                             e.getErrorType().getLabel(),
                             e.getMessage()),
                     DuskResponse.ResponseType.ERROR
@@ -101,7 +101,7 @@ public class Dusk {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected error", e);
             return new DuskResponse(
-                    String.format("⚠️ System Error\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                    String.format("⚠️\tSystem Error:\n\t%s",
                             e.getMessage()),
                     DuskResponse.ResponseType.SYSTEM_ERROR
             );

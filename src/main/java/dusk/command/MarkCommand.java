@@ -44,7 +44,7 @@ public class MarkCommand extends Command {
             taskIndex = Integer.parseInt(description) - 1;
         } catch (NumberFormatException exception) {
             throw new InputException(
-                    "Task number cannot be empty or invalid for a 'MARK'/'UNMARK' command!"
+                    "Task number cannot be empty or invalid for a mark/unmark command!"
             );
         }
 
@@ -62,6 +62,6 @@ public class MarkCommand extends Command {
             );
         }
 
-        saveAsync(storage, tasks, duskIO);
+        saveAsync(storage, tasks);
     }
 }

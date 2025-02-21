@@ -16,7 +16,6 @@ import dusk.ui.DuskIO;
  * Parses user input strings and returns the corresponding command object.
  */
 public class Parser {
-
     private static final Pattern FLAGS_PATTERN = Pattern.compile(
             "/(?<flag>on|from|to|by)\\s*(?<value>[^/]+)?",
             Pattern.CASE_INSENSITIVE
@@ -51,78 +50,205 @@ public class Parser {
      */
     public static Command parse(DuskIO duskIO, Storage storage,
                                 TaskList tasks, String input) throws InputException {
-        if (input.isBlank()) {
-            throw new InputException("Input cannot be null or empty.");
+        if (input == null || input.trim().isEmpty()) {
+            throw new InputException("Input cannot be empty");
         }
 
-        Matcher inputMatcher = INPUT_PATTERN.matcher(input);
-        if (!inputMatcher.matches()) {
-            throw new InputException("Invalid command: " + input);
+        Matcher matcher = INPUT_PATTERN.matcher(input.trim());
+        if (!matcher.find()) {
+            throw new InputException("Invalid command format");
         }
 
-        CommandType commandType = CommandType.fromString(inputMatcher.group("command"));
-        if (commandType == null) {
-            throw new InputException("Unknown command: " + input);
-        }
+        String command = matcher.group("command").toLowerCase();
+        String description = matcher.group("description");
+        String arguments = matcher.group("arguments") != null ? matcher.group("arguments") : "";
 
-        String rawDescription = inputMatcher.group("description");
-        String description = (rawDescription == null) ? "" : rawDescription.trim();
+        validateCommand(command, description, arguments);
 
-        String rawArguments = inputMatcher.group("arguments");
-        String arguments = (rawArguments == null) ? "" : rawArguments.trim();
-
-        String onStr = null;
-        String fromStr = null;
-        String toStr = null;
-        String byStr = null;
-
-        if (!arguments.isBlank()) {
-            Matcher flagsMatcher = FLAGS_PATTERN.matcher(arguments);
-            while (flagsMatcher.find()) {
-                String foundFlag = flagsMatcher.group("flag");
-                String foundValue = flagsMatcher.group("value");
-                if (foundValue != null) {
-                    foundValue = foundValue.trim();
-                }
-                if (foundFlag != null) {
-                    switch (foundFlag.toLowerCase()) {
-                    case "on" -> onStr = foundValue;
-                    case "from" -> fromStr = foundValue;
-                    case "to" -> toStr = foundValue;
-                    case "by" -> byStr = foundValue;
-                    default -> {
-                    }
-                    }
-                }
-            }
-        }
-
-        LocalDateTime onDateTime = parseDateTime(onStr);
-        LocalDateTime fromDateTime = parseDateTime(fromStr);
-        LocalDateTime toDateTime = parseDateTime(toStr);
-        LocalDateTime byDateTime = parseDateTime(byStr);
-
-        return switch (commandType) {
-            case LIST -> new ListCommand(tasks, duskIO, onDateTime, fromDateTime, toDateTime);
-            case FIND -> new FindCommand(tasks, duskIO, description);
-            case MARK -> new MarkCommand(tasks, duskIO, storage, description, true);
-            case UNMARK -> new MarkCommand(tasks, duskIO, storage, description, false);
-            case DELETE -> new DeleteCommand(tasks, duskIO, storage, description);
-            case TODO -> new CreateTodoCommand(tasks, duskIO, storage, description);
-            case DEADLINE -> new CreateDeadlineCommand(tasks, duskIO, storage, description, byDateTime);
-            case EVENT -> new CreateEventCommand(tasks, duskIO, storage, description, fromDateTime, toDateTime);
+        return switch (command) {
+            case "list" -> parseListCommand(duskIO, tasks, arguments);
+            case "find" -> new FindCommand(tasks, duskIO, description);
+            case "mark" -> new MarkCommand(tasks, duskIO, storage, description, true);
+            case "unmark" -> new MarkCommand(tasks, duskIO, storage, description, false);
+            case "delete" -> new DeleteCommand(tasks, duskIO, storage, description);
+            case "todo" -> new CreateTodoCommand(tasks, duskIO, storage, description);
+            case "deadline" -> parseDeadlineCommand(duskIO, storage, tasks, description, arguments);
+            case "event" -> parseEventCommand(duskIO, storage, tasks, description, arguments);
+            default -> throw new InputException("Unknown command: " + command);
         };
     }
 
+    private static void validateCommand(String command, String description,
+                                        String arguments) throws InputException {
+        switch (command) {
+        case "list" -> {
+            if (!arguments.isEmpty()) {
+                validateDateTimeFlags(arguments);
+            }
+        }
+        case "find" -> {
+            if (description == null || description.trim().isEmpty()) {
+                throw new InputException("Find command requires a search term");
+            }
+        }
+        case "mark", "unmark", "delete" -> {
+            if (description == null || description.trim().isEmpty()) {
+                throw new InputException(command + " command requires a task number");
+            }
+            try {
+                int taskNumber = Integer.parseInt(description.trim());
+                if (taskNumber <= 0) {
+                    throw new InputException(command +
+                            " command requires a positive task number");
+                }
+            } catch (NumberFormatException e) {
+                throw new InputException(command +
+                        " command requires a valid integer task number");
+            }
+        }
+        case "todo" -> {
+            if (description == null || description.trim().isEmpty()) {
+                throw new InputException("Todo command requires a description");
+            }
+            if (!arguments.isEmpty()) {
+                throw new InputException("Todo command should not have any flags");
+            }
+        }
+        case "deadline" -> {
+            if (description == null || description.trim().isEmpty()) {
+                throw new InputException("Deadline command requires a description");
+            }
+            if (!arguments.contains("/by")) {
+                throw new InputException("Deadline command requires a /by datetime");
+            }
+            validateDateTimeFlags(arguments);
+        }
+        case "event" -> {
+            if (description == null || description.trim().isEmpty()) {
+                throw new InputException("Event command requires a description");
+            }
+            if (!arguments.contains("/from") || !arguments.contains("/to")) {
+                throw new InputException(
+                        "Event command requires both /from and /to datetimes");
+            }
+            validateDateTimeFlags(arguments);
+        }
+        default -> throw new InputException("Unknown command: " + command);
+        }
+    }
+
+    private static void validateDateTimeFlags(String arguments) throws InputException {
+        Matcher flagMatcher = FLAGS_PATTERN.matcher(arguments);
+        while (flagMatcher.find()) {
+            String flag = flagMatcher.group("flag");
+            String value = flagMatcher.group("value");
+
+            if (value == null || value.trim().isEmpty()) {
+                throw new InputException("Missing datetime value for /" + flag + " flag");
+            }
+
+            try {
+                parseDateTime(value.trim());
+            } catch (InputException e) {
+                throw new InputException("Invalid datetime format for /" + flag +
+                        " flag. Use yyyy-MM-dd [HHmm]");
+            }
+        }
+    }
+
     private static LocalDateTime parseDateTime(String dateTimeStr) throws InputException {
-        if (dateTimeStr == null || dateTimeStr.isBlank()) {
-            return null;
-        }
         try {
-            return LocalDateTime.parse(dateTimeStr, DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(dateTimeStr.trim(), DATE_TIME_FORMATTER);
         } catch (DateTimeParseException e) {
-            throw new InputException("Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: "
-                    + dateTimeStr);
+            throw new InputException("Invalid datetime format. Use yyyy-MM-dd [HHmm]");
         }
+    }
+
+    private static Command parseListCommand(DuskIO duskIO, TaskList tasks,
+                                            String arguments) throws InputException {
+        if (arguments.isEmpty()) {
+            return new ListCommand(tasks, duskIO, null, null, null);
+        }
+
+        LocalDateTime fromDate = null;
+        LocalDateTime toDate = null;
+        LocalDateTime onDate = null;
+
+        Matcher flagMatcher = FLAGS_PATTERN.matcher(arguments);
+        while (flagMatcher.find()) {
+            String flag = flagMatcher.group("flag").toLowerCase();
+            String value = flagMatcher.group("value").trim();
+
+            switch (flag) {
+            case "from" -> fromDate = parseDateTime(value);
+            case "to" -> toDate = parseDateTime(value);
+            case "on" -> onDate = parseDateTime(value);
+            default -> throw new InputException("Invalid flag for list command: /" + flag);
+            }
+        }
+
+        if (onDate != null) {
+            if (fromDate != null || toDate != null) {
+                throw new InputException("Cannot use /on with /from or /to flags");
+            }
+            return new ListCommand(tasks, duskIO, onDate, null, null);
+        }
+
+        if (fromDate != null && toDate != null) {
+            return new ListCommand(tasks, duskIO, null, fromDate, toDate);
+        } else if (fromDate != null || toDate != null) {
+            throw new InputException("Must specify both /from and /to dates");
+        }
+
+        return new ListCommand(tasks, duskIO, null, null, null);
+    }
+
+    private static Command parseDeadlineCommand(DuskIO duskIO, Storage storage,
+                                                TaskList tasks, String description,
+                                                String arguments) throws InputException {
+        Matcher flagMatcher = FLAGS_PATTERN.matcher(arguments);
+        LocalDateTime deadline = null;
+
+        while (flagMatcher.find()) {
+            if (flagMatcher.group("flag").equalsIgnoreCase("by")) {
+                deadline = parseDateTime(flagMatcher.group("value").trim());
+                break;
+            }
+        }
+
+        if (deadline == null) {
+            throw new InputException("Deadline command requires a /by datetime");
+        }
+
+        return new CreateDeadlineCommand(tasks, duskIO, storage, description, deadline);
+    }
+
+    private static Command parseEventCommand(DuskIO duskIO, Storage storage,
+                                             TaskList tasks, String description,
+                                             String arguments) throws InputException {
+        Matcher flagMatcher = FLAGS_PATTERN.matcher(arguments);
+        LocalDateTime fromDate = null;
+        LocalDateTime toDate = null;
+
+        while (flagMatcher.find()) {
+            String flag = flagMatcher.group("flag").toLowerCase();
+            String value = flagMatcher.group("value").trim();
+
+            switch (flag) {
+            case "from" -> fromDate = parseDateTime(value);
+            case "to" -> toDate = parseDateTime(value);
+            default -> throw new InputException("Invalid flag for event command: /" + flag);
+            }
+        }
+
+        if (fromDate == null || toDate == null) {
+            throw new InputException("Event command requires both /from and /to datetimes");
+        }
+
+        if (toDate.isBefore(fromDate)) {
+            throw new InputException("Event end time cannot be before start time");
+        }
+
+        return new CreateEventCommand(tasks, duskIO, storage, description, fromDate, toDate);
     }
 }
