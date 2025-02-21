@@ -9,7 +9,7 @@ import dusk.task.TaskList;
 import dusk.ui.DuskIO;
 
 /**
- * Creates a new deadline task with a specified description and date/time.
+ * Command to create a deadline task.
  */
 public class CreateDeadlineCommand extends Command {
 
@@ -20,16 +20,16 @@ public class CreateDeadlineCommand extends Command {
     private final LocalDateTime deadline;
 
     /**
-     * Constructs a command for creating a deadline task.
+     * Constructs a CreateDeadlineCommand.
      *
      * @param tasks       the current task list
-     * @param duskIO      the console I/O
-     * @param storage     the storage object
-     * @param description the description of the new task
-     * @param deadline    the date/time by which the task is due
+     * @param duskIO      the I/O interface
+     * @param storage     the storage handler
+     * @param description the task description
+     * @param deadline    the deadline for the task
      */
-    public CreateDeadlineCommand(TaskList tasks, DuskIO duskIO,
-                                 Storage storage, String description, LocalDateTime deadline) {
+    public CreateDeadlineCommand(TaskList tasks, DuskIO duskIO, Storage storage,
+                                 String description, LocalDateTime deadline) {
         this.tasks = tasks;
         this.duskIO = duskIO;
         this.storage = storage;

@@ -9,7 +9,7 @@ import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
 
 /**
- * Deletes the task at the specified index from the task list.
+ * Command for deleting a specified task.
  */
 public class DeleteCommand extends Command {
 
@@ -19,12 +19,12 @@ public class DeleteCommand extends Command {
     private final String description;
 
     /**
-     * Constructs a command for deleting a task.
+     * Constructs a DeleteCommand.
      *
      * @param tasks       the current task list
-     * @param duskIO      the console I/O
-     * @param storage     the storage object
-     * @param description the description containing the index of the task to delete
+     * @param duskIO      the I/O interface
+     * @param storage     the storage handler
+     * @param description the command description containing the task index to delete
      */
     public DeleteCommand(TaskList tasks, DuskIO duskIO, Storage storage, String description) {
         this.tasks = tasks;
@@ -48,7 +48,6 @@ public class DeleteCommand extends Command {
                 "  " + removedTask,
                 "Now you have " + tasks.size() + " tasks in the list."
         );
-
         saveAsync(storage, tasks);
     }
 }
