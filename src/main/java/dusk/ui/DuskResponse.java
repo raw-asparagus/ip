@@ -1,4 +1,4 @@
-package dusk;
+package dusk.ui;
 
 /**
  * Represents a response from Dusk with additional metadata about the response type.

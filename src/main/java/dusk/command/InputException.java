@@ -1,7 +1,7 @@
 package dusk.command;
 
-import dusk.DuskException;
-import dusk.DuskExceptionType;
+import dusk.ui.DuskException;
+import dusk.ui.DuskExceptionType;
 
 /**
  * Represents an exception that occurs due to invalid user input.
