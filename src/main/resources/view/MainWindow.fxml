@@ -10,12 +10,14 @@
             minWidth="-Infinity" prefHeight="600.0"
             prefWidth="400.0"
             xmlns="http://javafx.com/javafx/17"
-            fx:controller="dusk.gui.MainWindow">
+            fx:controller="dusk.gui.MainWindow"
+            style="-fx-background-color: #f0f0f0;">
     <TextField fx:id="userInput"
                layoutY="558.0"
                onAction="#handleUserInput"
                prefHeight="41.0"
                prefWidth="324.0"
+               style="-fx-background-radius: 20; -fx-border-radius: 20;"
                AnchorPane.bottomAnchor="1.0"/>
     <Button fx:id="sendButton"
             layoutX="324.0"
@@ -24,16 +26,19 @@
             onAction="#handleUserInput"
             prefHeight="41.0"
             prefWidth="76.0"
+            style="-fx-background-radius: 20; -fx-background-color: #4a90e2; -fx-text-fill: white;"
             text="Send"/>
     <ScrollPane fx:id="scrollPane"
                 hbarPolicy="NEVER"
                 hvalue="1.0"
                 prefHeight="557.0"
                 prefWidth="400.0"
-                vvalue="1.0">
+                vvalue="1.0"
+                style="-fx-background: #f0f0f0; -fx-border-color: transparent;">
         <VBox fx:id="dialogContainer"
               prefHeight="552.0"
-              prefWidth="388.0"/>
+              prefWidth="388.0"
+              spacing="10"
+              style="-fx-padding: 10;"/>
     </ScrollPane>
 </AnchorPane>
-

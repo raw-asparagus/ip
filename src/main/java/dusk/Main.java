@@ -2,6 +2,7 @@ package dusk;
 
 import java.io.IOException;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dusk.gui.MainWindow;
@@ -43,6 +44,8 @@ public class Main extends Application {
             controller.setDusk(dusk);
 
             Scene scene = new Scene(ap);
+            scene.getStylesheets()
+                    .add(Objects.requireNonNull(getClass().getResource("/css/styles.css")).toExternalForm());
             stage.setTitle("Dusk");
             stage.setScene(scene);
             stage.show();
