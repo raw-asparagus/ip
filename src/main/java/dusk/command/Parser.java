@@ -119,10 +119,20 @@ public class Parser {
             return null;
         }
         try {
-            return LocalDateTime.parse(dateTimeStr, DATE_TIME_FORMATTER);
+            // First try to parse with the formatter
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, DATE_TIME_FORMATTER);
+
+            // Additional validation for reasonable date ranges
+            if (dateTime.getYear() < 1900 || dateTime.getYear() > 9999) {
+                throw new InputException("Year must be between 1900 and 9999: " + dateTimeStr);
+            }
+
+            return dateTime;
         } catch (DateTimeParseException e) {
-            throw new InputException("Use 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'. Invalid date/time format: "
-                    + dateTimeStr);
+            throw new InputException(String.format(
+                    "Invalid date/time format: '%s'\n" +
+                            "Expected format: 'yyyy-MM-dd' or 'yyyy-MM-dd HHmm'",
+                    dateTimeStr));
         }
     }
 }

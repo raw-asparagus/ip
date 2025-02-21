@@ -37,7 +37,8 @@ public class FindCommand extends Command {
      */
     @Override
     public void execute() throws IOException, TaskListException {
-        TaskList matchingTasks = tasks.search(keyword);
+        // Updated to use new search method with only keyword parameter
+        TaskList matchingTasks = tasks.search(keyword, null, null, null);
 
         if (matchingTasks.isEmpty()) {
             duskIO.print("No matching tasks found!");
