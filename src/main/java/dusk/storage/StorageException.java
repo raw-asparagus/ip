@@ -4,18 +4,17 @@ import dusk.ui.DuskException;
 import dusk.ui.DuskExceptionType;
 
 /**
- * Represents an exception specifically related to storage operations,
- * including loading and saving task data.
+ * Indicates an exception that occurs during storage operations,
+ * including loading and saving tasks.
  */
 public class StorageException extends DuskException {
 
     /**
      * Constructs a StorageException with the specified detail message.
      *
-     * @param message the detail message providing more information about the exception
+     * @param message the detail message describing the exception
      */
     public StorageException(String message) {
         super(message, DuskExceptionType.STORAGE_ERROR);
     }
-
 }

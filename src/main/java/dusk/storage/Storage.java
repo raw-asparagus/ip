@@ -23,42 +23,33 @@ import dusk.task.TaskListException;
 import dusk.task.Todo;
 
 /**
- * Manages reading and writing Task data to a persistent storage file, as well
- * as providing asynchronous operations for loading and saving.
+ * Manages read and write operations for task data in persistent storage.
+ * Provides synchronous and asynchronous methods to load and save a TaskList.
  */
 public class Storage {
 
-    /**
-     * Formatter to handle date/time information stored in the data file.
-     */
     private static final DateTimeFormatter STORAGE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd[ HHmm]");
 
-    /**
-     * Path to the file used for persistent storage of tasks.
-     */
     private static final Path DATA_FILE = Paths.get("data", "data.txt");
 
-    /**
-     * Single-threaded executor service for asynchronous operations.
-     */
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     /**
-     * Retrieves the path to the data file.
+     * Returns the data file path.
      *
-     * @return the path of the data file
+     * @return the path to the data file
      */
     protected Path getDataFile() {
         return DATA_FILE;
     }
 
     /**
-     * Asynchronously saves all tasks in the specified TaskList to the storage file.
+     * Asynchronously saves all tasks in the given TaskList.
      *
-     * @param tasks the TaskList containing tasks to be saved
-     * @return a CompletableFuture representing the completion of the save operation
-     * @throws CompletionException if a StorageException occurs during the save process
+     * @param tasks the TaskList to be saved
+     * @return a CompletableFuture representing the save operation
+     * @throws CompletionException if a StorageException occurs during saving
      */
     public CompletableFuture<Void> saveTasksAsync(TaskList tasks) throws CompletionException {
         return CompletableFuture.runAsync(() -> {
@@ -71,10 +62,10 @@ public class Storage {
     }
 
     /**
-     * Asynchronously loads all tasks from the storage file into a TaskList.
+     * Asynchronously loads tasks from the data file into a TaskList.
      *
      * @return a CompletableFuture resolving to the loaded TaskList
-     * @throws CompletionException if a StorageException occurs during the load process
+     * @throws CompletionException if a StorageException occurs during loading
      */
     public CompletableFuture<TaskList> loadTasksAsync() throws CompletionException {
         return CompletableFuture.supplyAsync(() -> {
@@ -112,10 +103,10 @@ public class Storage {
     }
 
     /**
-     * Loads all tasks from the data file into a new TaskList and returns it.
+     * Loads tasks from the data file into a new TaskList.
      *
-     * @return a TaskList containing the loaded Task objects
-     * @throws StorageException if an I/O error occurs during load operations
+     * @return the TaskList containing the loaded tasks
+     * @throws StorageException if an I/O error occurs during loading
      */
     public TaskList loadTasks() throws StorageException {
         TaskList tasks = new TaskList();
@@ -148,8 +139,8 @@ public class Storage {
     /**
      * Converts a Task to its string representation for storage.
      *
-     * @param task the Task to be converted
-     * @return the string form of the Task suitable for storage
+     * @param task the Task to convert
+     * @return the storage representation of the Task
      * @throws StorageException if the Task type is unrecognized
      */
     private String stringify(Task task) throws StorageException {
@@ -177,11 +168,11 @@ public class Storage {
     }
 
     /**
-     * Parses a single line of stored data into a Task.
+     * Parses a line of stored data into a Task.
      *
-     * @param taskLine the string representing the Task's data
-     * @return the Task parsed from the line data
-     * @throws StorageException if the data is corrupted or invalid
+     * @param taskLine the string representation of the task
+     * @return the parsed Task object
+     * @throws StorageException if the data is invalid or corrupted
      */
     private Task parseTask(String taskLine) throws StorageException {
         String[] parts = taskLine.split("\\|", -1);
@@ -200,11 +191,11 @@ public class Storage {
     }
 
     /**
-     * Interprets the split string array as components of a Task object.
+     * Splits the given task line into its components.
      *
-     * @param parts the array of data fields
-     * @return a Task object based on the data
-     * @throws StorageException if the data is missing required fields or has an unknown type
+     * @param parts the substrings representing a task's data
+     * @return an array of strings representing each part of the task data
+     * @throws StorageException if the taskLine is null or in an invalid format
      */
     private Task parseTaskParts(String[] parts) throws StorageException {
         String taskType = parts[0];
@@ -242,20 +233,20 @@ public class Storage {
     }
 
     /**
-     * Parses a string into a LocalDateTime based on the designated formatter.
+     * Parses a date and time string into a LocalDateTime object.
      *
-     * @param dateStr the string representing the date/time
-     * @return a LocalDateTime if valid, or {@code null} if blank
-     * @throws StorageException if the date/time string is invalid
+     * @param dateTimeString the string representing date and time
+     * @return the LocalDateTime object derived from the string
+     * @throws StorageException if the provided date time string is invalid
      */
-    private LocalDateTime parseDateTime(String dateStr) throws StorageException {
-        if (dateStr.isBlank()) {
+    private LocalDateTime parseDateTime(String dateTimeString) throws StorageException {
+        if (dateTimeString.isBlank()) {
             return null;
         }
         try {
-            return LocalDateTime.parse(dateStr, STORAGE_FORMATTER);
+            return LocalDateTime.parse(dateTimeString, STORAGE_FORMATTER);
         } catch (DateTimeParseException e) {
-            throw new StorageException("Invalid date format: \"" + dateStr + "\"");
+            throw new StorageException("Invalid date format: \"" + dateTimeString + "\"");
         }
     }
 }
