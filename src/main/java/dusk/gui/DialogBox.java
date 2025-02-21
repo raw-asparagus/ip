@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dusk.DuskResponse;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -73,33 +74,32 @@ public class DialogBox extends HBox {
         displayPicture.setImage(img);
     }
 
-    /**
-     * Creates a {@code DialogBox} to represent the user's dialog. The dialog box contains the user's
-     * message text and their associated image. The dialog orientation is flipped so that the image appears on
-     * the left and the text on the right, typically to distinguish it from the application's dialog.
-     *
-     * @param text The message text to be displayed in the dialog box.
-     * @param img  The image representing the user, displayed alongside the text.
-     * @return A {@code DialogBox} object configured to represent the user's dialog.
-     */
+    public static DialogBox getDuskDialog(String text, Image img, DuskResponse.ResponseType type) {
+        DialogBox db = new DialogBox(text, img);
+
+        // Apply styling based on response type
+        switch (type) {
+        case ERROR:
+            db.dialog.setStyle("-fx-background-color: #fff3cd; -fx-padding: 10px; " +
+                    "-fx-background-radius: 5px; -fx-border-radius: 5px;");
+            break;
+        case SYSTEM_ERROR:
+            db.dialog.setStyle("-fx-background-color: #f8d7da; -fx-padding: 10px; " +
+                    "-fx-background-radius: 5px; -fx-border-radius: 5px;");
+            break;
+        default:
+            break;
+        }
+        return db;
+    }
+
     public static DialogBox getUserDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
+        DialogBox db = new DialogBox(text, img);
         db.flip();
         return db;
     }
 
-    /**
-     * Creates a dialog box for displaying a message from the Dusk application, with the provided text
-     * and image. The dialog box maintains the default orientation with the message and image displayed
-     * in a graphical layout.
-     *
-     * @param text the message to be displayed in the dialog box
-     * @param img  the image to be displayed alongside the message
-     * @return a DialogBox containing the specified message and image
-     */
-    public static DialogBox getDuskDialog(String text, Image img) {
-        return new DialogBox(text, img);
-    }
+
 
     /**
      * Reverses the order of the child nodes within the DialogBox and updates their alignment.

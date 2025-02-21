@@ -58,7 +58,8 @@ public class Dusk {
     }
 
     public String getGreeting() {
-        return String.join("\n", GREETING_MESSAGES);
+        return new DuskResponse(String.join("\n", GREETING_MESSAGES),
+                DuskResponse.ResponseType.NORMAL).getMessage();
     }
 
     /**
@@ -79,15 +80,7 @@ public class Dusk {
         }
     }
 
-
-    /**
-     * Generates a response for the user's chat message by parsing and executing the command.
-     * Uses DuskIO as an intermediary to capture the output without writing to the terminal.
-     *
-     * @param input the user input to process
-     * @return the response captured from command execution
-     */
-    public String getResponse(String input) {
+    public DuskResponse getResponse(String input) {
         StringWriter stringWriter = new StringWriter();
         try (DuskIO duskIO = new DuskIO(new StringReader(""), stringWriter)) {
             if (input == null || input.trim().isEmpty()) {
@@ -95,17 +88,21 @@ public class Dusk {
             }
             Command command = Parser.parse(duskIO, STORAGE, taskList, input);
             command.execute();
-            return stringWriter.toString();
+            return new DuskResponse(stringWriter.toString(), DuskResponse.ResponseType.NORMAL);
         } catch (DuskException e) {
-            // Enhanced error formatting with error type
-            return String.format("❌ %s\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
-                    e.getErrorType().getLabel(),
-                    e.getMessage());
+            return new DuskResponse(
+                    String.format("❌ %s\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                            e.getErrorType().getLabel(),
+                            e.getMessage()),
+                    DuskResponse.ResponseType.ERROR
+            );
         } catch (Exception e) {
-            // Unexpected system errors
             LOGGER.log(Level.SEVERE, "Unexpected error", e);
-            return String.format("⚠️ System Error\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
-                    e.getMessage());
+            return new DuskResponse(
+                    String.format("⚠️ System Error\n━━━━━━━━━━━━━━━━\n%s\n━━━━━━━━━━━━━━━━",
+                            e.getMessage()),
+                    DuskResponse.ResponseType.SYSTEM_ERROR
+            );
         }
     }
 }
