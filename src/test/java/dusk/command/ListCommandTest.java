@@ -37,7 +37,7 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecuteEmptyTaskListPrintsEmptyMessage() throws IOException, TaskListException {
+    void testExecuteEmptyTaskListPrintsEmptyMessage() throws IOException, TaskListException, InputException {
         ListCommand command = new ListCommand(taskList, duskIo, null, null, null);
         command.execute();
         // Verifies no exceptions are thrown and execution completes
@@ -50,7 +50,7 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecuteWithTasksNoDateFilters() throws IOException, TaskListException {
+    void testExecuteWithTasksNoDateFilters() throws IOException, TaskListException, InputException {
         taskList.addTask(new Todo("First Task"));
         taskList.addTask(new Todo("Second Task"));
 
@@ -67,7 +67,7 @@ class ListCommandTest {
      * @throws TaskListException if there is an error accessing or modifying the TaskList.
      */
     @Test
-    void testExecuteOnDateFilter() throws IOException, TaskListException {
+    void testExecuteOnDateFilter() throws IOException, TaskListException, InputException {
         ListCommand command = new ListCommand(taskList, duskIo, LocalDateTime.now(), null, null);
         command.execute();
         // Verifies no exceptions are thrown and execution completes
