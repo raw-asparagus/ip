@@ -1,22 +1,50 @@
 # Dusk Task Manager - User Guide
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Command Format](#command-format)
 - [Basic Commands](#basic-commands)
-    - [Viewing Tasks](#viewing-tasks)
-    - [Finding Tasks](#finding-tasks)
-    - [Managing Task Status](#managing-task-status)
-    - [Deleting Tasks](#deleting-tasks)
+  - [Viewing Tasks](#viewing-tasks)
+  - [Finding Tasks](#finding-tasks)
+  - [Managing Task Status](#managing-task-status)
+  - [Deleting Tasks](#deleting-tasks)
 - [Creating Tasks](#creating-tasks)
-    - [Simple Tasks](#simple-tasks)
-    - [Deadlines](#deadlines)
-    - [Events](#events)
+  - [Simple Tasks](#simple-tasks)
+  - [Deadlines](#deadlines)
+  - [Events](#events)
 - [Date and Time Format](#date-and-time-format)
+
+![User Interface](Ui.png)
 
 ## Introduction
 
-Dusk is a command-line task manager that helps you keep track of your todos, deadlines, and events. This guide will help you understand how to use all available commands.
+Dusk is a command-line task manager that helps you keep track of your todos, deadlines, and events. This guide will help
+you understand how to use all available commands.
+
+### How to Use
+
+To run Dusk, use the following command in your terminal:
+
+```bash
+java -jar dusk.jar
+```
+
+### Requirements
+
+- **macOS**: Java 17 Azure edition
+- **Windows/Linux**: Java 17 SDK
+
+### Exiting the Program
+
+To exit Dusk, type:
+
+```text
+bye
+```
+
+💡 **Tip**: Tasks are automatically saved and loaded between sessions, so exiting the program (even accidentally) will
+not result in data loss.
 
 ## Command Format
 
