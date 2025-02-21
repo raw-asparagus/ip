@@ -46,9 +46,13 @@ public class DuskIO implements Closeable {
      * @param writer the Writer used for output operations
      */
     public DuskIO(Reader reader, Writer writer) {
+        if (reader == null || writer == null) {
+            throw new NullPointerException("Reader and Writer cannot be null");
+        }
         this.bufferedReader = new BufferedReader(reader);
         this.bufferedWriter = new BufferedWriter(writer);
     }
+
 
     /**
      * Prints one or more messages to the console, each prefixed with a tab and followed by a new line.
@@ -58,10 +62,12 @@ public class DuskIO implements Closeable {
      */
     public void print(String... messages) throws IOException {
         for (String message : messages) {
-            bufferedWriter.write("\t" + message + System.lineSeparator());
+            bufferedWriter.write("\t" + message);
+            bufferedWriter.newLine();
         }
-        bufferedWriter.flush();
+        bufferedWriter.flush(); // Ensure output is written immediately
     }
+
 
     /**
      * Closes both the reader and writer resources associated with this instance.
