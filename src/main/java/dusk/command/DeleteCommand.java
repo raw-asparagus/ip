@@ -39,7 +39,7 @@ public class DeleteCommand extends Command {
         try {
             taskIndex = Integer.parseInt(description) - 1;
         } catch (NumberFormatException exception) {
-            throw new InputException("Task number cannot be empty or invalid for a 'DELETE' command!");
+            throw new InputException("Task number cannot be empty or invalid for a delete command!");
         }
 
         Task removedTask = tasks.removeTask(taskIndex);
@@ -49,6 +49,6 @@ public class DeleteCommand extends Command {
                 "Now you have " + tasks.size() + " tasks in the list."
         );
 
-        saveAsync(storage, tasks, duskIO);
+        saveAsync(storage, tasks);
     }
 }

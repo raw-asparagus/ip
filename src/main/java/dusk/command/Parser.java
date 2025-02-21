@@ -55,7 +55,7 @@ public class Parser {
         }
 
         Matcher matcher = INPUT_PATTERN.matcher(input.trim());
-        if (!matcher.matches()) {
+        if (!matcher.find()) {
             throw new InputException("Invalid command format");
         }
 
