@@ -6,9 +6,14 @@ plugins {
 }
 
 ext {
-    javaFxVersion = '17.0.7'
+    javaFxVersion = '17.0.9'  // Updated to latest Java 17 compatible version
     junitVersion = '5.10.0'
     checkstyleVersion = '10.21.2'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
