@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.util.Collections;
@@ -17,37 +16,43 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A custom dialog box for the chat interface.
- * Displays either user or system messages with appropriate styling.
+ * A custom dialog box for the chat interface that displays user or system messages.
  */
 public class DialogBox extends HBox {
     private static final Logger LOGGER = Logger.getLogger(DialogBox.class.getName());
     private static final String DIALOG_BOX_FXML = "/view/DialogBox.fxml";
     private static final String ERROR_DIALOG_BOX_FXML = "/view/ErrorDialogBox.fxml";
-    private static final String SYSTEM_ERROR_STYLE = "; -fx-background-color: #f8d7da; -fx-text-fill: #721c24;";
 
     @FXML
     private Label dialog;
     @FXML
-    private ImageView displayPicture;
+    private ProfilePicture profilePicture;
 
     /**
-     * Private constructor to create a dialog box.
+     * Constructs a DialogBox with the specified text, image, and error flag.
      *
-     * @param text    the text to display
-     * @param img     the image (can be null)
-     * @param isError {@code true} if this dialog represents an error message
+     * @param text    the text to display.
+     * @param img     the image (can be null).
+     * @param isError {@code true} if this dialog represents an error message.
      */
     private DialogBox(String text, Image img, boolean isError) {
-        loadFxml(isError);
-        configureDialog(text, img);
+        dialog = new Label();
+        try {
+            loadFxml(isError);
+            if (profilePicture == null) {
+                profilePicture = new ProfilePicture(img);
+            }
+            configureDialog(text, img);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading FXML", e);
+        }
     }
 
     /**
-     * Private constructor for non-error messages.
+     * Constructs a DialogBox for non-error messages with the specified text and image.
      *
-     * @param text the text to display
-     * @param img  the image (can be null)
+     * @param text the text to display.
+     * @param img  the image (can be null).
      */
     private DialogBox(String text, Image img) {
         this(text, img, false);
@@ -56,65 +61,54 @@ public class DialogBox extends HBox {
     /**
      * Creates a dialog box for user messages.
      *
-     * @param text the user's message
-     * @param img  the user's avatar image
-     * @return a dialog box configured for user messages
+     * @param text the user's message.
+     * @param img  the user's avatar image.
+     * @return a DialogBox configured for user messages.
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        DialogBox db = new DialogBox(text, img);
-        db.flip();
-        return db;
+        DialogBox dialogBox = new DialogBox(text, img);
+        dialogBox.flip();
+        return dialogBox;
     }
 
     /**
-     * Creates a dialog box for Dusk messages with styling based on response type.
+     * Creates a dialog box for system messages with styling based on the response type.
      *
-     * @param text the message to display
-     * @param img  the Dusk avatar image
-     * @param type the type of response
-     * @return a dialog box configured for Dusk messages
+     * @param text the message to display.
+     * @param img  the system avatar image.
+     * @param type the type of response.
+     * @return a DialogBox configured for system messages.
      */
     public static DialogBox getDuskDialog(String text, Image img, DuskResponseType type) {
-        boolean isError = type == DuskResponseType.ERROR || type == DuskResponseType.SYSTEM_ERROR;
-        DialogBox db = new DialogBox(text, img, isError);
-
-        if (type == DuskResponseType.SYSTEM_ERROR) {
-            db.dialog.setStyle(db.dialog.getStyle() + SYSTEM_ERROR_STYLE);
-        }
-
-        return db;
+        return type == DuskResponseType.ERROR
+                ? new DialogBox(text, img, true)
+                : new DialogBox(text, img);
     }
 
     /**
      * Loads the appropriate FXML layout.
      *
-     * @param isError {@code true} to load the error-specific layout
+     * @param isError {@code true} to load the error-specific layout.
+     * @throws IOException if the FXML file cannot be loaded.
      */
-    private void loadFxml(boolean isError) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource(
-                    isError ? ERROR_DIALOG_BOX_FXML : DIALOG_BOX_FXML));
-            fxmlLoader.setController(this);
-            fxmlLoader.setRoot(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading FXML", e);
-        }
+    private void loadFxml(boolean isError) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
+                isError ? ERROR_DIALOG_BOX_FXML : DIALOG_BOX_FXML));
+        fxmlLoader.setController(this);
+        fxmlLoader.setRoot(this);
+        fxmlLoader.load();
     }
 
     /**
      * Configures the dialog with the specified text and image.
      *
-     * @param text the text to display
-     * @param img  the image to display; if null the image view is hidden
+     * @param text the text to display.
+     * @param img  the image to display; if null, the image view is hidden.
      */
     private void configureDialog(String text, Image img) {
         dialog.setText(text);
         if (img != null) {
-            displayPicture.setImage(img);
-        } else {
-            displayPicture.setManaged(false);
-            displayPicture.setVisible(false);
+            profilePicture.setImage(img);
         }
     }
 
