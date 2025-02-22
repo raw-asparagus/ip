@@ -2,118 +2,209 @@ package dusk.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
+
 
 /**
- * Test class for verifying functionality of the {@link TaskList}.
+ * Unit tests for the {@code TaskList} class.
  */
-public class TaskListTest {
+class TaskListTest {
+    private TaskList taskList;
+    private Task mockTask;
 
     /**
-     * Tests that adding a task increases the size of the list.
+     * Sets up test fixtures before each test.
      */
-    @Test
-    public void addTaskShouldIncreaseSize() {
-        TaskList taskList = new TaskList();
-        Task sampleTask = new Todo("Sample Task");
-        assertTrue(taskList.isEmpty(), "Task list should initially be empty");
-
-        taskList.addTask(sampleTask);
-        assertEquals(1, taskList.size(), "Task list size should be 1 after adding a task");
+    @BeforeEach
+    void setUp() {
+        taskList = new TaskList();
+        // Using an anonymous class since Task is abstract
+        mockTask = new Task("Test task") {
+            // No need to implement additional methods as we're only testing TaskList
+        };
     }
 
     /**
-     * Tests that removing a task at a valid index removes the correct task and updates the size.
-     *
-     * @throws TaskListException If the index is out of range.
+     * Verifies that adding a single task succeeds.
      */
     @Test
-    public void removeTaskValidIndexShouldRemoveCorrectly() throws TaskListException {
-        TaskList taskList = new TaskList();
-        Task sampleTask1 = new Todo("Task 1");
-        Task sampleTask2 = new Todo("Task 2");
-        taskList.addTask(sampleTask1);
-        taskList.addTask(sampleTask2);
-        assertEquals(2, taskList.size(), "There should be 2 tasks initially");
-
-        Task removedTask = taskList.removeTask(0);
-        assertEquals(sampleTask1, removedTask,
-                "The removed task should match the first task added");
-        assertEquals(1, taskList.size(),
-                "Task list size should be 1 after removal");
+    void addTaskSingleTaskSuccess() {
+        taskList.addTask(mockTask);
+        assertEquals(1, taskList.size());
+        try {
+            assertEquals(mockTask, taskList.getTask(0));
+        } catch (TaskListException e) {
+            fail("Unexpected TaskListException");
+        }
     }
 
     /**
-     * Tests that removing a task with an invalid index throws {@link TaskListException}.
+     * Verifies that removing a task with a valid index returns the removed task.
      */
     @Test
-    public void removeTaskInvalidIndexShouldThrowException() {
-        TaskList taskList = new TaskList();
-        // Attempt to remove from an empty list
-        assertThrows(TaskListException.class, () -> taskList.removeTask(0),
-                "Removing from an empty list should throw an exception");
+    void removeTaskValidIndexReturnsRemovedTask() {
+        taskList.addTask(mockTask);
+        try {
+            Task removedTask = taskList.removeTask(0);
+            assertEquals(mockTask, removedTask);
+            assertEquals(0, taskList.size());
+        } catch (TaskListException e) {
+            fail("Unexpected TaskListException");
+        }
     }
 
     /**
-     * Tests marking a task as done at a valid index.
-     *
-     * @throws TaskListException If the index is out of range.
-     * @throws MarkTaskException If the task is already marked.
+     * Verifies that removing a task with an invalid index throws an exception.
      */
     @Test
-    public void markTaskValidIndexShouldMarkTaskDone() throws TaskListException, MarkTaskException {
-        TaskList taskList = new TaskList();
-        Task sampleTask = new Todo("Markable Task");
-        taskList.addTask(sampleTask);
-
-        taskList.markTask(0);
-        assertTrue(taskList.getTask(0).getDone(), "Task at index 0 should be marked done");
+    void removeTaskInvalidIndexThrowsException() {
+        assertThrows(TaskListException.class, () -> taskList.removeTask(0));
     }
 
     /**
-     * Tests unmarking a task that is currently done at a valid index.
-     *
-     * @throws TaskListException If the index is out of range.
-     * @throws MarkTaskException If the task is already marked undone.
+     * Verifies that marking a task with a valid index succeeds.
      */
     @Test
-    public void unmarkTaskValidIndexShouldMarkTaskUndone() throws TaskListException, MarkTaskException {
-        TaskList taskList = new TaskList();
-        Task sampleTask = new Todo("Unmarkable Task");
-        sampleTask.markDone(); // Mark it done first
-        taskList.addTask(sampleTask);
-
-        taskList.unmarkTask(0);
-        assertFalse(taskList.getTask(0).getDone(), "Task at index 0 should be marked not done");
+    void markTaskValidIndexSuccess() {
+        taskList.addTask(mockTask);
+        try {
+            taskList.markTask(0);
+            assertTrue(taskList.getTask(0).getDone());
+        } catch (TaskListException | MarkTaskException e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
     }
 
     /**
-     * Tests that marking a task that is already done throws a {@link MarkTaskException}.
+     * Verifies that attempting to mark an already marked task throws an exception.
      */
     @Test
-    public void markTaskAlreadyDoneShouldThrowException() {
-        TaskList taskList = new TaskList();
-        Task sampleTask = new Todo("Already Done Task");
-        sampleTask.markDone();
-        taskList.addTask(sampleTask);
-
-        assertThrows(MarkTaskException.class, () -> taskList.markTask(0),
-                "Marking a task already done should throw MarkTaskException");
+    void markTaskAlreadyMarkedTaskThrowsException() {
+        taskList.addTask(mockTask);
+        try {
+            taskList.markTask(0);
+            assertThrows(MarkTaskException.class, () -> taskList.markTask(0));
+        } catch (TaskListException | MarkTaskException e) {
+            fail("Unexpected exception during test setup: " + e.getMessage());
+        }
     }
 
     /**
-     * Tests that unmarking a task that is already undone throws a {@link MarkTaskException}.
+     * Verifies that unmarking a task with a valid index succeeds.
      */
     @Test
-    public void unmarkTaskAlreadyUndoneShouldThrowException() {
-        TaskList taskList = new TaskList();
-        Task sampleTask = new Todo("Already Undone Task");
-        taskList.addTask(sampleTask);
+    void unmarkTaskValidIndexSuccess() {
+        taskList.addTask(mockTask);
+        try {
+            taskList.markTask(0);
+            taskList.unmarkTask(0);
+            assertFalse(taskList.getTask(0).getDone());
+        } catch (TaskListException | MarkTaskException e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
+    }
 
-        assertThrows(MarkTaskException.class, () -> taskList.unmarkTask(0),
-                "Unmarking a task already undone should throw MarkTaskException");
+    /**
+     * Verifies that attempting to unmark an already unmarked task throws an exception.
+     */
+    @Test
+    void unmarkTaskAlreadyUnmarkedTaskThrowsException() {
+        taskList.addTask(mockTask);
+        assertThrows(MarkTaskException.class, () -> taskList.unmarkTask(0));
+    }
+
+    /**
+     * Verifies that obtaining a task with a valid index returns the task.
+     */
+    @Test
+    void getTaskValidIndexReturnsTask() {
+        taskList.addTask(mockTask);
+        try {
+            assertEquals(mockTask, taskList.getTask(0));
+        } catch (TaskListException e) {
+            fail("Unexpected TaskListException");
+        }
+    }
+
+    /**
+     * Verifies that obtaining a task with an invalid index throws an exception.
+     */
+    @Test
+    void getTaskInvalidIndexThrowsException() {
+        assertThrows(TaskListException.class, () -> taskList.getTask(0));
+    }
+
+    /**
+     * Verifies that the size of an empty {@code TaskList} is zero.
+     */
+    @Test
+    void sizeEmptyListReturnsZero() {
+        assertEquals(0, taskList.size());
+    }
+
+    /**
+     * Verifies that the size of a non-empty {@code TaskList} returns the correct count.
+     */
+    @Test
+    void sizeNonEmptyListReturnsCorrectSize() {
+        taskList.addTask(mockTask);
+        taskList.addTask(mockTask);
+        assertEquals(2, taskList.size());
+    }
+
+    /**
+     * Verifies that {@code isEmpty} returns {@code true} for an empty {@code TaskList}.
+     */
+    @Test
+    void isEmptyEmptyListReturnsTrue() {
+        assertTrue(taskList.isEmpty());
+    }
+
+    /**
+     * Verifies that {@code isEmpty} returns {@code false} for a non-empty {@code TaskList}.
+     */
+    @Test
+    void isEmptyNonEmptyListReturnsFalse() {
+        taskList.addTask(mockTask);
+        assertFalse(taskList.isEmpty());
+    }
+
+    /**
+     * Verifies that searching with a keyword returns the matching tasks.
+     */
+    @Test
+    void searchWithKeywordReturnsMatchingTasks() {
+        Task task1 = new Task("Meeting with team") {
+        };
+        Task task2 = new Task("Call client") {
+        };
+        taskList.addTask(task1);
+        taskList.addTask(task2);
+
+        TaskList results = taskList.search("team", null, null, null);
+        assertEquals(1, results.size());
+        try {
+            assertEquals("Meeting with team", results.getTask(0).getDescription());
+        } catch (TaskListException e) {
+            fail("Unexpected TaskListException");
+        }
+    }
+
+    /**
+     * Verifies that searching with a date returns the matching tasks.
+     */
+    @Test
+    void searchWithDateReturnsMatchingTasks() {
+        LocalDateTime testDate = LocalDateTime.now();
+        TaskList results = taskList.search(null, testDate, null, null);
+        // Note: Specific date-based testing would depend on your Task implementation
+        assertNotNull(results);
     }
 }

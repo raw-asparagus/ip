@@ -5,193 +5,147 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages a list of tasks, providing methods for adding, removing, and
- * retrieving tasks based on various conditions.
+ * Manages a collection of tasks.
  */
 public class TaskList {
 
-    /**
-     * The underlying collection of Task objects associated with this TaskList.
-     */
     private final List<Task> tasks;
 
     /**
-     * Creates a new TaskList instance with an empty internal list of tasks.
+     * Constructs an empty TaskList.
      */
     public TaskList() {
-        this.tasks = new ArrayList<>();
+        tasks = new ArrayList<>();
     }
 
     /**
-     * Adds a new task to the list.
+     * Adds a task to the list.
      *
-     * @param task the Task object to add
+     * @param task the task to add
      */
     public void addTask(Task task) {
         tasks.add(task);
     }
 
     /**
-     * Removes a task at the specified index from the list.
+     * Removes the task at the specified index.
      *
-     * @param index the 0-based position of the task to remove
-     * @return the removed Task object
-     * @throws TaskListException if the provided index is out of bounds
+     * @param index the index of the task to remove (0-based)
+     * @return the removed task
+     * @throws TaskListException if the index is out of bounds
      */
     public Task removeTask(int index) throws TaskListException {
-        try {
-            return tasks.remove(index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new TaskListException("Index out of bounds: " + (index + 1));
+        if (index < 0 || index >= tasks.size()) {
+            throw new TaskListException("Invalid task index.");
         }
+        return tasks.remove(index);
     }
 
     /**
-     * Marks the specified task as done.
+     * Marks the task at the specified index as done.
      *
-     * @param index the 0-based position of the task to mark
+     * @param index the index of the task to mark (0-based)
      * @throws TaskListException if the index is out of bounds
      * @throws MarkTaskException if the task is already marked as done
      */
     public void markTask(int index) throws TaskListException, MarkTaskException {
-        try {
-            Task task = getTask(index);
-            if (task.getDone()) {
-                throw new MarkTaskException("Task already marked as done!");
-            }
-            task.markDone();
-        } catch (IndexOutOfBoundsException e) {
-            throw new TaskListException("Index out of bounds: " + (index + 1));
+        Task task = getTask(index);
+        if (task.getDone()) {
+            throw new MarkTaskException("Task is already marked as done.");
         }
+        task.markDone();
     }
 
     /**
-     * Marks the specified task as not done.
+     * Marks the task at the specified index as not done.
      *
-     * @param index the 0-based position of the task to unmark
+     * @param index the index of the task to unmark (0-based)
      * @throws TaskListException if the index is out of bounds
-     * @throws MarkTaskException if the task is already marked as not done
+     * @throws MarkTaskException if the task is already unmarked
      */
     public void unmarkTask(int index) throws TaskListException, MarkTaskException {
-        try {
-            Task task = getTask(index);
-            if (!task.getDone()) {
-                throw new MarkTaskException("Task already marked as not done!");
-            }
-            task.markUndone();
-        } catch (IndexOutOfBoundsException e) {
-            throw new TaskListException("Index out of bounds: " + (index + 1));
+        Task task = getTask(index);
+        if (!task.getDone()) {
+            throw new MarkTaskException("Task is already unmarked.");
         }
+        task.markUndone();
     }
 
     /**
      * Retrieves the task at the specified index.
      *
-     * @param index the 0-based position of the task
-     * @return the Task object at the given index
+     * @param index the index of the task (0-based)
+     * @return the task at the given index
      * @throws TaskListException if the index is out of bounds
      */
     public Task getTask(int index) throws TaskListException {
-        try {
-            return tasks.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new TaskListException("Index out of bounds: " + (index + 1));
+        if (index < 0 || index >= tasks.size()) {
+            throw new TaskListException("Invalid task index.");
         }
+        return tasks.get(index);
     }
 
     /**
-     * Retrieves the total number of tasks in the list.
+     * Returns the total number of tasks.
      *
-     * @return the size of the internal task list
+     * @return the size of the task list
      */
     public int size() {
         return tasks.size();
     }
 
     /**
-     * Checks if the task list is empty.
+     * Checks whether the task list is empty.
      *
-     * @return true if there are no tasks in the list, false otherwise
+     * @return true if there are no tasks; false otherwise
      */
     public boolean isEmpty() {
         return tasks.isEmpty();
     }
 
     /**
-     * Searches for tasks based on a keyword and/or date criteria.
-     * If keyword is provided, filters tasks whose descriptions contain the keyword.
-     * If date is provided, filters tasks occurring on that specific date.
-     * If both fromDate and toDate are provided, filters tasks within that date range.
+     * Searches for tasks that match the given criteria.
+     * If a keyword is provided, only tasks whose descriptions contain the keyword are returned.
+     * If a specific date is provided, only tasks on that date (via isOnDate) are returned.
+     * If both fromDate and toDate are provided, only tasks within the date range (via isWithinRange) are returned.
      *
-     * @param keyword the search keyword (optional, can be null)
-     * @param date specific date to search for tasks (optional, can be null)
-     * @param fromDate start date of the range (optional, can be null)
-     * @param toDate end date of the range (optional, can be null)
-     * @return a TaskList containing tasks that match all provided criteria
+     * @param keyword  search keyword (optional)
+     * @param date     specific date to search for (optional)
+     * @param fromDate start date of the range (optional)
+     * @param toDate   end date of the range (optional)
+     * @return a TaskList of tasks matching the criteria
      */
     public TaskList search(String keyword, LocalDateTime date,
                            LocalDateTime fromDate, LocalDateTime toDate) {
         TaskList result = new TaskList();
-
         for (Task task : tasks) {
-            boolean matches = true;
-
-            // Apply keyword filter if provided
-            if (keyword != null && !keyword.isEmpty()) {
-                matches = task.getName().toLowerCase()
-                        .contains(keyword.toLowerCase());
+            boolean matches = keyword == null || task.getDescription().toLowerCase().contains(keyword.toLowerCase());
+            if (date != null) {
+                boolean onDate = false;
+                if (task instanceof Deadline) {
+                    onDate = ((Deadline) task).isOnDate(date);
+                } else if (task instanceof Event) {
+                    onDate = ((Event) task).isOnDate(date);
+                }
+                if (!onDate) {
+                    matches = false;
+                }
             }
-
-            // Apply date filter if provided
-            if (matches && date != null) {
-                matches = isOnSpecificDate(task, date);
+            if (fromDate != null && toDate != null) {
+                boolean withinRange = false;
+                if (task instanceof Deadline) {
+                    withinRange = ((Deadline) task).isWithinRange(fromDate, toDate);
+                } else if (task instanceof Event) {
+                    withinRange = ((Event) task).isWithinRange(fromDate, toDate);
+                }
+                if (!withinRange) {
+                    matches = false;
+                }
             }
-
-            // Apply date range filter if both fromDate and toDate are provided
-            if (matches && fromDate != null && toDate != null) {
-                matches = isWithinDateRange(task, fromDate, toDate);
-            }
-
             if (matches) {
                 result.addTask(task);
             }
         }
-
         return result;
-    }
-
-    /**
-     * Checks if a task falls within the specified date range.
-     *
-     * @param task the task to check
-     * @param fromDate start of the date range
-     * @param toDate end of the date range
-     * @return true if the task is within the date range, false otherwise
-     */
-    private boolean isWithinDateRange(Task task, LocalDateTime fromDate, LocalDateTime toDate) {
-        if (task instanceof Event event) {
-            return !event.getTo().isBefore(fromDate) && !event.getFrom().isAfter(toDate);
-        } else if (task instanceof Deadline deadline) {
-            LocalDateTime dueDate = deadline.getBy();
-            return !dueDate.isBefore(fromDate) && !dueDate.isAfter(toDate);
-        }
-        return false;  // ToDo tasks don't have dates
-    }
-
-    /**
-     * Checks if a task occurs on a specific date.
-     *
-     * @param task the task to check
-     * @param date the date to check against
-     * @return true if the task occurs on the specified date, false otherwise
-     */
-    private boolean isOnSpecificDate(Task task, LocalDateTime date) {
-        if (task instanceof Event event) {
-            return event.getFrom().toLocalDate().equals(date.toLocalDate()) ||
-                    event.getTo().toLocalDate().equals(date.toLocalDate());
-        } else if (task instanceof Deadline deadline) {
-            return deadline.getBy().toLocalDate().equals(date.toLocalDate());
-        }
-        return false;  // ToDo tasks don't have dates
     }
 }

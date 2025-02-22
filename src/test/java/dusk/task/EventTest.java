@@ -4,90 +4,89 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.Test;
-
 /**
- * Test class for verifying functionality of the {@link Event} task.
+ * Unit tests for the {@code Event} class.
  */
-public class EventTest {
+class EventTest {
+    private final LocalDateTime from = LocalDateTime.of(2024, 3, 15, 14, 0);
+    private final LocalDateTime to = LocalDateTime.of(2024, 3, 15, 16, 0);
 
     /**
-     * Tests that constructor initializes an event with the expected fields.
+     * Verifies that the {@code Event} constructor correctly sets the description, start time, end time, and done
+     * status.
      */
     @Test
-    public void constructorValidInputsInitializesCorrectly() {
-        LocalDateTime startTime = LocalDateTime.of(2023, 11, 1, 14, 0);
-        LocalDateTime endTime = LocalDateTime.of(2023, 11, 1, 16, 0);
-        Event event = new Event("Company Meeting", startTime, endTime);
-
-        assertEquals("Company Meeting", event.getName(),
-                "Event description should match constructor argument");
-        assertEquals(startTime, event.getFrom(),
-                "Start time should match constructor argument");
-        assertEquals(endTime, event.getTo(),
-                "End time should match constructor argument");
-        assertFalse(event.getDone(), "A newly created event should not be marked done");
+    void constructorValidInputsCreatesCorrectEvent() {
+        Event event = new Event("Team meeting", from, to);
+        assertEquals("Team meeting", event.getDescription());
+        assertEquals(from, event.getFrom());
+        assertEquals(to, event.getTo());
+        assertFalse(event.getDone());
     }
 
     /**
-     * Tests that an event falling entirely within the specified range returns {@code true}.
+     * Verifies that {@code isWithinRange} returns {@code true} when the event is completely within the specified range.
      */
     @Test
-    public void isWithinRangeInRangeReturnsTrue() {
-        LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 10, 0);
-        LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 12, 0);
-        Event event = new Event("Morning Session", fromTime, toTime);
-
-        LocalDateTime rangeStart = LocalDateTime.of(2023, 11, 1, 9, 0);
-        LocalDateTime rangeEnd = LocalDateTime.of(2023, 11, 1, 13, 0);
-
-        assertTrue(event.isWithinRange(rangeStart, rangeEnd),
-                "Event times should lie within the specified range");
+    void isWithinRangeEventCompletelyInRangeReturnsTrue() {
+        Event event = new Event("Team meeting", from, to);
+        LocalDateTime rangeStart = LocalDateTime.of(2024, 3, 15, 13, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2024, 3, 15, 17, 0);
+        assertTrue(event.isWithinRange(rangeStart, rangeEnd));
     }
 
     /**
-     * Tests that an event completely outside the specified range returns {@code false}.
+     * Verifies that {@code isWithinRange} returns {@code false} when the event is outside the specified range.
      */
     @Test
-    public void isWithinRangeOutOfRangeReturnsFalse() {
-        LocalDateTime fromTime = LocalDateTime.of(2023, 11, 1, 15, 0);
-        LocalDateTime toTime = LocalDateTime.of(2023, 11, 1, 16, 0);
-        Event event = new Event("Afternoon Session", fromTime, toTime);
-
-        LocalDateTime rangeStart = LocalDateTime.of(2023, 11, 1, 9, 0);
-        LocalDateTime rangeEnd = LocalDateTime.of(2023, 11, 1, 10, 0);
-
-        assertFalse(event.isWithinRange(rangeStart, rangeEnd),
-                "Event times should not lie within the specified range");
+    void isWithinRangeEventOutsideRangeReturnsFalse() {
+        Event event = new Event("Team meeting", from, to);
+        LocalDateTime rangeStart = LocalDateTime.of(2024, 3, 16, 14, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2024, 3, 16, 16, 0);
+        assertFalse(event.isWithinRange(rangeStart, rangeEnd));
     }
 
     /**
-     * Tests that an event on the exact specified date returns {@code true} for isOnDate().
+     * Verifies that {@code isOnDate} returns {@code true} when the event occurs on the specified date.
      */
     @Test
-    public void isOnDateExactDateReturnsTrue() {
-        LocalDateTime startTime = LocalDateTime.of(2024, 3, 1, 9, 30);
-        LocalDateTime endTime = LocalDateTime.of(2024, 3, 1, 11, 30);
-        Event event = new Event("Conference", startTime, endTime);
-
-        LocalDateTime sameDay = LocalDateTime.of(2024, 3, 1, 0, 0);
-        assertTrue(event.isOnDate(sameDay),
-                "Event should be found on the same day");
+    void isOnDateEventOnSameDateReturnsTrue() {
+        Event event = new Event("Team meeting", from, to);
+        LocalDateTime date = LocalDateTime.of(2024, 3, 15, 0, 0);
+        assertTrue(event.isOnDate(date));
     }
 
     /**
-     * Tests that an event not on the specified date returns {@code false} for isOnDate().
+     * Verifies that {@code isOnDate} returns {@code false} when the event does not occur on the specified date.
      */
     @Test
-    public void isOnDateDifferentDateReturnsFalse() {
-        LocalDateTime startTime = LocalDateTime.of(2024, 3, 2, 12, 0);
-        LocalDateTime endTime = LocalDateTime.of(2024, 3, 2, 13, 0);
-        Event event = new Event("March Gathering", startTime, endTime);
+    void isOnDateEventOnDifferentDateReturnsFalse() {
+        Event event = new Event("Team meeting", from, to);
+        LocalDateTime date = LocalDateTime.of(2024, 3, 16, 0, 0);
+        assertFalse(event.isOnDate(date));
+    }
 
-        LocalDateTime otherDay = LocalDateTime.of(2024, 3, 1, 0, 0);
-        assertFalse(event.isOnDate(otherDay),
-                "Event should not be found on a different day");
+    /**
+     * Verifies the string representation of a new {@code Event}.
+     */
+    @Test
+    void toStringNewEventReturnsCorrectFormat() {
+        Event event = new Event("Team meeting", from, to);
+        String expected = "[E][ ] Team meeting (Mar 15 2024 14:00 to Mar 15 2024 16:00)";
+        assertEquals(expected, event.toString());
+    }
+
+    /**
+     * Verifies the string representation of a completed {@code Event}.
+     */
+    @Test
+    void toStringCompletedEventReturnsCorrectFormat() {
+        Event event = new Event("Team meeting", from, to);
+        event.markDone();
+        String expected = "[E][✗] Team meeting (Mar 15 2024 14:00 to Mar 15 2024 16:00)";
+        assertEquals(expected, event.toString());
     }
 }

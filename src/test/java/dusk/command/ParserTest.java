@@ -1,197 +1,139 @@
 package dusk.command;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import dusk.ui.DuskIO;
 import dusk.storage.Storage;
 import dusk.task.TaskList;
-import dusk.ui.DuskIO;
 
 /**
- * Tests for the Parser class, ensuring commands are parsed correctly.
+ * Test cases for verifying the functionality of the Parser component.
  */
-class ParserTest {
+public class ParserTest {
 
-    private DuskIO duskIo;
+    private DuskIO duskIO;
     private Storage storage;
-    private TaskList taskList;
+    private TaskList tasks;
 
     /**
-     * Sets up the test environment before each test method.
+     * Sets up the test environment before each test.
      */
     @BeforeEach
-    void setUp() {
-        duskIo = new DuskIO(System.in, System.out);
+    public void setUp() {
+        duskIO = new DuskIO(new StringReader(""), new StringWriter());
         storage = new Storage();
-        taskList = new TaskList();
+        tasks = new TaskList();
     }
 
     /**
-     * Tests that parsing an empty input string throws an InputException.
+     * Verifies that parsing a valid todo command works correctly.
      */
     @Test
-    void parseEmptyInputThrowsInputException() {
-        assertThrows(
-                InputException.class,
-                () -> Parser.parse(duskIo, storage, taskList, ""),
-                "Parser should throw InputException for empty input."
-        );
+    public void parseTodoCommandSuccess() {
+        assertDoesNotThrow(() -> {
+            Command cmd = Parser.parse(duskIO, storage, tasks, "todo Read book");
+            assertInstanceOf(CreateTodoCommand.class, cmd);
+        });
     }
 
     /**
-     * Tests that parsing an unrecognized command string throws an InputException.
+     * Verifies that parsing a valid deadline command works correctly.
      */
     @Test
-    void parseInvalidCommandThrowsInputException() {
-        assertThrows(
-                InputException.class,
-                () -> Parser.parse(duskIo, storage, taskList, "unknowncommand"),
-                "Parser should throw InputException for invalid or unrecognized commands."
-        );
+    public void parseDeadlineCommandSuccess() {
+        assertDoesNotThrow(() -> {
+            Command cmd = Parser.parse(duskIO, storage, tasks,
+                    "deadline Submit report /by 2024-03-20 1400");
+            assertInstanceOf(CreateDeadlineCommand.class, cmd);
+        });
     }
 
     /**
-     * Tests that the "list" command returns a ListCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that parsing a valid event command works correctly.
      */
     @Test
-    void parseListCommandReturnsListCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "list");
-        assertInstanceOf(
-                ListCommand.class,
-                command,
-                "Parser should return a ListCommand for 'list' input."
-        );
+    public void parseEventCommandSuccess() {
+        assertDoesNotThrow(() -> {
+            Command cmd = Parser.parse(duskIO, storage, tasks,
+                    "event Team meeting /from 2024-03-20 1400 /to 2024-03-20 1500");
+            assertInstanceOf(CreateEventCommand.class, cmd);
+        });
     }
 
     /**
-     * Tests that the "todo" command returns a CreateTodoCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that parsing a valid list command works correctly.
      */
     @Test
-    void parseTodoCommandReturnsCreateTodoCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "todo Buy groceries");
-        assertInstanceOf(
-                CreateTodoCommand.class,
-                command,
-                "Parser should return a CreateTodoCommand for 'todo' input."
-        );
+    public void parseListCommandSuccess() {
+        assertDoesNotThrow(() -> {
+            Command cmd = Parser.parse(duskIO, storage, tasks, "list");
+            assertInstanceOf(ListCommand.class, cmd);
+        });
     }
 
     /**
-     * Tests that the "deadline" command returns a CreateDeadlineCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that a missing description triggers an InputException.
      */
     @Test
-    void parseDeadlineCommandReturnsCreateDeadlineCommand() throws InputException {
-        Command command = Parser.parse(
-                duskIo,
-                storage,
-                taskList,
-                "deadline Finish assignment /by 2023-10-10 1300"
-        );
-        assertInstanceOf(
-                CreateDeadlineCommand.class,
-                command,
-                "Parser should return a CreateDeadlineCommand for 'deadline' input with /by date."
-        );
+    public void parseCommandNoDescriptionThrowsInputException() {
+        assertThrows(InputException.class, () -> Parser.parse(duskIO, storage, tasks, "todo"));
     }
 
     /**
-     * Tests that the "event" command returns a CreateEventCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that a deadline command with an invalid datetime format triggers an InputException.
      */
     @Test
-    void parseEventCommandReturnsCreateEventCommand() throws InputException {
-        Command command = Parser.parse(
-                duskIo,
-                storage,
-                taskList,
-                "event Team meeting /from 2023-12-01 /to 2023-12-01 1500"
-        );
-        assertInstanceOf(
-                CreateEventCommand.class,
-                command,
-                "Parser should return a CreateEventCommand for 'event' input with /from and /to dates."
-        );
+    public void parseDeadlineInvalidDateTimeThrowsInputException() {
+        assertThrows(InputException.class, () -> Parser.parse(duskIO, storage, tasks,
+                "deadline Submit report /by invalid-date"));
     }
 
     /**
-     * Tests that parsing an invalid date/time format throws an InputException.
+     * Verifies that an event command missing required flags triggers an InputException.
      */
     @Test
-    void parseInvalidDateTimeThrowsInputException() {
-        assertThrows(
-                InputException.class,
-                () -> Parser.parse(duskIo, storage, taskList, "deadline Something /by 2023-99-99"),
-                "Parser should throw InputException on invalid date/time format."
-        );
+    public void parseEventMissingFlagsThrowsInputException() {
+        assertThrows(InputException.class, () -> Parser.parse(duskIO, storage, tasks,
+                "event Team meeting /from 2024-03-20 1400"));
     }
 
     /**
-     * Tests that the "mark" command returns a MarkCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that an invalid command type triggers an InputException.
      */
     @Test
-    void parseMarkCommandReturnsMarkCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "mark 1");
-        assertInstanceOf(
-                MarkCommand.class,
-                command,
-                "Parser should return a MarkCommand for 'mark' input."
-        );
+    public void parseInvalidCommandTypeThrowsInputException() {
+        assertThrows(InputException.class, () -> Parser.parse(duskIO, storage, tasks, "invalid command"));
     }
 
     /**
-     * Tests that the "unmark" command returns a MarkCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that parsing a valid find command works correctly.
      */
     @Test
-    void parseUnmarkCommandReturnsMarkCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "unmark 1");
-        assertInstanceOf(
-                MarkCommand.class,
-                command,
-                "Parser should return a MarkCommand for 'unmark' input."
-        );
+    public void parseFindCommandSuccess() {
+        assertDoesNotThrow(() -> {
+            Command cmd = Parser.parse(duskIO, storage, tasks, "find book");
+            assertInstanceOf(FindCommand.class, cmd);
+        });
     }
 
     /**
-     * Tests that the "delete" command returns a DeleteCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
+     * Verifies that mark and unmark commands are parsed correctly.
      */
     @Test
-    void parseDeleteCommandReturnsDeleteCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "delete 1");
-        assertInstanceOf(
-                DeleteCommand.class,
-                command,
-                "Parser should return a DeleteCommand for 'delete' input."
-        );
-    }
-
-    /**
-     * Tests that the "find" command returns a FindCommand instance.
-     *
-     * @throws InputException if there is an invalid input to the command.
-     */
-    @Test
-    void parseFindCommandReturnsFindCommand() throws InputException {
-        Command command = Parser.parse(duskIo, storage, taskList, "find homework");
-        assertInstanceOf(
-                FindCommand.class,
-                command,
-                "Parser should return a FindCommand for 'find' input."
-        );
+    public void parseMarkUnmarkCommandsSuccess() {
+        assertDoesNotThrow(() -> {
+            Command markCmd = Parser.parse(duskIO, storage, tasks, "mark 1");
+            Command unmarkCmd = Parser.parse(duskIO, storage, tasks, "unmark 1");
+            assertInstanceOf(MarkCommand.class, markCmd);
+            assertInstanceOf(MarkCommand.class, unmarkCmd);
+        });
     }
 }

@@ -7,6 +7,7 @@ plugins {
 
 ext {
     javaFxVersion = '17.0.9'  // Updated to latest Java 17 compatible version
+    mockitoVersion = '5.11.0'
     junitVersion = '5.10.0'
     checkstyleVersion = '10.21.2'
 }
@@ -24,6 +25,7 @@ repositories {
 dependencies {
     // Testing
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
     // JavaFX - Platform specific dependencies

@@ -4,32 +4,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Represents an event task with a start and end date/time.
+ * Represents an event task with a start and end time.
  */
 public class Event extends Task {
 
-    /**
-     * The formatter used to display the event date and time.
-     */
     private static final DateTimeFormatter OUTPUT_FORMATTER =
             DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm");
 
-    /**
-     * The start date/time of the event.
-     */
     private final LocalDateTime from;
-
-    /**
-     * The end date/time of the event.
-     */
     private final LocalDateTime to;
 
     /**
-     * Constructs an Event task with a description, start date/time, and end date/time.
+     * Constructs an Event.
      *
-     * @param description the description of the event
-     * @param from        the LocalDateTime when the event starts
-     * @param to          the LocalDateTime when the event ends
+     * @param description the event description
+     * @param from        the start date and time
+     * @param to          the end date and time
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
@@ -38,29 +28,29 @@ public class Event extends Task {
     }
 
     /**
-     * Retrieves the date/time when this event starts.
+     * Retrieves the start date and time.
      *
-     * @return the LocalDateTime representing the start of the event
+     * @return the event start as a LocalDateTime
      */
     public LocalDateTime getFrom() {
         return from;
     }
 
     /**
-     * Retrieves the date/time when this event ends.
+     * Retrieves the end date and time.
      *
-     * @return the LocalDateTime representing the end of the event
+     * @return the event end as a LocalDateTime
      */
     public LocalDateTime getTo() {
         return to;
     }
 
     /**
-     * Checks whether this event intersects with the specified time range.
+     * Checks if any part of the event falls within the specified time range.
      *
-     * @param start the start of the date/time range
-     * @param end   the end of the date/time range
-     * @return true if any part of the event is within the range, false otherwise
+     * @param start the range start
+     * @param end   the range end
+     * @return true if any part of the event is within the range; false otherwise
      */
     public boolean isWithinRange(LocalDateTime start, LocalDateTime end) {
         if (from != null && to != null) {
@@ -70,16 +60,15 @@ public class Event extends Task {
             return from.isAfter(start) && from.isBefore(end);
         } else if (to != null) {
             return to.isAfter(start) && to.isBefore(end);
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
-     * Checks if this event occurs on the specified date (ignoring exact times).
+     * Checks if the event occurs on the specified date.
      *
-     * @param date the LocalDateTime whose date will be compared against this event
-     * @return true if the event occurs on the specified date, false otherwise
+     * @param date the date to check
+     * @return true if the event spans the specified date; false otherwise
      */
     public boolean isOnDate(LocalDateTime date) {
         if (from == null || to == null) {
@@ -91,25 +80,22 @@ public class Event extends Task {
     }
 
     /**
-     * Returns a string representation of this Event task, including its type,
-     * completion status, and the event's date/time range.
+     * Returns the string representation of this event.
      *
-     * @return a string showing the event type, status, and date/time range
+     * @return a formatted string with task type, status, and event time range
      */
     @Override
     public String toString() {
         String fromStr = (from == null) ? "" : from.format(OUTPUT_FORMATTER);
         String toStr = (to == null) ? "" : to.format(OUTPUT_FORMATTER);
+        String message = "";
 
-        String message;
-        if (fromStr.isEmpty() && toStr.isEmpty()) {
-            message = "";
-        } else if (fromStr.isEmpty()) {
-            message = " (to: " + toStr + ")";
-        } else if (toStr.isEmpty()) {
-            message = " (from: " + fromStr + ")";
-        } else {
-            message = " (from: " + fromStr + " to: " + toStr + ")";
+        if (fromStr.isEmpty() && !toStr.isEmpty()) {
+            message = " (until " + toStr + ")";
+        } else if (!fromStr.isEmpty() && toStr.isEmpty()) {
+            message = " (from " + fromStr + ")";
+        } else if (!fromStr.isEmpty()) {
+            message = " (" + fromStr + " to " + toStr + ")";
         }
 
         return "[E]" + super.toString() + message;

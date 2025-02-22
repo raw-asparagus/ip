@@ -1,73 +1,62 @@
 package dusk.command;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-
+import dusk.storage.Storage;
+import dusk.task.TaskList;
+import dusk.ui.DuskIO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dusk.storage.Storage;
-import dusk.task.TaskList;
-import dusk.task.TaskListException;
-import dusk.ui.DuskIO;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
- * Tests for the CreateTodoCommand class.
+ * Tests the functionality of the CreateTodoCommand.
  */
-class CreateTodoCommandTest {
+public class CreateTodoCommandTest {
 
     private TaskList taskList;
-    private DuskIO duskIo;
+    private DuskIO duskIO;
     private Storage storage;
 
-    /**
-     * Sets up the test environment before each test method.
-     */
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         taskList = new TaskList();
-        duskIo = new DuskIO(System.in, System.out);
-        storage = new Storage();
+        duskIO = mock(DuskIO.class);
+        storage = mock(Storage.class);
     }
 
     /**
-     * Tests executing a valid CreateTodoCommand scenario.
-     *
-     * @throws IOException       if I/O error occurs while executing the command.
-     * @throws InputException    if there is an invalid input to the command.
-     * @throws TaskListException if there is an error accessing or modifying the TaskList.
+     * Verifies that a valid todo task is successfully added.
      */
     @Test
-    void testExecuteValidData() throws IOException, InputException, TaskListException {
-        CreateTodoCommand command = new CreateTodoCommand(
-                taskList, duskIo, storage, "Buy groceries"
-        );
+    public void executeValidTodoTaskAdded() throws IOException, InputException {
+        CreateTodoCommand command = new CreateTodoCommand(taskList, duskIO, storage, "Test todo");
 
+        when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
         command.execute();
 
-        assertEquals(1, taskList.size(), "TaskList should have 1 task after executing a valid CreateTodoCommand.");
-        assertFalse(taskList.getTask(0).getDone(), "Newly created todo should not be marked done.");
-        assertTrue(
-                taskList.getTask(0).toString().contains("Buy groceries"),
-                "Task should contain the given description in its string representation."
-        );
+        assertEquals(1, taskList.size());
+        verify(duskIO).print(eq("Got it. I've added this task:"),
+                contains("  [T][ ] Test todo"),
+                eq("Now you have 1 tasks in the list."));
+        verify(storage).saveTasksAsync(taskList);
     }
 
     /**
-     * Tests that executing CreateTodoCommand with an empty description throws an InputException.
+     * Verifies that executing the command with an empty description throws an InputException.
      */
     @Test
-    void testExecuteEmptyDescriptionThrowsException() {
-        CreateTodoCommand command = new CreateTodoCommand(taskList, duskIo, storage, "");
-
-        assertThrows(
-                InputException.class,
-                command::execute,
-                "Executing CreateTodoCommand with empty description should throw an InputException."
-        );
+    public void executeEmptyDescriptionThrowsInputException() {
+        CreateTodoCommand command = new CreateTodoCommand(taskList, duskIO, storage, "");
+        assertThrows(InputException.class, command::execute);
+        assertEquals(0, taskList.size());
     }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ import dusk.task.TaskList;
 import dusk.task.Todo;
 
 /**
- * Test class for verifying functionality of the Storage component.
+ * Tests for verifying the functionality of the Storage component.
  */
 public class StorageTest {
 
@@ -28,14 +29,15 @@ public class StorageTest {
     private Storage storage;
 
     /**
-     * Sets up the test environment by creating a temporary data file
-     * and initializing the {@link Storage} instance.
+     * Sets up the test environment by creating a temporary data file and 
+     * initializing the {@code Storage} instance.
      *
-     * @param tempDir The temporary directory provided by JUnit.
-     * @throws IOException If an I/O error occurs while creating the file.
+     * @param tempDir the temporary directory provided by JUnit
+     * @throws IOException if an I/O error occurs while creating the file
      */
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws IOException {
+    public void setUp(@TempDir final Path tempDir) throws IOException {
+        // Setup temporary data file and initialize storage.
         this.tempDataFile = tempDir.resolve("data.txt");
 
         storage = new Storage() {
@@ -47,7 +49,7 @@ public class StorageTest {
     }
 
     /**
-     * Cleans up any resources used by the storage after each test.
+     * Cleans up resources after each test.
      */
     @AfterEach
     public void tearDown() {
@@ -55,9 +57,9 @@ public class StorageTest {
     }
 
     /**
-     * Tests that saving and then loading tasks results in an identical list of tasks.
+     * Verifies that saving and then loading tasks causes the same task list to be retrieved.
      *
-     * @throws Exception If any exception occurs during the save or load operations.
+     * @throws Exception if an error occurs during the save or load operations
      */
     @Test
     public void saveTasksLoadTasksRoundTripSuccess() throws Exception {
@@ -71,21 +73,21 @@ public class StorageTest {
         assertEquals(tasks.size(), loadedTasks.size(),
                 "Loaded tasks should match the count of saved tasks");
 
-        assertEquals("Test Todo", loadedTasks.getTask(0).getName(),
+        assertEquals("Test Todo", loadedTasks.getTask(0).getDescription(),
                 "First task description matches after load");
         assertFalse(loadedTasks.getTask(0).getDone(),
                 "First task should remain unmarked by default");
 
-        assertEquals("Test Deadline", loadedTasks.getTask(1).getName(),
+        assertEquals("Test Deadline", loadedTasks.getTask(1).getDescription(),
                 "Second task description matches after load");
         assertFalse(loadedTasks.getTask(1).getDone(),
                 "Second task should remain unmarked by default");
     }
 
     /**
-     * Tests that an invalid task line in the data file causes a {@link StorageException}.
+     * Verifies that an invalid task line in the data file causes a {@code StorageException}.
      *
-     * @throws Exception If an I/O error occurs while writing to the file.
+     * @throws Exception if an I/O error occurs while writing to the file
      */
     @Test
     public void invalidTaskLineParseTaskThrowsStorageException() throws Exception {
@@ -96,9 +98,9 @@ public class StorageTest {
     }
 
     /**
-     * Tests that incomplete data for an Event causes a {@link StorageException}.
+     * Verifies that incomplete event data triggers a {@code StorageException}.
      *
-     * @throws Exception If an I/O error occurs while writing to the file.
+     * @throws Exception if an I/O error occurs while writing to the file
      */
     @Test
     public void incompleteDataForEventThrowsStorageException() throws Exception {
@@ -109,9 +111,9 @@ public class StorageTest {
     }
 
     /**
-     * Tests that an invalid date/time format in the data file causes a {@link StorageException}.
+     * Verifies that an invalid date/time format triggers a {@code StorageException}.
      *
-     * @throws Exception If an I/O error occurs while writing to the file.
+     * @throws Exception if an I/O error occurs while writing to the file
      */
     @Test
     public void parseDateTimeInvalidFormatThrowsStorageException() throws Exception {
@@ -122,7 +124,7 @@ public class StorageTest {
     }
 
     /**
-     * Verifies that attempting to save tasks does not throw an exception if no I/O errors occur.
+     * Verifies that saving tasks does not throw an exception when no I/O errors occur.
      */
     @Test
     public void saveTasksIoErrorThrowsStorageException() {
@@ -131,5 +133,76 @@ public class StorageTest {
 
         assertDoesNotThrow(() -> storage.saveTasks(tasks),
                 "If the path is writable, saving should succeed.");
+    }
+
+    /**
+     * Verifies that saving and loading an empty task list works correctly.
+     *
+     * @throws Exception if an error occurs during the operations
+     */
+    @Test
+    public void emptyTaskListSaveLoadSuccess() throws Exception {
+        TaskList emptyList = new TaskList();
+        assertDoesNotThrow(() -> storage.saveTasks(emptyList));
+
+        TaskList loadedList = storage.loadTasks();
+        assertEquals(0, loadedList.size(), "Loaded task list should be empty");
+    }
+
+    /**
+     * Verifies that saving and loading multiple task types works as expected.
+     *
+     * @throws Exception if an error occurs during the operations
+     */
+    @Test
+    public void multipleTaskTypesSaveLoadSuccess() throws Exception {
+        TaskList taskList = new TaskList();
+        taskList.addTask(new Todo("Buy groceries"));
+        taskList.addTask(new Deadline("Submit assignment",
+                LocalDateTime.now().plusDays(1)));
+
+        storage.saveTasks(taskList);
+        TaskList loadedList = storage.loadTasks();
+
+        assertEquals(taskList.size(), loadedList.size(),
+                "Loaded list should have same number of tasks");
+        assertEquals(taskList.getTask(0).getDescription(),
+                loadedList.getTask(0).getDescription(),
+                "Task descriptions should match");
+    }
+
+    /**
+     * Verifies that loading a non-existent file returns an empty task list.
+     *
+     * @throws Exception if an error occurs during the load operation
+     */
+    @Test
+    public void nonExistentFileLoadReturnsEmptyList() throws Exception {
+        // Delete the file if it exists
+        Files.deleteIfExists(tempDataFile);
+
+        TaskList loadedList = storage.loadTasks();
+        assertTrue(loadedList.isEmpty(),
+                "Loading from non-existent file should return empty list");
+    }
+
+    /**
+     * Verifies that the state of tasks is preserved after a full storage cycle.
+     *
+     * @throws Exception if an error occurs during the operations
+     */
+    @Test
+    public void taskStatePreservation() throws Exception {
+        TaskList originalList = new TaskList();
+        Todo todo = new Todo("Complete task");
+        todo.markDone();
+        originalList.addTask(todo);
+
+        storage.saveTasks(originalList);
+        TaskList loadedList = storage.loadTasks();
+
+        Todo loadedTodo = (Todo) loadedList.getTask(0);
+        assertTrue(loadedTodo.getDone(),
+                "Task done state should be preserved after save/load");
     }
 }

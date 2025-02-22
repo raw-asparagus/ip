@@ -1,75 +1,131 @@
 package dusk.command;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.io.IOException;
+
+import dusk.task.Deadline;
+import dusk.task.Event;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.task.Todo;
 import dusk.ui.DuskIO;
 
 /**
- * Tests for the ListCommand class.
+ * Test cases for {@link ListCommand}.
  */
-class ListCommandTest {
+public class ListCommandTest {
 
     private TaskList taskList;
-    private DuskIO duskIo;
+    private DuskIO duskIO;
 
     /**
-     * Sets up the test environment before each test method.
+     * Initializes test fixtures before each test.
      */
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         taskList = new TaskList();
-        duskIo = new DuskIO(System.in, System.out);
+        duskIO = mock(DuskIO.class);
     }
 
     /**
-     * Tests executing a ListCommand when the TaskList is empty.
-     *
-     * @throws IOException       if an I/O error occurs while executing the command.
-     * @throws TaskListException if there is an error accessing or modifying the TaskList.
+     * Tests executing the list command with an empty task list.
      */
     @Test
-    void testExecuteEmptyTaskListPrintsEmptyMessage() throws IOException, TaskListException, InputException {
-        ListCommand command = new ListCommand(taskList, duskIo, null, null, null);
+    public void executeEmptyTaskList() throws IOException, TaskListException, InputException {
+        ListCommand command = new ListCommand(taskList, duskIO, null, null, null);
         command.execute();
-        // Verifies no exceptions are thrown and execution completes
+
+        verify(duskIO).print("Task list is empty!");
     }
 
     /**
-     * Tests executing a ListCommand with tasks and no date filters applied.
-     *
-     * @throws IOException       if an I/O error occurs while executing the command.
-     * @throws TaskListException if there is an error accessing or modifying the TaskList.
+     * Tests executing the list command with tasks present.
      */
     @Test
-    void testExecuteWithTasksNoDateFilters() throws IOException, TaskListException, InputException {
-        taskList.addTask(new Todo("First Task"));
-        taskList.addTask(new Todo("Second Task"));
+    public void executeListAllTasks() throws IOException, TaskListException, InputException {
+        taskList.addTask(new Todo("test task 1"));
+        taskList.addTask(new Todo("test task 2"));
 
-        ListCommand command = new ListCommand(taskList, duskIo, null, null, null);
+        ListCommand command = new ListCommand(taskList, duskIO, null, null, null);
         command.execute();
 
-        assertEquals(2, taskList.size(), "Should still have 2 tasks in the list.");
+        verify(duskIO).print(
+                eq("Here are all the tasks:"),
+                eq("1. [T][ ] test task 1"),
+                eq("2. [T][ ] test task 2")
+        );
     }
 
     /**
-     * Tests executing a ListCommand with an on-date filter.
-     *
-     * @throws IOException       if an I/O error occurs while executing the command.
-     * @throws TaskListException if there is an error accessing or modifying the TaskList.
+     * Tests executing the list command to retrieve tasks within a specified date range.
      */
     @Test
-    void testExecuteOnDateFilter() throws IOException, TaskListException, InputException {
-        ListCommand command = new ListCommand(taskList, duskIo, LocalDateTime.now(), null, null);
+    public void executeListTasksWithinDateRange() throws IOException, TaskListException, InputException {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime tomorrow = now.plusDays(1);
+        LocalDateTime dayAfterTomorrow = tomorrow.plusDays(1);
+        LocalDateTime nextWeek = now.plusWeeks(1);
+
+        taskList.addTask(new Event("event 1", now, now.plusHours(2)));
+        taskList.addTask(new Deadline("deadline 1", tomorrow));
+        taskList.addTask(new Event("event 2", nextWeek, nextWeek.plusHours(1)));
+        taskList.addTask(new Deadline("deadline 2", nextWeek));
+
+        ListCommand command = new ListCommand(taskList, duskIO, null, now, dayAfterTomorrow);
         command.execute();
-        // Verifies no exceptions are thrown and execution completes
+
+        verify(duskIO).print(
+                contains("Here are the tasks between "),
+                contains("1. [E][ ] event 1 ("),
+                contains("2. [D][ ] deadline 1 (by ")
+        );
+    }
+
+    /**
+     * Tests executing the list command when no tasks match the specified date range.
+     */
+    @Test
+    public void executeListTasksNoMatchInDateRange() throws IOException, TaskListException, InputException {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextWeek = now.plusWeeks(1);
+
+        taskList.addTask(new Event("future event", nextWeek, nextWeek.plusHours(1)));
+
+        ListCommand command = new ListCommand(taskList, duskIO, null, now, now.plusDays(1));
+        command.execute();
+
+        verify(duskIO).print("No matching tasks found!");
+    }
+
+    /**
+     * Tests executing the list command with a specific date filter.
+     */
+    @Test
+    public void executeListTasksWithSpecificDateOnly() throws IOException, TaskListException, InputException {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime tomorrow = now.plusDays(1);
+        LocalDateTime dayAfterTomorrow = tomorrow.plusDays(1);
+        LocalDateTime nextWeek = now.plusWeeks(1);
+
+        taskList.addTask(new Event("past event", now.minusDays(1), now));
+        taskList.addTask(new Event("event 1", now, dayAfterTomorrow.plusHours(2)));
+        taskList.addTask(new Event("event 2", nextWeek, nextWeek.plusHours(1)));
+
+        ListCommand command = new ListCommand(taskList, duskIO, now, null, null);
+        command.execute();
+
+        verify(duskIO).print(
+                contains("Here are the tasks on "),
+                contains("1. [E][ ] past event ("),
+                contains("2. [E][ ] event 1 (")
+        );
     }
 }

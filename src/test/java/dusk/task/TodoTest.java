@@ -2,44 +2,42 @@ package dusk.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 /**
- * Test class for verifying functionality of the {@link Todo} task.
+ * Unit tests for the {@code Todo} class.
  */
-public class TodoTest {
+class TodoTest {
 
     /**
-     * Tests that the constructor initializes the description correctly.
+     * Verifies that the {@code Todo} constructor correctly sets the description and the default done status.
      */
     @Test
-    public void constructorValidDescriptionInitializesCorrectly() {
-        Todo todo = new Todo("Buy groceries");
-        assertEquals("Buy groceries", todo.getName(),
-                "Todo description should match constructor argument");
-        assertFalse(todo.getDone(), "A newly created todo should not be marked done");
+    void constructorValidDescriptionCreatesCorrectTodo() {
+        Todo todo = new Todo("Read book");
+        assertEquals("Read book", todo.getDescription());
+        assertFalse(todo.getDone());
     }
 
     /**
-     * Tests that markDone() sets the "done" state to {@code true}.
+     * Verifies the string representation of a new {@code Todo}.
      */
     @Test
-    public void markDoneSetsDoneToTrue() {
-        Todo todo = new Todo("Finish homework");
-        todo.markDone();
-        assertTrue(todo.getDone(), "markDone() should set getDone() to true");
+    void toStringNewTodoReturnsCorrectFormat() {
+        Todo todo = new Todo("Read book");
+        String expected = "[T][ ] Read book";
+        assertEquals(expected, todo.toString());
     }
 
     /**
-     * Tests that markUndone() sets the "done" state to {@code false}.
+     * Verifies the string representation of a completed {@code Todo}.
      */
     @Test
-    public void markUndoneSetsDoneToFalse() {
-        Todo todo = new Todo("Finish homework");
+    void toStringCompletedTodoReturnsCorrectFormat() {
+        Todo todo = new Todo("Read book");
         todo.markDone();
-        todo.markUndone();
-        assertFalse(todo.getDone(), "markUndone() should set getDone() to false");
+        String expected = "[T][✗] Read book";
+        assertEquals(expected, todo.toString());
     }
 }

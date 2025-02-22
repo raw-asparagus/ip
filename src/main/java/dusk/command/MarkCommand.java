@@ -9,7 +9,7 @@ import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
 
 /**
- * Marks or unmarks the task at the specified index from the task list.
+ * Command for marking or unmarking a task as done.
  */
 public class MarkCommand extends Command {
 
@@ -17,24 +17,24 @@ public class MarkCommand extends Command {
     private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
-    private final boolean markAsDone;
+    private final boolean isMarkedAsDone;
 
     /**
-     * Constructs a command for marking or unmarking a task as done.
+     * Constructs a MarkCommand.
      *
      * @param tasks       the current task list
-     * @param duskIO      the console I/O
-     * @param storage     the storage object
-     * @param description the index of the task to mark/unmark
-     * @param markAsDone  whether to mark the task as done (true) or not (false)
+     * @param duskIO      the I/O interface
+     * @param storage     the storage handler
+     * @param description the command description containing the task index
+     * @param isMarkedAsDone  true to mark as done, false to unmark
      */
     public MarkCommand(TaskList tasks, DuskIO duskIO, Storage storage,
-                       String description, boolean markAsDone) {
+                       String description, boolean isMarkedAsDone) {
         this.tasks = tasks;
         this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
-        this.markAsDone = markAsDone;
+        this.isMarkedAsDone = isMarkedAsDone;
     }
 
     @Override
@@ -43,25 +43,16 @@ public class MarkCommand extends Command {
         try {
             taskIndex = Integer.parseInt(description) - 1;
         } catch (NumberFormatException exception) {
-            throw new InputException(
-                    "Task number cannot be empty or invalid for a mark/unmark command!"
-            );
+            throw new InputException("Task number cannot be empty or invalid for a mark/unmark command!");
         }
 
-        if (markAsDone) {
+        if (isMarkedAsDone) {
             tasks.markTask(taskIndex);
-            duskIO.print(
-                    "Nice! I've marked this task as done:",
-                    "  " + tasks.getTask(taskIndex)
-            );
+            duskIO.print("Nice! I've marked this task as done:", "  " + tasks.getTask(taskIndex));
         } else {
             tasks.unmarkTask(taskIndex);
-            duskIO.print(
-                    "OK! I've updated this task to not done:",
-                    "  " + tasks.getTask(taskIndex)
-            );
+            duskIO.print("OK! I've updated this task to not done:", "  " + tasks.getTask(taskIndex));
         }
-
         saveAsync(storage, tasks);
     }
 }

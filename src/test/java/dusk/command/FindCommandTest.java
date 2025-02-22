@@ -1,14 +1,13 @@
 package dusk.command;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
@@ -16,70 +15,118 @@ import dusk.task.Todo;
 import dusk.ui.DuskIO;
 
 /**
- * Tests for the FindCommand class.
+ * Test cases for {@link FindCommand}.
  */
-class FindCommandTest {
+public class FindCommandTest {
 
-    private TaskList tasks;
+    private TaskList taskList;
     private DuskIO duskIO;
-    private ByteArrayOutputStream outContent;
 
     /**
-     * Sets up the test environment before each test method.
+     * Initializes test fixtures before each test.
      */
     @BeforeEach
-    void setUp() {
-        tasks = new TaskList();
-        outContent = new ByteArrayOutputStream();
-        duskIO = new DuskIO(System.in, new PrintStream(outContent));
+    public void setUp() {
+        taskList = new TaskList();
+        duskIO = mock(DuskIO.class);
     }
 
     /**
-     * Tests executing a FindCommand when there are matching tasks.
-     *
-     * @throws IOException       if an I/O error occurs while executing the command.
-     * @throws TaskListException if an error occurs while retrieving tasks.
+     * Tests executing the find command on an empty task list.
      */
     @Test
-    void testExecuteValidFind() throws IOException, TaskListException {
-        tasks.addTask(new Todo("read book"));
-        tasks.addTask(new Todo("return book"));
-        tasks.addTask(new Todo("go shopping"));
-
-        FindCommand command = new FindCommand(tasks, duskIO, "book");
+    public void executeEmptyTaskList() throws IOException, TaskListException {
+        FindCommand command = new FindCommand(taskList, duskIO, "test");
         command.execute();
 
-        String output = outContent.toString();
-
-        // Verify output includes the header.
-        assertTrue(output.contains("Here are the matching tasks in your list:"),
-                "Output should include the header for matching tasks.");
-        // Verify that the matching tasks are printed.
-        assertTrue(output.contains("read book") && output.contains("return book"),
-                "Output should include tasks that contain 'book'.");
-        // Verify that non-matching tasks do not appear.
-        assertFalse(output.contains("go shopping"),
-                "Output should not include tasks that do not match the search keyword.");
+        verify(duskIO).print("No matching tasks found!");
     }
 
     /**
-     * Tests executing a FindCommand when there are no matching tasks.
-     *
-     * @throws IOException       if an I/O error occurs while executing the command.
-     * @throws TaskListException if an error occurs while retrieving tasks.
+     * Tests executing the find command with an exact match.
      */
     @Test
-    void testExecuteNoMatchingTasks() throws IOException, TaskListException {
-        tasks.addTask(new Todo("read book"));
-        tasks.addTask(new Todo("return book"));
+    public void executeExactMatch() throws IOException, TaskListException {
+        taskList.addTask(new Todo("Buy groceries"));
+        taskList.addTask(new Todo("Do homework"));
 
-        FindCommand command = new FindCommand(tasks, duskIO, "exercise");
+        FindCommand command = new FindCommand(taskList, duskIO, "Buy groceries");
         command.execute();
 
-        String output = outContent.toString();
+        verify(duskIO).print(
+                eq("Here are the matching tasks in your list:"),
+                eq("1. [T][ ] Buy groceries")
+        );
+    }
 
-        // Verify that the no matching tasks message is printed.
-        assertTrue(output.contains("No matching tasks found!"),
-                "Output should indicate that no matching tasks were found.");
+    /**
+     * Tests executing the find command with a partial match.
+     */
+    @Test
+    public void executePartialMatch() throws IOException, TaskListException {
+        taskList.addTask(new Todo("Buy groceries"));
+        taskList.addTask(new Todo("Must buy fruits"));
+        taskList.addTask(new Todo("Do homework"));
+
+        FindCommand command = new FindCommand(taskList, duskIO, "buy");
+        command.execute();
+
+        verify(duskIO).print(
+                eq("Here are the matching tasks in your list:"),
+                eq("1. [T][ ] Buy groceries"),
+                eq("2. [T][ ] Must buy fruits")
+        );
+    }
+
+    /**
+     * Tests executing the find command with combined exact and partial matches.
+     */
+    @Test
+    public void executeCombinedExactAndPartialMatches() throws IOException, TaskListException {
+        taskList.addTask(new Todo("Buy groceries"));
+        taskList.addTask(new Todo("Buy fruits"));
+        taskList.addTask(new Todo("Must Buy vegetables"));
+
+        FindCommand command = new FindCommand(taskList, duskIO, "Buy");
+        command.execute();
+
+        verify(duskIO).print(
+                eq("Here are the matching tasks in your list:"),
+                eq("1. [T][ ] Buy groceries"),
+                eq("2. [T][ ] Buy fruits"),
+                eq("3. [T][ ] Must Buy vegetables")
+        );
+    }
+
+    /**
+     * Tests executing the find command when no tasks match.
+     */
+    @Test
+    public void executeNoMatchingTasks() throws IOException, TaskListException {
+        taskList.addTask(new Todo("Buy groceries"));
+        taskList.addTask(new Todo("Do homework"));
+
+        FindCommand command = new FindCommand(taskList, duskIO, "study");
+        command.execute();
+
+        verify(duskIO).print("No matching tasks found!");
+    }
+
+    /**
+     * Tests executing the find command to ensure the search is case-sensitive.
+     */
+    @Test
+    public void executeCaseSensitiveSearch() throws IOException, TaskListException {
+        taskList.addTask(new Todo("Buy GROCERIES"));
+        taskList.addTask(new Todo("buy fruits"));
+
+        FindCommand command = new FindCommand(taskList, duskIO, "Buy");
+        command.execute();
+
+        verify(duskIO).print(
+                eq("Here are the matching tasks in your list:"),
+                eq("1. [T][ ] Buy GROCERIES"),
+                eq("2. [T][ ] buy fruits")
+        );
     }
 }

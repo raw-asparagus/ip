@@ -4,68 +4,86 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.Test;
-
 /**
- * Test class for verifying functionality of the {@link Deadline} task.
+ * Unit tests for the {@code Deadline} class.
  */
-public class DeadlineTest {
+class DeadlineTest {
+    private final LocalDateTime deadline = LocalDateTime.of(2024, 3, 15, 23, 59);
 
     /**
-     * Tests that the constructor initializes all fields correctly.
+     * Verifies that the {@code Deadline} constructor correctly sets the description, deadline, and done status.
      */
     @Test
-    public void constructorValidInputsInitializesCorrectly() {
-        LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 23, 59);
-        Deadline deadline = new Deadline("Submit report", byTime);
-
-        assertEquals("Submit report", deadline.getName(),
-                "Deadline description should match constructor argument");
-        assertEquals(byTime, deadline.getBy(),
-                "Deadline by-time should match constructor argument");
-        assertFalse(deadline.getDone(), "A newly created deadline should not be marked done");
+    void constructorValidInputsCreatesCorrectDeadline() {
+        Deadline task = new Deadline("Submit report", deadline);
+        assertEquals("Submit report", task.getDescription());
+        assertEquals(deadline, task.getBy());
+        assertFalse(task.getDone());
     }
 
     /**
-     * Tests that a deadline time within the specified range returns {@code true}.
+     * Verifies that {@code isWithinRange} returns {@code true} when the deadline is within the specified range.
      */
     @Test
-    public void isWithinRangeTimeWithinReturnsTrue() {
-        LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 12, 0);
-        Deadline deadline = new Deadline("New Deadline", byTime);
-
-        LocalDateTime startRange = LocalDateTime.of(2023, 12, 31, 0, 0);
-        LocalDateTime endRange = LocalDateTime.of(2023, 12, 31, 23, 59);
-
-        assertTrue(deadline.isWithinRange(startRange, endRange),
-                "Deadline should be within the given time range");
+    void isWithinRangeDeadlineInRangeReturnsTrue() {
+        Deadline task = new Deadline("Submit report", deadline);
+        LocalDateTime rangeStart = LocalDateTime.of(2024, 3, 15, 0, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2024, 3, 16, 0, 0);
+        assertTrue(task.isWithinRange(rangeStart, rangeEnd));
     }
 
     /**
-     * Tests that a deadline on a matching date returns {@code true} for isOnDate().
+     * Verifies that {@code isWithinRange} returns {@code false} for a deadline outside the range.
      */
     @Test
-    public void isOnDateCorrectDateReturnsTrue() {
-        LocalDateTime byTime = LocalDateTime.of(2024, 1, 1, 10, 30);
-        Deadline deadline = new Deadline("Deadline for New Year", byTime);
-
-        LocalDateTime sameDay = LocalDateTime.of(2024, 1, 1, 0, 0);
-        assertTrue(deadline.isOnDate(sameDay),
-                "Deadline should be recognized as occurring on the same day");
+    void isWithinRangeDeadlineOutsideRangeReturnsFalse() {
+        Deadline task = new Deadline("Submit report", deadline);
+        LocalDateTime rangeStart = LocalDateTime.of(2024, 3, 16, 0, 0);
+        LocalDateTime rangeEnd = LocalDateTime.of(2024, 3, 17, 0, 0);
+        assertFalse(task.isWithinRange(rangeStart, rangeEnd));
     }
 
     /**
-     * Tests that a deadline on a non-matching date returns {@code false} for isOnDate().
+     * Verifies that {@code isOnDate} returns {@code true} when the deadline falls on the specified date.
      */
     @Test
-    public void isOnDateDifferentDateReturnsFalse() {
-        LocalDateTime byTime = LocalDateTime.of(2024, 1, 2, 10, 30);
-        Deadline deadline = new Deadline("Another Deadline", byTime);
+    void isOnDateDeadlineOnSameDateReturnsTrue() {
+        Deadline task = new Deadline("Submit report", deadline);
+        LocalDateTime date = LocalDateTime.of(2024, 3, 15, 0, 0);
+        assertTrue(task.isOnDate(date));
+    }
 
-        LocalDateTime otherDate = LocalDateTime.of(2024, 1, 1, 0, 0);
-        assertFalse(deadline.isOnDate(otherDate),
-                "Deadline should be recognized as not on a different day");
+    /**
+     * Verifies that {@code isOnDate} returns {@code false} when the deadline is not on the specified date.
+     */
+    @Test
+    void isOnDateDeadlineOnDifferentDateReturnsFalse() {
+        Deadline task = new Deadline("Submit report", deadline);
+        LocalDateTime date = LocalDateTime.of(2024, 3, 16, 0, 0);
+        assertFalse(task.isOnDate(date));
+    }
+
+    /**
+     * Verifies the string representation of a new {@code Deadline}.
+     */
+    @Test
+    void toStringNewDeadlineReturnsCorrectFormat() {
+        Deadline task = new Deadline("Submit report", deadline);
+        String expected = "[D][ ] Submit report (by Mar 15 2024 23:59)";
+        assertEquals(expected, task.toString());
+    }
+
+    /**
+     * Verifies the string representation of a completed {@code Deadline}.
+     */
+    @Test
+    void toStringCompletedDeadlineReturnsCorrectFormat() {
+        Deadline task = new Deadline("Submit report", deadline);
+        task.markDone();
+        String expected = "[D][✗] Submit report (by Mar 15 2024 23:59)";
+        assertEquals(expected, task.toString());
     }
 }

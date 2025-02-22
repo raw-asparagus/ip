@@ -3,9 +3,9 @@ package dusk.gui;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-
 import dusk.Dusk;
 import dusk.ui.DuskResponse;
+import dusk.ui.DuskResponseType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,11 +17,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * The MainWindow class represents the main user interface component for the Dusk application.
- * It consists of a scrollable dialog container to display user input and application responses,
- * a text input field for user commands, and a button to submit commands.
+ * Represents the main user interface component for the Dusk application.
+ * Contains a scrollable dialog area, a text input field, and a submit button.
  */
 public class MainWindow extends AnchorPane {
+
     private static final String USER_IMAGE_PATH = "/images/surtr.png";
     private static final String DUSK_IMAGE_PATH = "/images/dusk.png";
 
@@ -29,21 +29,37 @@ public class MainWindow extends AnchorPane {
     private final Image duskImage;
     private Dusk dusk;
 
-    @FXML private ScrollPane scrollPane;
-    @FXML private VBox dialogContainer;
-    @FXML private TextField userInput;
-    @FXML private Button sendButton;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private VBox dialogContainer;
+    @FXML
+    private TextField userInput;
+    @FXML
+    private Button sendButton;
 
+    /**
+     * Constructs a new MainWindow.
+     */
     public MainWindow() {
         this.userImage = loadImage(USER_IMAGE_PATH);
         this.duskImage = loadImage(DUSK_IMAGE_PATH);
     }
 
+    /**
+     * Loads an image from the specified path.
+     *
+     * @param path the image path
+     * @return the loaded image
+     */
     private Image loadImage(String path) {
         return new Image(Objects.requireNonNull(
                 this.getClass().getResourceAsStream(path)));
     }
 
+    /**
+     * Initializes the UI components.
+     */
     @FXML
     public void initialize() {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -52,17 +68,19 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Injects the Dusk instance
+     * Injects the Dusk instance.
+     *
+     * @param d the Dusk instance
      */
     public void setDusk(Dusk d) {
         assert d != null : "Dusk instance cannot be null";
         dusk = d;
         displayDuskResponse(new DuskResponse(dusk.getGreeting(),
-                DuskResponse.ResponseType.NORMAL));
+                DuskResponseType.NORMAL));
     }
 
     /**
-     * Handles the user's input and generates appropriate responses.
+     * Handles the user's input and processes the response.
      */
     @FXML
     private void handleUserInput() {
@@ -81,7 +99,7 @@ public class MainWindow extends AnchorPane {
 
         if ("bye".equalsIgnoreCase(input)) {
             displayDuskResponse(new DuskResponse(Dusk.FAREWELL_MESSAGE,
-                    DuskResponse.ResponseType.NORMAL));
+                    DuskResponseType.NORMAL));
             handleTermination();
         } else {
             DuskResponse response = dusk.getResponse(input);
@@ -92,13 +110,13 @@ public class MainWindow extends AnchorPane {
     /**
      * Displays Dusk's response in the dialog container.
      *
-     * @param response The response to display
+     * @param response the response to display
      */
     private void displayDuskResponse(DuskResponse response) {
         assert response != null : "Response cannot be null";
         assert dialogContainer != null : "Dialog container must be initialized";
 
-        Image imageToUse = response.getType() == DuskResponse.ResponseType.NORMAL ? duskImage : null;
+        Image imageToUse = response.getType() == DuskResponseType.NORMAL ? duskImage : null;
         dialogContainer.getChildren().add(
                 DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
         scrollToBottom();
@@ -125,6 +143,9 @@ public class MainWindow extends AnchorPane {
                 }));
     }
 
+    /**
+     * Scrolls the dialog view to the bottom.
+     */
     private void scrollToBottom() {
         Platform.runLater(() -> scrollPane.setVvalue(1.0));
     }
