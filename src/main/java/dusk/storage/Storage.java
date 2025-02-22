@@ -147,7 +147,7 @@ public class Storage {
         String taskType;
         String taskDetails = "";
         boolean isDone = task.getDone();
-        String name = task.getName();
+        String name = task.getDescription();
 
         if (task instanceof Todo) {
             taskType = "T";

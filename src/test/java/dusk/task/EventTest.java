@@ -22,7 +22,7 @@ public class EventTest {
         LocalDateTime endTime = LocalDateTime.of(2023, 11, 1, 16, 0);
         Event event = new Event("Company Meeting", startTime, endTime);
 
-        assertEquals("Company Meeting", event.getName(),
+        assertEquals("Company Meeting", event.getDescription(),
                 "Event description should match constructor argument");
         assertEquals(startTime, event.getFrom(),
                 "Start time should match constructor argument");

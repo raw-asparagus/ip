@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import dusk.Dusk;
 import dusk.ui.DuskResponse;
+import dusk.ui.DuskResponseType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -75,7 +76,7 @@ public class MainWindow extends AnchorPane {
         assert d != null : "Dusk instance cannot be null";
         dusk = d;
         displayDuskResponse(new DuskResponse(dusk.getGreeting(),
-                DuskResponse.ResponseType.NORMAL));
+                DuskResponseType.NORMAL));
     }
 
     /**
@@ -98,7 +99,7 @@ public class MainWindow extends AnchorPane {
 
         if ("bye".equalsIgnoreCase(input)) {
             displayDuskResponse(new DuskResponse(Dusk.FAREWELL_MESSAGE,
-                    DuskResponse.ResponseType.NORMAL));
+                    DuskResponseType.NORMAL));
             handleTermination();
         } else {
             DuskResponse response = dusk.getResponse(input);
@@ -115,7 +116,7 @@ public class MainWindow extends AnchorPane {
         assert response != null : "Response cannot be null";
         assert dialogContainer != null : "Dialog container must be initialized";
 
-        Image imageToUse = response.getType() == DuskResponse.ResponseType.NORMAL ? duskImage : null;
+        Image imageToUse = response.getType() == DuskResponseType.NORMAL ? duskImage : null;
         dialogContainer.getChildren().add(
                 DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
         scrollToBottom();

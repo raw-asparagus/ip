@@ -16,6 +16,7 @@ import dusk.storage.StorageException;
 import dusk.task.TaskList;
 import dusk.ui.DuskIO;
 import dusk.ui.DuskResponse;
+import dusk.ui.DuskResponseType;
 
 /**
  * The main application class for Dusk. This class is responsible for initializing tasks,
@@ -52,7 +53,7 @@ public class Dusk {
      */
     public String getGreeting() {
         return new DuskResponse(String.join("\n", GREETING_MESSAGES),
-                DuskResponse.ResponseType.NORMAL).getMessage();
+                DuskResponseType.NORMAL).getMessage();
     }
 
     /**
@@ -88,17 +89,17 @@ public class Dusk {
             }
             Command command = Parser.parse(duskIO, STORAGE, taskList, input);
             command.execute();
-            return new DuskResponse(stringWriter.toString(), DuskResponse.ResponseType.NORMAL);
+            return new DuskResponse(stringWriter.toString(), DuskResponseType.NORMAL);
         } catch (DuskException e) {
             return new DuskResponse(
                     String.format("❌\t%s:\n\t%s", e.getErrorType().getLabel(), e.getMessage()),
-                    DuskResponse.ResponseType.ERROR
+                    DuskResponseType.ERROR
             );
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected error", e);
             return new DuskResponse(
                     String.format("⚠️\tSystem Error:\n\t%s", e.getMessage()),
-                    DuskResponse.ResponseType.SYSTEM_ERROR
+                    DuskResponseType.SYSTEM_ERROR
             );
         }
     }
