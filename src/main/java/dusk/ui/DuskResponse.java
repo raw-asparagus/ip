@@ -6,7 +6,7 @@ package dusk.ui;
 public class DuskResponse {
 
     private final String message;
-    private final ResponseType type;
+    private final DuskResponseType type;
 
     /**
      * Constructs a DuskResponse with the specified message and response type.
@@ -14,7 +14,7 @@ public class DuskResponse {
      * @param message the response message
      * @param type    the type of the response
      */
-    public DuskResponse(String message, ResponseType type) {
+    public DuskResponse(String message, DuskResponseType type) {
         this.message = message;
         this.type = type;
     }
@@ -33,16 +33,7 @@ public class DuskResponse {
      *
      * @return the type of the response
      */
-    public ResponseType getType() {
+    public DuskResponseType getType() {
         return type;
-    }
-
-    /**
-     * Enumeration of response types.
-     */
-    public enum ResponseType {
-        NORMAL,
-        ERROR,
-        SYSTEM_ERROR
     }
 }

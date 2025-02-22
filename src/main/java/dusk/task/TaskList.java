@@ -119,7 +119,7 @@ public class TaskList {
                            LocalDateTime fromDate, LocalDateTime toDate) {
         TaskList result = new TaskList();
         for (Task task : tasks) {
-            boolean matches = keyword == null || task.getName().toLowerCase().contains(keyword.toLowerCase());
+            boolean matches = keyword == null || task.getDescription().toLowerCase().contains(keyword.toLowerCase());
             if (date != null) {
                 boolean onDate = false;
                 if (task instanceof Deadline) {

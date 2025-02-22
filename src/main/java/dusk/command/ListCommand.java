@@ -3,7 +3,6 @@ package dusk.command;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import dusk.task.Task;
 import dusk.task.TaskList;
 import dusk.task.TaskListException;
 import dusk.ui.DuskIO;

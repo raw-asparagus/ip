@@ -147,7 +147,7 @@ public class Storage {
         String taskType;
         String taskDetails = "";
         boolean isDone = task.getDone();
-        String name = task.getName();
+        String name = task.getDescription();
 
         if (task instanceof Todo) {
             taskType = "T";
@@ -199,7 +199,7 @@ public class Storage {
      */
     private Task parseTaskParts(String[] parts) throws StorageException {
         String taskType = parts[0];
-        boolean done = Boolean.parseBoolean(parts[1]);
+        boolean isDone = Boolean.parseBoolean(parts[1]);
         String description = parts[2];
 
         Task task = switch (taskType) {
@@ -223,10 +223,10 @@ public class Storage {
         };
 
         if (task == null) {
-            throw new StorageException("Unknown task type: " + taskType + "|" + description + "|" + done);
+            throw new StorageException("Unknown task type: " + taskType + "|" + description + "|" + isDone);
         }
 
-        if (done) {
+        if (isDone) {
             task.markDone();
         }
         return task;

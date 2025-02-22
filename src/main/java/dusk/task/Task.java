@@ -37,7 +37,7 @@ public abstract class Task {
      *
      * @return the description text
      */
-    public String getName() {
+    public String getDescription() {
         return description;
     }
 

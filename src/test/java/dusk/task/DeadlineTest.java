@@ -21,7 +21,7 @@ public class DeadlineTest {
         LocalDateTime byTime = LocalDateTime.of(2023, 12, 31, 23, 59);
         Deadline deadline = new Deadline("Submit report", byTime);
 
-        assertEquals("Submit report", deadline.getName(),
+        assertEquals("Submit report", deadline.getDescription(),
                 "Deadline description should match constructor argument");
         assertEquals(byTime, deadline.getBy(),
                 "Deadline by-time should match constructor argument");

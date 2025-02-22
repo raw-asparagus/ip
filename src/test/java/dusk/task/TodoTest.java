@@ -17,7 +17,7 @@ public class TodoTest {
     @Test
     public void constructorValidDescriptionInitializesCorrectly() {
         Todo todo = new Todo("Buy groceries");
-        assertEquals("Buy groceries", todo.getName(),
+        assertEquals("Buy groceries", todo.getDescription(),
                 "Todo description should match constructor argument");
         assertFalse(todo.getDone(), "A newly created todo should not be marked done");
     }

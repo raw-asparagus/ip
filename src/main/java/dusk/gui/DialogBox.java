@@ -1,6 +1,6 @@
 package dusk.gui;
 
-import dusk.ui.DuskResponse;
+import dusk.ui.DuskResponseType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -74,11 +74,11 @@ public class DialogBox extends HBox {
      * @param type the type of response
      * @return a dialog box configured for Dusk messages
      */
-    public static DialogBox getDuskDialog(String text, Image img, DuskResponse.ResponseType type) {
-        boolean isError = type == DuskResponse.ResponseType.ERROR || type == DuskResponse.ResponseType.SYSTEM_ERROR;
+    public static DialogBox getDuskDialog(String text, Image img, DuskResponseType type) {
+        boolean isError = type == DuskResponseType.ERROR || type == DuskResponseType.SYSTEM_ERROR;
         DialogBox db = new DialogBox(text, img, isError);
 
-        if (type == DuskResponse.ResponseType.SYSTEM_ERROR) {
+        if (type == DuskResponseType.SYSTEM_ERROR) {
             db.dialog.setStyle(db.dialog.getStyle() + SYSTEM_ERROR_STYLE);
         }
 
