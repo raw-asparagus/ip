@@ -2,7 +2,6 @@ package dusk.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -46,8 +45,8 @@ public class DeleteCommandTest {
         verify(storage).saveTasksAsync(taskList);
         verify(duskIO).print(
                 eq("Noted. I've removed this task:"),
-                anyString(),
-                anyString()
+                eq("  [T][ ] test task"),
+                eq("Now you have 0 tasks in the list.")
         );
     }
 

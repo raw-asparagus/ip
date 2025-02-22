@@ -1,80 +1,65 @@
 package dusk.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+
 import dusk.storage.Storage;
 import dusk.task.TaskList;
-import dusk.task.TaskListException;
 import dusk.ui.DuskIO;
 
-/**
- * Tests for the CreateEventCommand class.
- */
-class CreateEventCommandTest {
-
+public class CreateEventCommandTest {
     private TaskList taskList;
-    private DuskIO duskIo;
+    private DuskIO duskIO;
     private Storage storage;
 
-    /**
-     * Sets up the test environment before each test method.
-     */
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         taskList = new TaskList();
-        duskIo = new DuskIO(System.in, System.out);
-        storage = new Storage();
+        duskIO = mock(DuskIO.class);
+        storage = mock(Storage.class);
     }
 
-    /**
-     * Tests executing a valid CreateEventCommand scenario.
-     *
-     * @throws IOException       if I/O error occurs while executing the command.
-     * @throws InputException    if there is an invalid input to the command.
-     * @throws TaskListException if there is an error accessing or modifying the TaskList.
-     */
     @Test
-    void testExecuteValidData() throws IOException, InputException, TaskListException {
+    public void executeValidEventTaskAdded() throws IOException, InputException {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        LocalDateTime endTime = LocalDateTime.now().plusDays(1).plusHours(2);
+        LocalDateTime endTime = startTime.plusHours(2);
         CreateEventCommand command = new CreateEventCommand(
-                taskList, duskIo, storage, "Team meeting", startTime, endTime
+                taskList, duskIO, storage, "Test event", startTime, endTime
         );
 
+        when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
         command.execute();
 
-        assertEquals(1, taskList.size(), "TaskList should have 1 task after executing a valid CreateEventCommand.");
-        assertFalse(taskList.getTask(0).getDone(), "Newly created event should not be marked done.");
-        assertTrue(
-                taskList.getTask(0).toString().contains("Team meeting"),
-                "Event should contain the given description in its string representation."
+        assertEquals(1, taskList.size());
+        verify(duskIO).print(
+                eq("Got it. I've added this task:"),
+                contains("  [E][ ] Test event ("),
+                eq("Now you have 1 tasks in the list.")
         );
+        verify(storage).saveTasksAsync(taskList);
     }
 
-    /**
-     * Tests that executing CreateEventCommand with an empty description throws an InputException.
-     */
     @Test
-    void testExecuteEmptyDescriptionThrowsException() {
+    public void executeEmptyDescriptionThrowsInputException() {
         LocalDateTime startTime = LocalDateTime.now().plusDays(1);
-        LocalDateTime endTime = LocalDateTime.now().plusDays(1).plusHours(2);
+        LocalDateTime endTime = startTime.plusHours(2);
         CreateEventCommand command = new CreateEventCommand(
-                taskList, duskIo, storage, "", startTime, endTime
+                taskList, duskIO, storage, "", startTime, endTime
         );
 
-        assertThrows(
-                InputException.class,
-                command::execute,
-                "Executing CreateEventCommand with empty description should throw an InputException."
-        );
+        assertThrows(InputException.class, command::execute);
+        assertEquals(0, taskList.size());
     }
 }
