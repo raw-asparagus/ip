@@ -17,7 +17,7 @@ public class MarkCommand extends Command {
     private final DuskIO duskIO;
     private final Storage storage;
     private final String description;
-    private final boolean markAsDone;
+    private final boolean isMarkedAsDone;
 
     /**
      * Constructs a MarkCommand.
@@ -26,15 +26,15 @@ public class MarkCommand extends Command {
      * @param duskIO      the I/O interface
      * @param storage     the storage handler
      * @param description the command description containing the task index
-     * @param markAsDone  true to mark as done, false to unmark
+     * @param isMarkedAsDone  true to mark as done, false to unmark
      */
     public MarkCommand(TaskList tasks, DuskIO duskIO, Storage storage,
-                       String description, boolean markAsDone) {
+                       String description, boolean isMarkedAsDone) {
         this.tasks = tasks;
         this.duskIO = duskIO;
         this.storage = storage;
         this.description = description;
-        this.markAsDone = markAsDone;
+        this.isMarkedAsDone = isMarkedAsDone;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MarkCommand extends Command {
             throw new InputException("Task number cannot be empty or invalid for a mark/unmark command!");
         }
 
-        if (markAsDone) {
+        if (isMarkedAsDone) {
             tasks.markTask(taskIndex);
             duskIO.print("Nice! I've marked this task as done:", "  " + tasks.getTask(taskIndex));
         } else {
