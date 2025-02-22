@@ -62,6 +62,6 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         String formatted = (by == null) ? "N/A" : by.format(OUTPUT_FORMATTER);
-        return "[D]" + super.toString() + " (by: " + formatted + ")";
+        return "[D]" + super.toString() + " (by " + formatted + ")";
     }
 }

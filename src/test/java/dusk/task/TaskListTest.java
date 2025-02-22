@@ -12,10 +12,16 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 
+/**
+ * Unit tests for the {@code TaskList} class.
+ */
 class TaskListTest {
     private TaskList taskList;
     private Task mockTask;
 
+    /**
+     * Sets up test fixtures before each test.
+     */
     @BeforeEach
     void setUp() {
         taskList = new TaskList();
@@ -25,6 +31,9 @@ class TaskListTest {
         };
     }
 
+    /**
+     * Verifies that adding a single task succeeds.
+     */
     @Test
     void addTaskSingleTaskSuccess() {
         taskList.addTask(mockTask);
@@ -36,6 +45,9 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that removing a task with a valid index returns the removed task.
+     */
     @Test
     void removeTaskValidIndexReturnsRemovedTask() {
         taskList.addTask(mockTask);
@@ -48,11 +60,17 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that removing a task with an invalid index throws an exception.
+     */
     @Test
     void removeTaskInvalidIndexThrowsException() {
         assertThrows(TaskListException.class, () -> taskList.removeTask(0));
     }
 
+    /**
+     * Verifies that marking a task with a valid index succeeds.
+     */
     @Test
     void markTaskValidIndexSuccess() {
         taskList.addTask(mockTask);
@@ -64,6 +82,9 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that attempting to mark an already marked task throws an exception.
+     */
     @Test
     void markTaskAlreadyMarkedTaskThrowsException() {
         taskList.addTask(mockTask);
@@ -75,6 +96,9 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that unmarking a task with a valid index succeeds.
+     */
     @Test
     void unmarkTaskValidIndexSuccess() {
         taskList.addTask(mockTask);
@@ -87,12 +111,18 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that attempting to unmark an already unmarked task throws an exception.
+     */
     @Test
     void unmarkTaskAlreadyUnmarkedTaskThrowsException() {
         taskList.addTask(mockTask);
         assertThrows(MarkTaskException.class, () -> taskList.unmarkTask(0));
     }
 
+    /**
+     * Verifies that obtaining a task with a valid index returns the task.
+     */
     @Test
     void getTaskValidIndexReturnsTask() {
         taskList.addTask(mockTask);
@@ -103,16 +133,25 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that obtaining a task with an invalid index throws an exception.
+     */
     @Test
     void getTaskInvalidIndexThrowsException() {
         assertThrows(TaskListException.class, () -> taskList.getTask(0));
     }
 
+    /**
+     * Verifies that the size of an empty {@code TaskList} is zero.
+     */
     @Test
     void sizeEmptyListReturnsZero() {
         assertEquals(0, taskList.size());
     }
 
+    /**
+     * Verifies that the size of a non-empty {@code TaskList} returns the correct count.
+     */
     @Test
     void sizeNonEmptyListReturnsCorrectSize() {
         taskList.addTask(mockTask);
@@ -120,17 +159,26 @@ class TaskListTest {
         assertEquals(2, taskList.size());
     }
 
+    /**
+     * Verifies that {@code isEmpty} returns {@code true} for an empty {@code TaskList}.
+     */
     @Test
     void isEmptyEmptyListReturnsTrue() {
         assertTrue(taskList.isEmpty());
     }
 
+    /**
+     * Verifies that {@code isEmpty} returns {@code false} for a non-empty {@code TaskList}.
+     */
     @Test
     void isEmptyNonEmptyListReturnsFalse() {
         taskList.addTask(mockTask);
         assertFalse(taskList.isEmpty());
     }
 
+    /**
+     * Verifies that searching with a keyword returns the matching tasks.
+     */
     @Test
     void searchWithKeywordReturnsMatchingTasks() {
         Task task1 = new Task("Meeting with team") {
@@ -149,6 +197,9 @@ class TaskListTest {
         }
     }
 
+    /**
+     * Verifies that searching with a date returns the matching tasks.
+     */
     @Test
     void searchWithDateReturnsMatchingTasks() {
         LocalDateTime testDate = LocalDateTime.now();

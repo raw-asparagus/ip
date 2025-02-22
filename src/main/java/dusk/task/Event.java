@@ -91,11 +91,11 @@ public class Event extends Task {
         String message = "";
 
         if (fromStr.isEmpty() && !toStr.isEmpty()) {
-            message = " (to: " + toStr + ")";
+            message = " (until " + toStr + ")";
         } else if (!fromStr.isEmpty() && toStr.isEmpty()) {
-            message = " (from: " + fromStr + ")";
+            message = " (from " + fromStr + ")";
         } else if (!fromStr.isEmpty()) {
-            message = " (from: " + fromStr + " to: " + toStr + ")";
+            message = " (" + fromStr + " to " + toStr + ")";
         }
 
         return "[E]" + super.toString() + message;

@@ -57,6 +57,6 @@ public abstract class Task {
      */
     @Override
     public String toString() {
-        return "[" + (isDone ? "X" : " ") + "] " + description;
+        return "[" + (isDone ? "✗" : " ") + "] " + description;
     }
 }
