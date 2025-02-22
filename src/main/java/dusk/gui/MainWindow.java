@@ -18,9 +18,6 @@ import javafx.stage.Stage;
 
 /**
  * The primary user interface component that handles user interactions for the Dusk application.
- * <p>
- * This component contains a scrollable dialog area, a text input field, and a submit button.
- * </p>
  */
 public class MainWindow extends AnchorPane {
 
@@ -44,8 +41,8 @@ public class MainWindow extends AnchorPane {
      * Constructs a MainWindow.
      */
     public MainWindow() {
-        this.userImage = loadImage(USER_IMAGE_PATH);
-        this.duskImage = loadImage(DUSK_IMAGE_PATH);
+        userImage = loadImage(USER_IMAGE_PATH);
+        duskImage = loadImage(DUSK_IMAGE_PATH);
     }
 
     /**
@@ -115,34 +112,6 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Processes a user message.
-     *
-     * @param message the user message
-     */
-    private void processUserMessage(String message) {
-        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
-        dialogContainer.getChildren().add(userDialog);
-
-        if (dusk != null) {
-            CompletableFuture.supplyAsync(() -> dusk.getResponse(message))
-                    .thenAccept(response -> Platform.runLater(() -> displayDuskResponse(response)))
-                    .exceptionally(error -> {
-                        Platform.runLater(() -> displayError("An unexpected error occurred: " + error.getMessage()));
-                        return null;
-                    });
-        }
-        scrollToBottom();
-        clearUserInput();
-    }
-
-    /**
-     * Clears the user input field.
-     */
-    private void clearUserInput() {
-        userInput.clear();
-    }
-
-    /**
      * Displays Dusk's response in the dialog container.
      *
      * @param response the response to display
@@ -165,6 +134,40 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
+     * Processes a user message.
+     *
+     * @param message the user message
+     */
+    private void processUserMessage(String message) {
+        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
+        dialogContainer.getChildren().add(userDialog);
+
+        if (dusk != null) {
+            CompletableFuture.supplyAsync(() -> dusk.getResponse(message))
+                    .thenAccept(response -> Platform.runLater(() -> displayDuskResponse(response)))
+                    .exceptionally(error -> {
+                        Platform.runLater(() -> displayError("An unexpected error occurred: " + error.getMessage()));
+                        return null;
+                    });
+        }
+
+        userDialog.needsLayoutProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {  // Layout is complete
+                scrollToBottom();
+            }
+        });
+        clearUserInput();
+    }
+
+
+    /**
+     * Clears the user input field.
+     */
+    private void clearUserInput() {
+        userInput.clear();
+    }
+
+    /**
      * Displays an error message in the dialog container.
      *
      * @param errorMessage the error message to display
@@ -172,7 +175,12 @@ public class MainWindow extends AnchorPane {
     private void displayError(String errorMessage) {
         ErrorBox errorBox = new ErrorBox(errorMessage);
         dialogContainer.getChildren().add(errorBox);
-        scrollToBottom();
+
+        errorBox.needsLayoutProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {  // Layout is complete
+                scrollToBottom();
+            }
+        });
     }
 
     /**

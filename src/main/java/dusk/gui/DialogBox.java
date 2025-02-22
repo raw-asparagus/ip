@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.util.Collections;
@@ -24,12 +23,11 @@ public class DialogBox extends HBox {
     private static final Logger LOGGER = Logger.getLogger(DialogBox.class.getName());
     private static final String DIALOG_BOX_FXML = "/view/DialogBox.fxml";
     private static final String ERROR_DIALOG_BOX_FXML = "/view/ErrorDialogBox.fxml";
-    private static final String SYSTEM_ERROR_STYLE = "; -fx-background-color: #f8d7da; -fx-text-fill: #721c24;";
 
     @FXML
     private Label dialog;
     @FXML
-    private ImageView displayPicture;
+    private ProfilePicture profilePicture; // Changed from ImageView to ProfilePicture
 
     /**
      * Private constructor to create a dialog box.
@@ -39,8 +37,16 @@ public class DialogBox extends HBox {
      * @param isError {@code true} if this dialog represents an error message
      */
     private DialogBox(String text, Image img, boolean isError) {
-        loadFxml(isError);
-        configureDialog(text, img);
+        try {
+            loadFxml(isError);
+            // Initialize ProfilePicture if it wasn't created by FXML
+            if (profilePicture == null) {
+                profilePicture = new ProfilePicture(img);
+            }
+            configureDialog(text, img);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading FXML", e);
+        }
     }
 
     /**
@@ -61,7 +67,7 @@ public class DialogBox extends HBox {
      * @return a dialog box configured for user messages
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        DialogBox db = new DialogBox(text, img);
+        var db = new DialogBox(text, img);
         db.flip();
         return db;
     }
@@ -75,14 +81,9 @@ public class DialogBox extends HBox {
      * @return a dialog box configured for Dusk messages
      */
     public static DialogBox getDuskDialog(String text, Image img, DuskResponseType type) {
-        boolean isError = type == DuskResponseType.ERROR || type == DuskResponseType.SYSTEM_ERROR;
-        DialogBox db = new DialogBox(text, img, isError);
-
-        if (type == DuskResponseType.SYSTEM_ERROR) {
-            db.dialog.setStyle(db.dialog.getStyle() + SYSTEM_ERROR_STYLE);
-        }
-
-        return db;
+        return type == DuskResponseType.ERROR
+                ? new DialogBox(text, img, true)
+                : new DialogBox(text, img);
     }
 
     /**
@@ -90,16 +91,12 @@ public class DialogBox extends HBox {
      *
      * @param isError {@code true} to load the error-specific layout
      */
-    private void loadFxml(boolean isError) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource(
-                    isError ? ERROR_DIALOG_BOX_FXML : DIALOG_BOX_FXML));
-            fxmlLoader.setController(this);
-            fxmlLoader.setRoot(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading FXML", e);
-        }
+    private void loadFxml(boolean isError) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
+                isError ? ERROR_DIALOG_BOX_FXML : DIALOG_BOX_FXML));
+        fxmlLoader.setController(this);
+        fxmlLoader.setRoot(this);
+        fxmlLoader.load();
     }
 
     /**
@@ -111,10 +108,7 @@ public class DialogBox extends HBox {
     private void configureDialog(String text, Image img) {
         dialog.setText(text);
         if (img != null) {
-            displayPicture.setImage(img);
-        } else {
-            displayPicture.setManaged(false);
-            displayPicture.setVisible(false);
+            profilePicture.setImage(img);
         }
     }
 
@@ -122,9 +116,9 @@ public class DialogBox extends HBox {
      * Flips the dialog box so that the image appears on the left.
      */
     private void flip() {
-        ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
-        Collections.reverse(children);
-        getChildren().setAll(children);
+        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
+        Collections.reverse(tmp);
+        getChildren().setAll(tmp);
         setAlignment(Pos.TOP_LEFT);
     }
 }

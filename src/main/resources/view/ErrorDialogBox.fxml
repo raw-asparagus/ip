@@ -1,28 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 
-<fx:root type="javafx.scene.layout.HBox"
-         xmlns="http://javafx.com/javafx/17"
-         xmlns:fx="http://javafx.com/fxml/1"
-         alignment="TOP_RIGHT"
-         prefWidth="400.0">
-    <padding>
-        <Insets bottom="15.0" left="5.0" right="5.0" top="15.0"/>
-    </padding>
-    <Label fx:id="dialog"
-           wrapText="true"
-           minHeight="-Infinity"
-           style="-fx-background-color: #fff3cd; -fx-background-radius: 10; -fx-padding: 10; -fx-text-fill: #856404; -fx-font-family: 'System'; -fx-wrap-text: true"/>
-    <ImageView fx:id="displayPicture"
-               fitHeight="99.0"
-               fitWidth="99.0"
-               pickOnBounds="true"
-               preserveRatio="true">
+<fx:root type="javafx.scene.layout.HBox" alignment="TOP_RIGHT" maxHeight="Infinity" maxWidth="Infinity"
+         prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="dialog" styleClass="error-box" text="Label" wrapText="true" HBox.hgrow="ALWAYS" minHeight="-Infinity">
         <HBox.margin>
-            <Insets left="10.0"/>
+            <Insets left="5.0" right="5.0"/>
         </HBox.margin>
-    </ImageView>
+    </Label>
 </fx:root>

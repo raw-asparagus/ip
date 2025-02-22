@@ -71,3 +71,10 @@
 .dialog-box.dusk {
     -fx-background-color: #f5f5f5;
 }
+
+.profile-picture {
+    -fx-background-radius: 50%;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 0);
+    -fx-clip-type: circle;
+}
