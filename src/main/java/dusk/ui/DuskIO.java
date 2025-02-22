@@ -52,7 +52,7 @@ public class DuskIO implements Closeable {
      */
     public void print(String... messages) throws IOException {
         for (String message : messages) {
-            bufferedWriter.write("\t" + message);
+            bufferedWriter.write(message);
             bufferedWriter.newLine();
         }
         bufferedWriter.flush();

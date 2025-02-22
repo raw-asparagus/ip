@@ -8,13 +8,12 @@ import javafx.scene.text.TextFlow;
  * An error message box that spans the width of the chat container.
  */
 public class ErrorBox extends HBox {
-
     private static final String ERROR_STYLE_CLASS = "error-box";
 
     /**
-     * Creates an error box displaying the specified error message.
+     * Constructs an ErrorBox displaying the specified error message.
      *
-     * @param errorMessage the error message to display
+     * @param errorMessage the error message to display.
      */
     public ErrorBox(String errorMessage) {
         TextFlow textFlow = new TextFlow();

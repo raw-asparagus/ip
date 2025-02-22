@@ -3,6 +3,7 @@ package dusk.gui;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+
 import dusk.Dusk;
 import dusk.ui.DuskResponse;
 import dusk.ui.DuskResponseType;
@@ -20,7 +21,6 @@ import javafx.stage.Stage;
  * The primary user interface component that handles user interactions for the Dusk application.
  */
 public class MainWindow extends AnchorPane {
-
     private static final String USER_IMAGE_PATH = "/images/surtr.png";
     private static final String DUSK_IMAGE_PATH = "/images/dusk.png";
 
@@ -41,6 +41,7 @@ public class MainWindow extends AnchorPane {
      * Constructs a MainWindow.
      */
     public MainWindow() {
+        // Constructor implementation.
         userImage = loadImage(USER_IMAGE_PATH);
         duskImage = loadImage(DUSK_IMAGE_PATH);
     }
@@ -48,8 +49,8 @@ public class MainWindow extends AnchorPane {
     /**
      * Loads an image from the specified path.
      *
-     * @param path the image path
-     * @return the loaded image
+     * @param path the image path.
+     * @return the loaded image.
      */
     private Image loadImage(String path) {
         return new Image(Objects.requireNonNull(
@@ -69,7 +70,7 @@ public class MainWindow extends AnchorPane {
     /**
      * Injects the Dusk instance.
      *
-     * @param d the Dusk instance
+     * @param d the Dusk instance.
      */
     public void setDusk(Dusk d) {
         assert d != null : "Dusk instance cannot be null";
@@ -96,8 +97,8 @@ public class MainWindow extends AnchorPane {
     /**
      * Determines whether the provided input is an exit command.
      *
-     * @param input the user input
-     * @return {@code true} if the input is an exit command, otherwise {@code false}
+     * @param input the user input.
+     * @return {@code true} if the input is an exit command, otherwise {@code false}.
      */
     private boolean isExitCommand(String input) {
         return "bye".equalsIgnoreCase(input);
@@ -114,7 +115,7 @@ public class MainWindow extends AnchorPane {
     /**
      * Displays Dusk's response in the dialog container.
      *
-     * @param response the response to display
+     * @param response the response to display.
      */
     private void displayDuskResponse(DuskResponse response) {
         if (response.getType() == DuskResponseType.ERROR) {
@@ -136,7 +137,7 @@ public class MainWindow extends AnchorPane {
     /**
      * Processes a user message.
      *
-     * @param message the user message
+     * @param message the user message.
      */
     private void processUserMessage(String message) {
         DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
@@ -159,7 +160,6 @@ public class MainWindow extends AnchorPane {
         clearUserInput();
     }
 
-
     /**
      * Clears the user input field.
      */
@@ -170,7 +170,7 @@ public class MainWindow extends AnchorPane {
     /**
      * Displays an error message in the dialog container.
      *
-     * @param errorMessage the error message to display
+     * @param errorMessage the error message to display.
      */
     private void displayError(String errorMessage) {
         ErrorBox errorBox = new ErrorBox(errorMessage);

@@ -1,20 +1,30 @@
+/* Root styles */
 .root {
     -fx-background-color: #f0f0f0;
+    -fx-font-family: 'Consolas', 'Monaco', 'DejaVu Sans Mono', 'Monospace';
 }
 
+/* Input elements */
 .text-field {
+    -fx-font-family: 'Monospace';
+    -fx-font-weight: bold;
     -fx-background-radius: 20;
     -fx-border-radius: 20;
-    -fx-padding: 0 15 0 15;
+    -fx-padding: 0 15;
 }
 
 .button {
+    -fx-font-family: 'Monospace';
+    -fx-font-weight: bold;
     -fx-background-radius: 20;
     -fx-background-color: #4a90e2;
     -fx-text-fill: white;
 }
 
+/* Scrolling container */
 .scroll-pane {
+    -fx-font-family: 'Monospace';
+    -fx-font-weight: bold;
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
@@ -26,35 +36,9 @@
     -fx-background-color: transparent;
 }
 
+/* Dialog elements */
 .dialog-container {
     -fx-padding: 10;
-}
-
-.profile-picture {
-    -fx-background-radius: 50%;
-    -fx-background-color: white;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
-}
-
-.profile-picture .image-view {
-    -fx-background-radius: 50%;
-    -fx-background-color: white;
-}
-
-.error-box {
-    -fx-background-color: #ffe6e6;
-    -fx-padding: 10;
-    -fx-spacing: 10;
-    -fx-border-color: #ffcccc;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-margin: 5 0;
-}
-
-.error-box .error-text {
-    -fx-fill: #cc0000;
-    -fx-font-size: 14px;
 }
 
 .dialog-box {
@@ -72,9 +56,32 @@
     -fx-background-color: #f5f5f5;
 }
 
+/* Profile picture */
 .profile-picture {
     -fx-background-radius: 50%;
     -fx-background-color: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 4, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 4, 0, 0, 0);
     -fx-clip-type: circle;
+}
+
+.profile-picture .image-view {
+    -fx-background-radius: 50%;
+    -fx-background-color: white;
+}
+
+/* Error styling */
+.error-box {
+    -fx-background-color: #ffe6e6;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-border-color: #ffcccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-margin: 5 0;
+}
+
+.error-box .error-text {
+    -fx-fill: #cc0000;
+    -fx-font-size: 14px;
 }

@@ -16,8 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A custom dialog box for the chat interface.
- * Displays either user or system messages with appropriate styling.
+ * A custom dialog box for the chat interface that displays user or system messages.
  */
 public class DialogBox extends HBox {
     private static final Logger LOGGER = Logger.getLogger(DialogBox.class.getName());
@@ -27,19 +26,19 @@ public class DialogBox extends HBox {
     @FXML
     private Label dialog;
     @FXML
-    private ProfilePicture profilePicture; // Changed from ImageView to ProfilePicture
+    private ProfilePicture profilePicture;
 
     /**
-     * Private constructor to create a dialog box.
+     * Constructs a DialogBox with the specified text, image, and error flag.
      *
-     * @param text    the text to display
-     * @param img     the image (can be null)
-     * @param isError {@code true} if this dialog represents an error message
+     * @param text    the text to display.
+     * @param img     the image (can be null).
+     * @param isError {@code true} if this dialog represents an error message.
      */
     private DialogBox(String text, Image img, boolean isError) {
+        dialog = new Label();
         try {
             loadFxml(isError);
-            // Initialize ProfilePicture if it wasn't created by FXML
             if (profilePicture == null) {
                 profilePicture = new ProfilePicture(img);
             }
@@ -50,10 +49,10 @@ public class DialogBox extends HBox {
     }
 
     /**
-     * Private constructor for non-error messages.
+     * Constructs a DialogBox for non-error messages with the specified text and image.
      *
-     * @param text the text to display
-     * @param img  the image (can be null)
+     * @param text the text to display.
+     * @param img  the image (can be null).
      */
     private DialogBox(String text, Image img) {
         this(text, img, false);
@@ -62,23 +61,23 @@ public class DialogBox extends HBox {
     /**
      * Creates a dialog box for user messages.
      *
-     * @param text the user's message
-     * @param img  the user's avatar image
-     * @return a dialog box configured for user messages
+     * @param text the user's message.
+     * @param img  the user's avatar image.
+     * @return a DialogBox configured for user messages.
      */
     public static DialogBox getUserDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
-        return db;
+        DialogBox dialogBox = new DialogBox(text, img);
+        dialogBox.flip();
+        return dialogBox;
     }
 
     /**
-     * Creates a dialog box for Dusk messages with styling based on response type.
+     * Creates a dialog box for system messages with styling based on the response type.
      *
-     * @param text the message to display
-     * @param img  the Dusk avatar image
-     * @param type the type of response
-     * @return a dialog box configured for Dusk messages
+     * @param text the message to display.
+     * @param img  the system avatar image.
+     * @param type the type of response.
+     * @return a DialogBox configured for system messages.
      */
     public static DialogBox getDuskDialog(String text, Image img, DuskResponseType type) {
         return type == DuskResponseType.ERROR
@@ -89,7 +88,8 @@ public class DialogBox extends HBox {
     /**
      * Loads the appropriate FXML layout.
      *
-     * @param isError {@code true} to load the error-specific layout
+     * @param isError {@code true} to load the error-specific layout.
+     * @throws IOException if the FXML file cannot be loaded.
      */
     private void loadFxml(boolean isError) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -102,8 +102,8 @@ public class DialogBox extends HBox {
     /**
      * Configures the dialog with the specified text and image.
      *
-     * @param text the text to display
-     * @param img  the image to display; if null the image view is hidden
+     * @param text the text to display.
+     * @param img  the image to display; if null, the image view is hidden.
      */
     private void configureDialog(String text, Image img) {
         dialog.setText(text);
@@ -116,9 +116,9 @@ public class DialogBox extends HBox {
      * Flips the dialog box so that the image appears on the left.
      */
     private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
+        ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
+        Collections.reverse(children);
+        getChildren().setAll(children);
         setAlignment(Pos.TOP_LEFT);
     }
 }

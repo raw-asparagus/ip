@@ -12,30 +12,28 @@ public class ProfilePicture extends StackPane {
     private final ImageView imageView;
 
     /**
-     * No-argument constructor required for FXML.
-     * Creates a profile picture with no image and default size.
+     * Constructs a ProfilePicture with no image and default size.
      */
     public ProfilePicture() {
         this(null, DEFAULT_SIZE);
     }
 
     /**
-     * Creates a new profile picture with the default size.
+     * Constructs a ProfilePicture with the specified image and default size.
      *
-     * @param image the image to display
+     * @param image the image to display.
      */
     public ProfilePicture(Image image) {
         this(image, DEFAULT_SIZE);
     }
 
     /**
-     * Creates a new profile picture with the specified size.
+     * Constructs a ProfilePicture with the specified image and size.
      *
-     * @param image the image to display
-     * @param size  the size for both the width and height of the profile picture
+     * @param image the image to display.
+     * @param size  the size for the profile picture.
      */
     public ProfilePicture(Image image, double size) {
-
         imageView = new ImageView(image);
         imageView.setFitWidth(size);
         imageView.setFitHeight(size);
@@ -51,7 +49,7 @@ public class ProfilePicture extends StackPane {
     /**
      * Updates the profile picture with a new image.
      *
-     * @param image the new image to display
+     * @param image the new image to display.
      */
     public void setImage(Image image) {
         imageView.setImage(image);

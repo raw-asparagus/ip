@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 
-<fx:root type="javafx.scene.layout.HBox" alignment="TOP_RIGHT" maxHeight="Infinity" maxWidth="Infinity"
-         prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <Label fx:id="dialog" styleClass="error-box" text="Label" wrapText="true" HBox.hgrow="ALWAYS" minHeight="-Infinity">
+<fx:root type="javafx.scene.layout.HBox"
+         xmlns:fx="http://javafx.com/fxml/1"
+         xmlns="http://javafx.com/javafx/17"
+         alignment="TOP_RIGHT"
+         maxHeight="Infinity"
+         maxWidth="Infinity"
+         prefWidth="400.0">
+    <Label fx:id="dialog"
+           HBox.hgrow="ALWAYS"
+           minHeight="-Infinity"
+           styleClass="error-box"
+           text="Label"
+           wrapText="true">
         <HBox.margin>
             <Insets left="5.0" right="5.0"/>
         </HBox.margin>

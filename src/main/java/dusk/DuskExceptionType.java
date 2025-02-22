@@ -4,11 +4,9 @@ package dusk;
  * Enumerates the types of exceptions that can be thrown in the Dusk application.
  */
 public enum DuskExceptionType {
-    COMMAND_ERROR("Command Error"),
     INPUT_ERROR("Input Error"),
     STORAGE_ERROR("Storage Error"),
-    TASK_ERROR("Task Error"),
-    SYSTEM_ERROR("System Error");
+    TASK_ERROR("Task Error");
 
     private final String label;
 
