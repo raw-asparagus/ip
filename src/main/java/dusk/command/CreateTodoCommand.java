@@ -1,52 +1,44 @@
 package dusk.command;
 
-import java.io.IOException;
-
 import dusk.storage.Storage;
 import dusk.task.TaskList;
 import dusk.task.Todo;
 import dusk.ui.DuskIO;
 
 /**
- * Command to create a todo task.
+ * Command to create a {@link Todo} task.
  */
-public class CreateTodoCommand extends Command {
-
-    private final TaskList tasks;
-    private final DuskIO duskIO;
-    private final Storage storage;
-    private final String description;
+public class CreateTodoCommand extends CreateTaskCommand {
 
     /**
      * Constructs a CreateTodoCommand.
      *
-     * @param tasks       the current task list
-     * @param duskIO      the I/O interface
+     * @param tasks       the task list
+     * @param duskIO      the UI interface
      * @param storage     the storage handler
      * @param description the task description
      */
     public CreateTodoCommand(TaskList tasks, DuskIO duskIO, Storage storage, String description) {
-        this.tasks = tasks;
-        this.duskIO = duskIO;
-        this.storage = storage;
-        this.description = description;
+        super(tasks, duskIO, storage, description);
     }
 
+    /**
+     * Creates a Todo task.
+     *
+     * @return a new {@link Todo} instance
+     */
     @Override
-    public void execute() throws IOException, InputException {
-        if (description.isEmpty()) {
-            throw new InputException("A todo command must include a description.");
-        }
+    protected dusk.task.Task createTask() {
+        return new Todo(description);
+    }
 
-        Todo newTask = new Todo(description);
-        tasks.addTask(newTask);
-
-        duskIO.print(
-                "Got it. I've added this task:",
-                "  " + newTask,
-                "Now you have " + tasks.size() + " tasks in the list."
-        );
-
-        saveAsync(storage, tasks);
+    /**
+     * Returns the validation message for a todo command.
+     *
+     * @return the validation message
+     */
+    @Override
+    protected String getValidationMessage() {
+        return "A todo command must include a description.";
     }
 }
