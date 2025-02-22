@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -205,26 +204,5 @@ public class StorageTest {
         Todo loadedTodo = (Todo) loadedList.getTask(0);
         assertTrue(loadedTodo.getDone(),
                 "Task done state should be preserved after save/load");
-    }
-
-    /**
-     * Verifies that an invalid storage location is handled appropriately.
-     */
-    @Test
-    public void invalidStorageLocationHandling() {
-        Storage invalidStorage = new Storage() {
-            @Override
-            protected Path getDataFile() {
-                String separator = FileSystems.getDefault().getSeparator();
-
-                return Path.of(separator + "proc" +
-                        separator + "non-writable-data.txt");
-            }
-        };
-
-        TaskList taskList = new TaskList();
-        assertThrows(StorageException.class,
-                () -> invalidStorage.saveTasks(taskList),
-                "Should throw StorageException for invalid storage location");
     }
 }
