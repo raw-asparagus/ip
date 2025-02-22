@@ -15,9 +15,10 @@ import dusk.storage.Storage;
 import dusk.task.TaskList;
 
 /**
- * Tests for verifying the functionality of the Parser component.
+ * Test cases for verifying the functionality of the Parser component.
  */
 public class ParserTest {
+
     private DuskIO duskIO;
     private Storage storage;
     private TaskList tasks;
@@ -79,8 +80,7 @@ public class ParserTest {
     }
 
     /**
-     * Verifies that parsing a command without description throws InputException
-     * when description is required.
+     * Verifies that a missing description triggers an InputException.
      */
     @Test
     public void parseCommandNoDescriptionThrowsInputException() {
@@ -88,8 +88,7 @@ public class ParserTest {
     }
 
     /**
-     * Verifies that parsing a deadline command with invalid datetime format
-     * throws InputException.
+     * Verifies that a deadline command with an invalid datetime format triggers an InputException.
      */
     @Test
     public void parseDeadlineInvalidDateTimeThrowsInputException() {
@@ -98,8 +97,7 @@ public class ParserTest {
     }
 
     /**
-     * Verifies that parsing an event command with missing time flags
-     * throws InputException.
+     * Verifies that an event command missing required flags triggers an InputException.
      */
     @Test
     public void parseEventMissingFlagsThrowsInputException() {
@@ -108,7 +106,7 @@ public class ParserTest {
     }
 
     /**
-     * Verifies that parsing an invalid command type throws InputException.
+     * Verifies that an invalid command type triggers an InputException.
      */
     @Test
     public void parseInvalidCommandTypeThrowsInputException() {
@@ -127,7 +125,7 @@ public class ParserTest {
     }
 
     /**
-     * Verifies that parsing mark/unmark commands work correctly.
+     * Verifies that mark and unmark commands are parsed correctly.
      */
     @Test
     public void parseMarkUnmarkCommandsSuccess() {
