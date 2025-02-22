@@ -1,33 +1,61 @@
-# Dusk project template
+# Dusk - Task Management Application
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are
-instructions on how to use it.
+A Java-based task management application that helps you organize and track your tasks efficiently.
 
-## Setting up in Intellij
+## Prerequisites
 
-Prerequisites: JDK 17, update Intellij to the most recent version.
+- JDK 17
+- IntelliJ IDEA (latest version recommended)
 
-1. Open Intellij (if you are not in the welcome screen, click `File` > `Close Project` to close the existing project
-   first)
-1. Open the project into Intellij as follows:
-    1. Click `Open`.
-    1. Select the project directory, and click `OK`.
-    1. If there are any further prompts, accept the defaults.
-1. Configure the project to use **JDK 17** (not other versions) as explained
-   in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
-   In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/dusk.Dusk.java` file, right-click it, and choose `Run dusk.Dusk.main()` (if the
-   code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something
-   like the below as the output:
-   ```
-   ____________________________________________________________
-   Hello! I'm dusk.Dusk
-   What can I do for you?
-   ____________________________________________________________
-   Bye. Hope to see you again soon!
-   ____________________________________________________________
-   ```
+## Project Setup in IntelliJ IDEA
 
-**Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move
-Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle)
-expect to find Java files.
+1. Open IntelliJ IDEA (if you're not in the welcome screen, click `File` > `Close Project` to close any existing project)
+2. Open the project:
+   1. Click `Open`
+   2. Select the project directory
+   3. Click `OK`
+   4. Accept defaults for any additional prompts
+3. Configure JDK:
+   - Set project SDK to JDK 17 as explained [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk)
+   - Set **Project language level** to `SDK default`
+
+## Project Structure
+
+- `src/main/java`: Contains all source code
+   - Primary entry point: `dusk/Dusk.java`
+- `src/test/java`: Contains test cases
+   - Comprehensive unit tests for tasks, storage, and commands
+
+## Building the Project
+
+The project uses Gradle for build automation. Key details:
+- Java version: 17
+- JavaFX version: 17.0.10
+- JUnit version: 5.10.2
+
+To build the project:
+```bash
+./gradlew build
+```
+
+To create an executable JAR:
+```bash
+./gradlew shadowJar
+```
+
+## Running the Application
+
+1. Locate `src/main/java/dusk/Dusk.java`
+2. Right-click and select `Run dusk.Dusk.main()`
+3. If configured correctly, you should see:
+![User Interface](docs/Ui.png)
+
+## Development Guidelines
+
+- Keep Java source files within `src/main/java` folder structure
+- Follow the test-driven development approach with comprehensive unit tests
+- Maintain code quality standards using Checkstyle (version 10.2)
+
+## Current Version
+
+0.3.0
