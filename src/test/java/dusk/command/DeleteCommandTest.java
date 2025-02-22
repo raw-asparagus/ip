@@ -1,15 +1,14 @@
 package dusk.command;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dusk.ui.DuskIO;
-import dusk.task.MarkTaskException;
 import dusk.task.TaskListException;
 import dusk.storage.Storage;
 import dusk.task.TaskList;
@@ -20,7 +19,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-public class MarkCommandTest {
+
+public class DeleteCommandTest {
     private TaskList taskList;
     private DuskIO duskIO;
     private Storage storage;
@@ -33,56 +33,54 @@ public class MarkCommandTest {
     }
 
     @Test
-    public void executeValidIndexMarksTaskAsDone() throws TaskListException,
-            InputException, MarkTaskException, IOException {
-        // Add a task to mark
+    public void executeValidIndexDeletesTask() throws TaskListException,
+            InputException, IOException {
         taskList.addTask(new Todo("test task"));
-        // Configure mock to return a CompletableFuture
         when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
-
-        MarkCommand command = new MarkCommand(taskList, duskIO, storage, "1", true);
+        DeleteCommand command = new DeleteCommand(taskList, duskIO, storage, "1");
 
         command.execute();
+        when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
 
-        assertTrue(taskList.getTask(0).getDone());
+        assertEquals(0, taskList.size());
         verify(storage).saveTasksAsync(taskList);
         verify(duskIO).print(
-                eq("Nice! I've marked this task as done:"),
-                eq("  [T][✗] test task")
+                eq("Noted. I've removed this task:"),
+                anyString(),
+                anyString()
         );
     }
 
     @Test
     public void executeInvalidIndexThrowsTaskListException() {
-        MarkCommand command = new MarkCommand(taskList, duskIO, storage, "1", true);
+        DeleteCommand command = new DeleteCommand(taskList, duskIO, storage, "1");
 
         assertThrows(TaskListException.class, command::execute);
     }
 
     @Test
     public void executeInvalidInputFormatThrowsInputException() {
-        MarkCommand command = new MarkCommand(taskList, duskIO, storage, "invalid", true);
+        DeleteCommand command = new DeleteCommand(taskList, duskIO, storage, "invalid");
 
         assertThrows(InputException.class, command::execute);
     }
 
     @Test
-    public void executeUnmarkTaskUnmarksTask() throws TaskListException,
-            InputException, MarkTaskException, IOException {
-        Todo todo = new Todo("test task");
-        todo.markDone();
-        taskList.addTask(todo);
+    public void executeDeletesCorrectTaskWhenMultipleTasksExist() throws TaskListException,
+            InputException, IOException {
+        Todo task1 = new Todo("first task");
+        Todo task2 = new Todo("second task");
+        taskList.addTask(task1);
+        when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
+        taskList.addTask(task2);
         when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
 
-        MarkCommand command = new MarkCommand(taskList, duskIO, storage, "1", false);
-
+        DeleteCommand command = new DeleteCommand(taskList, duskIO, storage, "1");
         command.execute();
+        when(storage.saveTasksAsync(taskList)).thenReturn(CompletableFuture.completedFuture(null));
 
-        assertFalse(taskList.getTask(0).getDone());
+        assertEquals(1, taskList.size());
+        assertEquals(task2, taskList.getTask(0));
         verify(storage).saveTasksAsync(taskList);
-        verify(duskIO).print(
-                eq("OK! I've updated this task to not done:"),
-                eq("  [T][ ] test task")
-        );
     }
 }
