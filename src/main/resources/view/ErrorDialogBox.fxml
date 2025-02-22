@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
@@ -10,21 +9,13 @@
          xmlns:fx="http://javafx.com/fxml/1"
          alignment="TOP_RIGHT"
          prefWidth="400.0">
-
     <padding>
         <Insets bottom="15.0" left="5.0" right="5.0" top="15.0"/>
     </padding>
-
     <Label fx:id="dialog"
            wrapText="true"
            minHeight="-Infinity"
-           style="-fx-background-color: #fff3cd;
-                  -fx-background-radius: 10;
-                  -fx-padding: 10;
-                  -fx-text-fill: #856404;
-                  -fx-font-family: 'System';
-                  -fx-wrap-text: true"/>
-
+           style="-fx-background-color: #fff3cd; -fx-background-radius: 10; -fx-padding: 10; -fx-text-fill: #856404; -fx-font-family: 'System'; -fx-wrap-text: true"/>
     <ImageView fx:id="displayPicture"
                fitHeight="99.0"
                fitWidth="99.0"

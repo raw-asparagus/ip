@@ -17,8 +17,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * Represents the main user interface component for the Dusk application.
- * Contains a scrollable dialog area, a text input field, and a submit button.
+ * The primary user interface component that handles user interactions for the Dusk application.
+ * <p>
+ * This component contains a scrollable dialog area, a text input field, and a submit button.
+ * </p>
  */
 public class MainWindow extends AnchorPane {
 
@@ -39,7 +41,7 @@ public class MainWindow extends AnchorPane {
     private Button sendButton;
 
     /**
-     * Constructs a new MainWindow.
+     * Constructs a MainWindow.
      */
     public MainWindow() {
         this.userImage = loadImage(USER_IMAGE_PATH);
@@ -58,7 +60,7 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Initializes the UI components.
+     * Initializes the user interface components.
      */
     @FXML
     public void initialize() {
@@ -80,31 +82,64 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Handles the user's input and processes the response.
+     * Processes the user input and handles the corresponding response.
      */
     @FXML
     private void handleUserInput() {
-        String input = userInput.getText().trim();
-        if (input.isEmpty()) {
-            return;
-        }
-
-        assert dusk != null : "Dusk instance must be initialized before handling input";
-        assert dialogContainer != null : "Dialog container must be initialized";
-
-        dialogContainer.getChildren().add(
-                DialogBox.getUserDialog(input, userImage));
-        scrollToBottom();
-        userInput.clear();
-
-        if ("bye".equalsIgnoreCase(input)) {
-            displayDuskResponse(new DuskResponse(Dusk.FAREWELL_MESSAGE,
-                    DuskResponseType.NORMAL));
-            handleTermination();
+        String trimmedInput = userInput.getText().trim();
+        if (trimmedInput.isEmpty()) {
+            clearUserInput();
+        } else if (isExitCommand(trimmedInput)) {
+            processExitCommand();
         } else {
-            DuskResponse response = dusk.getResponse(input);
-            displayDuskResponse(response);
+            processUserMessage(trimmedInput);
         }
+    }
+
+    /**
+     * Determines whether the provided input is an exit command.
+     *
+     * @param input the user input
+     * @return {@code true} if the input is an exit command, otherwise {@code false}
+     */
+    private boolean isExitCommand(String input) {
+        return "bye".equalsIgnoreCase(input);
+    }
+
+    /**
+     * Processes an exit command.
+     */
+    private void processExitCommand() {
+        displayDuskResponse(new DuskResponse(Dusk.FAREWELL_MESSAGE, DuskResponseType.NORMAL));
+        handleTermination();
+    }
+
+    /**
+     * Processes a user message.
+     *
+     * @param message the user message
+     */
+    private void processUserMessage(String message) {
+        DialogBox userDialog = DialogBox.getUserDialog(message, userImage);
+        dialogContainer.getChildren().add(userDialog);
+
+        if (dusk != null) {
+            CompletableFuture.supplyAsync(() -> dusk.getResponse(message))
+                    .thenAccept(response -> Platform.runLater(() -> displayDuskResponse(response)))
+                    .exceptionally(error -> {
+                        Platform.runLater(() -> displayError("An unexpected error occurred: " + error.getMessage()));
+                        return null;
+                    });
+        }
+        scrollToBottom();
+        clearUserInput();
+    }
+
+    /**
+     * Clears the user input field.
+     */
+    private void clearUserInput() {
+        userInput.clear();
     }
 
     /**
@@ -113,17 +148,35 @@ public class MainWindow extends AnchorPane {
      * @param response the response to display
      */
     private void displayDuskResponse(DuskResponse response) {
-        assert response != null : "Response cannot be null";
-        assert dialogContainer != null : "Dialog container must be initialized";
+        if (response.getType() == DuskResponseType.ERROR) {
+            displayError(response.getMessage());
+        } else {
+            DialogBox duskDialog = DialogBox.getDuskDialog(response.getMessage(), duskImage, response.getType());
+            // Add the dialog and wait for it to be properly added
+            dialogContainer.getChildren().add(duskDialog);
 
-        Image imageToUse = response.getType() == DuskResponseType.NORMAL ? duskImage : null;
-        dialogContainer.getChildren().add(
-                DialogBox.getDuskDialog(response.getMessage(), imageToUse, response.getType()));
+            // Wait for layout to complete before scrolling
+            duskDialog.needsLayoutProperty().addListener((observable, oldValue, newValue) -> {
+                if (!newValue) {  // Layout is complete
+                    scrollToBottom();
+                }
+            });
+        }
+    }
+
+    /**
+     * Displays an error message in the dialog container.
+     *
+     * @param errorMessage the error message to display
+     */
+    private void displayError(String errorMessage) {
+        ErrorBox errorBox = new ErrorBox(errorMessage);
+        dialogContainer.getChildren().add(errorBox);
         scrollToBottom();
     }
 
     /**
-     * Handles the termination of the application with a delay.
+     * Terminates the application after a delay.
      */
     private void handleTermination() {
         // Disable input controls
@@ -144,9 +197,22 @@ public class MainWindow extends AnchorPane {
     }
 
     /**
-     * Scrolls the dialog view to the bottom.
+     * Scrolls the dialog container to the bottom.
      */
     private void scrollToBottom() {
-        Platform.runLater(() -> scrollPane.setVvalue(1.0));
+        // Request layout pass to ensure all elements are properly sized
+        dialogContainer.requestLayout();
+
+        // Use Platform.runLater to ensure scroll happens after layout
+        Platform.runLater(() -> {
+            // Wait for next layout pass
+            dialogContainer.layout();
+
+            // Scroll to bottom
+            scrollPane.setVvalue(1.0);
+
+            // Double-check scroll in case of dynamic content loading
+            Platform.runLater(() -> scrollPane.setVvalue(1.0));
+        });
     }
 }
