@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class StorageTest {
     private Storage storage;
 
     /**
-     * Sets up the test environment by creating a temporary data file and
+     * Sets up the test environment by creating a temporary data file and 
      * initializing the {@code Storage} instance.
      *
      * @param tempDir the temporary directory provided by JUnit
@@ -214,7 +215,10 @@ public class StorageTest {
         Storage invalidStorage = new Storage() {
             @Override
             protected Path getDataFile() {
-                return Path.of(System.getProperty("java.io.tmpdir"), "invalid", "path", "data.txt");
+                String separator = FileSystems.getDefault().getSeparator();
+
+                return Path.of(separator + "proc" +
+                        separator + "non-writable-data.txt");
             }
         };
 
